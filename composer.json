@@ -1,0 +1,19 @@
+{
+    "name": "windows/agenda-facil",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "app\\": "app"
+        },
+        "files":[
+            "app/helpers/constants.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Vitor hugo julieti",
+            "email": "vitorhugojulieti@gmail.com"
+        }
+    ],
+    "require": {}
+}
