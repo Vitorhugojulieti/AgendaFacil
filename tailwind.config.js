@@ -19,6 +19,8 @@ module.exports = {
       'sucessColor':'#96DD8C',
       'black':"#000000",
       'white':"#ffff",
+      'lightGray':"E5E9EB",
+      'transparent':'transparent'
     },
     fontFamily: {
       Urbanist: ['Urbanist', 'sans'], 

@@ -235,6 +235,7 @@
     </div>
     <!-- footer -->
     <?php require 'includes/footer.php';?>
+    <script src="/assets/js/acordions.js" deffer></script>
 </body>
 </html>
 
