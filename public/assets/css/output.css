@@ -608,8 +608,32 @@ video {
   right: 2.5rem;
 }
 
+.col-span-1{
+  grid-column: span 1 / span 1;
+}
+
+.col-span-2{
+  grid-column: span 2 / span 2;
+}
+
+.col-start-1{
+  grid-column-start: 1;
+}
+
+.col-start-2{
+  grid-column-start: 2;
+}
+
+.row-span-1{
+  grid-row: span 1 / span 1;
+}
+
 .mb-4{
   margin-bottom: 1rem;
+}
+
+.ml-2{
+  margin-left: 0.5rem;
 }
 
 .flex{
@@ -624,8 +648,8 @@ video {
   height: 16.666667%;
 }
 
-.h-12{
-  height: 3rem;
+.h-14{
+  height: 3.5rem;
 }
 
 .h-5\/6{
@@ -653,8 +677,8 @@ video {
   width: 25%;
 }
 
-.w-1\/6{
-  width: 16.666667%;
+.w-14{
+  width: 3.5rem;
 }
 
 .w-2\/4{
@@ -679,6 +703,10 @@ video {
 
 .w-4\/5{
   width: 80%;
+}
+
+.w-5\/6{
+  width: 83.333333%;
 }
 
 .w-full{
@@ -707,6 +735,10 @@ video {
   align-items: center;
 }
 
+.justify-start{
+  justify-content: flex-start;
+}
+
 .justify-center{
   justify-content: center;
 }
@@ -717,6 +749,10 @@ video {
 
 .justify-around{
   justify-content: space-around;
+}
+
+.gap-1{
+  gap: 0.25rem;
 }
 
 .gap-12{
@@ -807,6 +843,11 @@ video {
 .border-borderFormColor{
   --tw-border-opacity: 1;
   border-color: rgb(134 134 134 / var(--tw-border-opacity));
+}
+
+.border-lightGray{
+  --tw-border-opacity: 1;
+  border-color: rgb(229 233 235 / var(--tw-border-opacity));
 }
 
 .border-principal10{
@@ -1068,6 +1109,20 @@ video {
   display: block;
 }
 
+/* remove spins input number */
+
+input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Para Firefox */
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 .focus-within\:border-white:focus-within{
   border-color: #ffff;
 }
@@ -1078,6 +1133,10 @@ video {
 
 .hover\:cursor-pointer:hover{
   cursor: pointer;
+}
+
+.hover\:text-white:hover{
+  color: #ffff;
 }
 
 .hover\:underline:hover{
@@ -1103,3 +1162,26 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+@media (min-width: 768px){
+  .md\:flex{
+    display: flex;
+  }
+
+  .md\:flex-col{
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 1024px){
+  .lg\:grid{
+    display: grid;
+  }
+
+  .lg\:grid-cols-2{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lg\:grid-rows-1{
+    grid-template-rows: repeat(1, minmax(0, 1fr));
+  }
+}

@@ -8,7 +8,7 @@ class HomeController{
     public string $view;
 
     public function index(){
-        $this->view = 'redefinePassword.php';
+        $this->view = 'indexAdm.php';
         // $this->view = 'index_not_login.php';
         $this->data = [
             'title'=>'Agenda facil',
