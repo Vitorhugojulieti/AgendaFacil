@@ -1,9 +1,9 @@
 <body style="overflow:none;">
     <div class="w-full min-h-screen flex flex-col justify-center items-center bg-principal10 p-4 mb-4">
-        <form action="" method="post" id="formCadClient" class="w-3/5 flex flex-col items-center justify-center gap-8 ">
+        <form action="" method="post" id="formCadClient" class="w-4/5 md:w-3/5 flex flex-col items-center justify-center gap-8 ">
             <img src="/assets/images/logo-white.png" alt="logo" >
-            <legend class="font-Urbanist font-semibold text-white text-3xl">Bem vindo a plataforma!</legend>
-            <fieldset class="w-5/6 lg:grid lg:grid-rows-1 lg:grid-cols-2 gap-8 md:flex md:flex-col">
+            <legend class="font-Urbanist font-semibold text-white text-2xl md:text-3xl">Bem vindo a plataforma!</legend>
+            <fieldset class="w-full lg:grid lg:grid-rows-1 lg:grid-cols-2 gap-8 md:flex md:w-5/6 md:flex-col ">
                 <!-- container 1 -->
                 <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-4 ">
                     <!-- campo -->
@@ -77,7 +77,7 @@
                 </div>
                
             </fieldset>
-            <div class="w-2/4">
+            <div class="w-full md:w-2/4">
                 <input type="submit" value="CADASTRAR" class="w-full bg-white text-principal10 font-Poppins font-semibold p-2 hover:cursor-pointer hover:underline">
                 <a href="#" class="text-white hover:underline">Já possui uma conta? <span class="font-semibold">Fazer login</span></a>
             </div>

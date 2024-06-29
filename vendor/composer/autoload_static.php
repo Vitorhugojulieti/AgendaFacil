@@ -8,6 +8,8 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
 {
     public static $files = array (
         '0a28c1dc4d7414a078f3a020a672d4e6' => __DIR__ . '/../..' . '/app/helpers/constants.php',
+        'a6a29970e7ab9640bdbafafcce7ce975' => __DIR__ . '/../..' . '/app/helpers/redirect.php',
+        'b9d01aaf9b98bebc1c39ebba0f7aa965' => __DIR__ . '/../..' . '/app/helpers/session.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -26,14 +28,23 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'app\\classes\\Block' => __DIR__ . '/../..' . '/app/classes/Block.php',
+        'app\\classes\\BlockNotLogged' => __DIR__ . '/../..' . '/app/classes/BlockNotLogged.php',
+        'app\\classes\\BlockPostRequest' => __DIR__ . '/../..' . '/app/classes/BlockPostRequest.php',
         'app\\classes\\Uri' => __DIR__ . '/../..' . '/app/classes/Uri.php',
+        'app\\classes\\Validate' => __DIR__ . '/../..' . '/app/classes/Validate.php',
+        'app\\classes\\ValidateEmail' => __DIR__ . '/../..' . '/app/classes/ValidateEmail.php',
+        'app\\classes\\ValidateRequired' => __DIR__ . '/../..' . '/app/classes/ValidateRequired.php',
         'app\\controllers\\HomeController' => __DIR__ . '/../..' . '/app/controllers/HomeController.php',
         'app\\core\\AppExtract' => __DIR__ . '/../..' . '/app/core/AppExtract.php',
         'app\\core\\ControllerExtract' => __DIR__ . '/../..' . '/app/core/ControllerExtract.php',
+        'app\\core\\FolderExtract' => __DIR__ . '/../..' . '/app/core/FolderExtract.php',
         'app\\core\\MethodExtract' => __DIR__ . '/../..' . '/app/core/MethodExtract.php',
         'app\\core\\MyApp' => __DIR__ . '/../..' . '/app/core/MyApp.php',
         'app\\core\\ParamsExtract' => __DIR__ . '/../..' . '/app/core/ParamsExtract.php',
         'app\\interfaces\\AppInterface' => __DIR__ . '/../..' . '/app/interfaces/AppInterface.php',
+        'app\\interfaces\\ControllerInterface' => __DIR__ . '/../..' . '/app/interfaces/ControllerInterface.php',
+        'app\\interfaces\\ValidateInterface' => __DIR__ . '/../..' . '/app/interfaces/ValidateInterface.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

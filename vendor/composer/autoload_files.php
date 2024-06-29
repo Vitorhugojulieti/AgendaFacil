@@ -7,4 +7,6 @@ $baseDir = dirname($vendorDir);
 
 return array(
     '0a28c1dc4d7414a078f3a020a672d4e6' => $baseDir . '/app/helpers/constants.php',
+    'a6a29970e7ab9640bdbafafcce7ce975' => $baseDir . '/app/helpers/redirect.php',
+    'b9d01aaf9b98bebc1c39ebba0f7aa965' => $baseDir . '/app/helpers/session.php',
 );

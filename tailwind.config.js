@@ -16,17 +16,28 @@ module.exports = {
       'iconFormColor':'#AFB6C2',
       'borderFormColor':'#868686',
       'errorColor':'#FD837C',
-      'sucessColor':'#96DD8C',
+      'sucessColor':'#22C55E',
       'black':"#000000",
       'white':"#ffff",
       'lightGray':"#E5E9EB",
+      'text-gray':"#71717A",
       'transparent':'transparent'
     },
     fontFamily: {
       Urbanist: ['Urbanist', 'sans'], 
       Poppins: ['Poppins', 'sans'], 
     },
-    extend: {},
+    extend: {
+      animation: {
+        'pulse-skeleton': 'pulse-skeleton 1.5s ease-in-out infinite',
+      },
+      keyframes: {
+        'pulse-skeleton': {
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: 0.4 },
+        },
+      },
+    },
   },
   plugins: [],
 }
