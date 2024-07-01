@@ -9,11 +9,10 @@ class Validate{
 
     private function validationInstance(String $field,array $validations){
         foreach ($validations as $classValidate) {
-            $namespae = "app\\classes\\";
-            $class = $namespae.$classValidate;
+            $namespace = "app\\classes\\";
+            $class = $namespace.$classValidate;
 
             [$class,$param] = $this->classWithColon($class);
-
             if(class_exists($class)){
                 $this->data[$field] = $this->executeClass(new $class,$field,$param);
             }
@@ -32,7 +31,6 @@ class Validate{
         foreach ($validations as $field => $validation) {
             $this->validationInstance($field,$validation);
         }
-
         if(in_array(false,$this->data)){
             $this->errors = true;
         }

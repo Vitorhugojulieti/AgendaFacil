@@ -7,5 +7,7 @@
 </head>
 <body>
     <h1>Home</h1>
+    <a href="login/destroy">Logout</a>
+    ?>
 </body>
 </html>

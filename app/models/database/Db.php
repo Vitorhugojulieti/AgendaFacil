@@ -71,7 +71,12 @@ class Db {
                 $data[] = $row;
             }
         }
-        return $data;
+        
+        if (stripos($query, 'SELECT') === 0) {
+            return $data;
+        } else {
+            return $result !== null; 
+        }
     }
 
     public function insert($data = null) {

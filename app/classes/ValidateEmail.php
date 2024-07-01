@@ -3,22 +3,30 @@
 namespace app\classes;
 
 use app\interfaces\ValidateInterface;
+use app\models\database\Db;
+use app\models\Client;
 
 class ValidateEmail implements ValidateInterface
 {
     public function handle($field, $param)
     {
-        $isEmail = filter_input(INPUT_POST, $field, FILTER_VALIDATE_EMAIL);
+        $email = filter_input(INPUT_POST, $field, FILTER_SANITIZE_EMAIL);
+        
+        $db = new Db();
+        $db->connect();
+        $db->setTable('users');
 
-        if (!$isEmail) {
-            Flash::set($field, 'Esse campo tem que ser um email');
+        $client = new Client();
+
+        if($client->emailHasPassword($db,$email)){
+            Flash::set($field, 'Esse email já está em uso!');
             return false;
         }
 
-        $string = filter_input(INPUT_POST, $field, FILTER_SANITIZE_EMAIL);
-        Old::set($field, $string);
+        
+        Old::set($field, $email);
 
-        return $string;
+        return $email;
     }
 }
 
