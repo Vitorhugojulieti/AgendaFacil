@@ -648,6 +648,14 @@ video {
   margin-left: 0.5rem;
 }
 
+.ml-4{
+  margin-left: 1rem;
+}
+
+.ml-6{
+  margin-left: 1.5rem;
+}
+
 .mt-4{
   margin-top: 1rem;
 }
@@ -759,6 +767,10 @@ video {
 
 .animate-pulse-skeleton{
   animation: pulse-skeleton 1.5s ease-in-out infinite;
+}
+
+.list-disc{
+  list-style-type: disc;
 }
 
 .flex-col{
@@ -1235,6 +1247,13 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+.disabled {
+  pointer-events: none;
+  color: grey;
+  cursor: default;
+  text-decoration: none;
+}
+
 .focus-within\:border-white:focus-within{
   border-color: #ffff;
 }
@@ -1293,6 +1312,11 @@ input[type=number] {
 
   .md\:flex-col{
     flex-direction: column;
+  }
+
+  .md\:text-3xl{
+    font-size: 1.875rem;
+    line-height: 2.25rem;
   }
 }
 

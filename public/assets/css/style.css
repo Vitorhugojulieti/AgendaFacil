@@ -37,3 +37,10 @@
   input[type=number] {
     -moz-appearance: textfield;
   }
+
+  .disabled {
+    pointer-events: none;
+    color: grey;
+    cursor: default;
+    text-decoration: none;
+}

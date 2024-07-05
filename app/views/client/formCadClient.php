@@ -1,7 +1,7 @@
 <body style="overflow:none;">
     <div class="w-full min-h-screen flex flex-col justify-center items-center bg-principal10 p-4 mb-4">
         <form action="signup/store" method="POST"  id="formCadClient" class="w-4/5 md:w-3/5 flex flex-col items-center justify-center gap-8 ">
-            <img src="/assets/images/logo-white.png" alt="logo" >
+            <a href="/"><img src="/assets/images/logo-white.png" alt="logo" ></a>
             <legend class="font-Urbanist font-semibold text-white text-2xl md:text-3xl">Bem vindo a plataforma!</legend>
             <fieldset class="w-full lg:grid lg:grid-rows-1 lg:grid-cols-2 gap-8 md:flex md:w-5/6 md:flex-col ">
                 <!-- container 1 -->
@@ -40,7 +40,6 @@
                     <div class="field w-full focus-within:text-white text-borderFormColor">
                         <div>
                             <label for="inputEmail" >Email</label>
-                            <i class='bx bxs-help-circle hover:text-white hover:cursor-pointer' id="btnOpenModalEmail" ></i>
                         </div>
                         <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-white focus-within:text-white">
                             <i class='bx bx-envelope' style='padding-left:1rem; padding-right:1rem;' ></i>
@@ -79,23 +78,12 @@
             </fieldset>
             <div class="w-full md:w-2/4">
                 <input type="submit" value="CADASTRAR" class="w-full bg-white text-principal10 font-Poppins font-semibold p-2 hover:cursor-pointer hover:underline">
-                <a href="#" class="text-white hover:underline">Já possui uma conta? <span class="font-semibold">Fazer login</span></a>
+                <a href="/login" class="text-white hover:underline">Já possui uma conta? <span class="font-semibold">Fazer login</span></a>
             </div>
         </form>
     </div>
 
     <!-- modais -->
-    <dialog id="modalEmail" class="w-2/4 bg-white text-black rounded p-4">
-        <div class="w-full flex justify-between items-center mb-4">
-            <div class="flex gap-4 items-center">
-                <i class='bx bx-envelope text-2xl' ></i>
-                <h1 class="text-2xl font-semibold font-Urbanist">modal teste email</h1>
-            </div>
-            <button id="btnCloseModalEmail" class="outline-none"><i class='bx bx-x-circle text-3xl'></i></button>
-        </div>
-        <p class="font-Poppins">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio, corrupti. Perspiciatis nostrum, atque provident velit voluptatem ea praesentium quae, deserunt sed esse reprehenderit unde vero harum. Inventore praesentium deserunt nostrum.</p>
-    </dialog>
-
     <dialog id="modalPassword" class="w-2/4 bg-white text-black rounded p-4 ">
         <div class="w-full flex justify-between items-center mb-4">
             <div class="flex gap-4 items-center">
@@ -104,7 +92,12 @@
             </div>
             <button id="btnCloseModalPassword" class="outline-none"><i class='bx bx-x-circle text-3xl'></i></button>
         </div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores dolorem mollitia commodi repudiandae natus molestias beatae deleniti, cum voluptatibus odit, nostrum aut eos. Excepturi ipsum a vero fuga veniam eos?</p>
+        <h3 class="text-base border-b-lightGray border-b-2 mb-2">Para sua segurança sua senha deve conter:</h3>
+        <ul class="flex flex-col gap-2">
+            <li class="list-disc ml-4">Minimo de 8 caracteres.</li>
+            <li class="list-disc ml-4">Ao menos um caractere especial. (*&@!#%)</li>
+            <li class="list-disc ml-4">Ao menos um numero.</li>
+        </ul>
     </dialog>
 
     <script type="module" src="/assets/js/formCadClient.js" deffer></script>

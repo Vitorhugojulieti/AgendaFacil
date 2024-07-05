@@ -16,6 +16,11 @@ export default class validateEqualsPassword{
         this.cleanAllSpans();
         let formValid = true;
 
+        if(!formValidator.isPasswordValid(this.password.value)){
+            this.spanPassword.innerHTML = this.iconError+"Senha invalida!";
+            formValid = false;
+        }
+
         if(!formValidator.isEqualValues(this.password.value,this.confirmPassword.value)){
             this.spanConfirmPassword.innerHTML = this.iconError+"Senhas não são iguais!";
             formValid = false;

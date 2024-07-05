@@ -12,8 +12,8 @@
     </nav>
 
     <div class="w-1/4 flex gap-4">
-        <button class="text-lg text-black border-2 border-solid border-black rounded-xl p-2 w-full hover:underline hover:cursor-pointer"><a href="#">Login</a></button>
-        <button class="text-lg bg-principal10 text-white rounded-xl p-2 w-full hover:underline hover:cursor-pointer"><a href="#">Cadastre-se</a></button>
+        <button class="text-lg text-black border-2 border-solid border-black rounded-xl p-2 w-full hover:underline hover:cursor-pointer"><a href="/login">Area cliente</a></button>
+        <button class="text-lg bg-principal10 text-white rounded-xl p-2 w-full hover:underline hover:cursor-pointer"><a href="#">Area empresa</a></button>
     </div>
 </header>
 

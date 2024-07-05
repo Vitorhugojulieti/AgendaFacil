@@ -4,7 +4,7 @@ namespace app\classes;
 
 use app\interfaces\ValidateInterface;
 use app\models\database\Db;
-use app\models\Client;
+use app\models\ValidateUsedFields;
 
 class ValidateEmail implements ValidateInterface
 {
@@ -14,11 +14,10 @@ class ValidateEmail implements ValidateInterface
         
         $db = new Db();
         $db->connect();
-        $db->setTable('users');
+        $db->setTable('client');
 
-        $client = new Client();
-
-        if($client->emailHasPassword($db,$email)){
+        $validatorDb = new ValidateUsedFields($db);
+        if($validatorDb->emailIsUsed($email)){
             Flash::set($field, 'Esse email já está em uso!');
             return false;
         }

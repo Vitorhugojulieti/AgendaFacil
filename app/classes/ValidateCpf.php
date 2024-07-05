@@ -4,7 +4,7 @@ namespace app\classes;
 
 use app\interfaces\ValidateInterface;
 use app\models\database\Db;
-use app\models\Client;
+use app\models\ValidateUsedFields;
 
 class ValidateCpf implements ValidateInterface
 {
@@ -14,11 +14,11 @@ class ValidateCpf implements ValidateInterface
         
         $db = new Db();
         $db->connect();
-        $db->setTable('users');
+        $db->setTable('client');
 
-        $client = new Client();
+        $validatorDb = new ValidateUsedFields($db);
 
-        if($client->cpfIsUsed($db,$cpf)){
+        if($validatorDb->cpfIsUsed($cpf)){
             Flash::set($field, 'Esse CPF já está em uso!');
             return false;
         }

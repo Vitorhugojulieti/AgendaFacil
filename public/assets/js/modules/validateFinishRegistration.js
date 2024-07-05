@@ -6,9 +6,11 @@ export default class validateFinishRegistration{
 
         this.inputCpf = document.querySelector("#inputCpf");
         this.inputPhone = document.querySelector("#inputPhone");
+        this.inputPassword = document.querySelector("#inputPassword");
 
         this.spanCpf = document.querySelector("#msgCpfError");
         this.spanPhone = document.querySelector("#msgPhoneError");
+        this.spanPassword = document.querySelector("#msgPasswordError");
 
         this.iconError = "<i class='bx bxs-info-circle' style='color:#fd837c'  ></i>";
     }
@@ -29,8 +31,18 @@ export default class validateFinishRegistration{
             formValid = false;
         }
 
+        if(!formValidator.isPasswordValid(this.inputPassword.value)){
+            this.spanPassword.innerHTML = this.iconError+"Senha invalida!";
+            formValid = false;
+        }
+
         if(formValidator.isEmpty(this.inputCpf.value)){
             this.spanCpf.innerHTML = this.iconError+"Campo cpf está vazio!";
+            formValid = false;
+        }
+
+        if(formValidator.isEmpty(this.inputPassword.value)){
+            this.spanPassword.innerHTML = this.iconError+"Campo senha está vazio!";
             formValid = false;
         }
 

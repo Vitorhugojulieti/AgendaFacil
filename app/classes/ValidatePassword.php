@@ -4,7 +4,7 @@ namespace app\classes;
 
 use app\interfaces\ValidateInterface;
 use app\models\database\Db;
-use app\models\Client;
+use app\models\ValidateUsedFields;
 
 class ValidatePassword implements ValidateInterface
 {
@@ -14,11 +14,11 @@ class ValidatePassword implements ValidateInterface
         
         $db = new Db();
         $db->connect();
-        $db->setTable('users');
+        $db->setTable('client');
 
-        $client = new Client();
+        $validatorDb = new ValidateUsedFields($db);
 
-        if($client->passwordIsUsed($db,$password)){
+        if($validatorDb->passwordIsUsed($password)){
             Flash::set($field, 'Essa senha já está em uso!');
             return false;
         }

@@ -1,7 +1,7 @@
 <body style="overflow:none;">
     <div class="w-full min-h-screen flex flex-col justify-center items-center bg-principal10 p-4 mb-4">
         <form action="" method="post" id="formRedefinePassword" class="w-3/5 flex flex-col items-center justify-center gap-4 ">
-            <img src="/assets/images/logo-white.png" alt="logo">
+            <a href="/"><img src="/assets/images/logo-white.png" alt="logo" ></a>
             <legend class="font-Urbanist font-semibold text-white text-3xl">Redefinir senha</legend>
             <fieldset class="w-2/4 flex flex-col items-start justify-center gap-4 ">
                  <!-- campo -->
@@ -46,7 +46,12 @@
             </div>
             <button id="btnCloseModalPassword" class="outline-none"><i class='bx bx-x-circle text-3xl'></i></button>
         </div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores dolorem mollitia commodi repudiandae natus molestias beatae deleniti, cum voluptatibus odit, nostrum aut eos. Excepturi ipsum a vero fuga veniam eos?</p>
+        <h3 class="text-base border-b-lightGray border-b-2 mb-2">Para sua segurança sua senha deve conter:</h3>
+        <ul class="flex flex-col gap-2">
+            <li class="list-disc ml-4">Minimo de 8 caracteres.</li>
+            <li class="list-disc ml-4">Ao menos um caractere especial. (*&@!#%)</li>
+            <li class="list-disc ml-4">Ao menos um numero.</li>
+        </ul>
     </dialog>
     <script type="module" src="/assets/js/redefinePassword.js" deffer></script>
 </body>

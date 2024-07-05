@@ -15,7 +15,7 @@ class Db {
     function __construct($host="127.0.0.1",
                          $port="3306",
                          $user="root",
-                         $dbname="mvcteste",
+                         $dbname="agendafacil",
                          $password="root") {
         $this->host = $host;
         $this->port = $port;

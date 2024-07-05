@@ -21,7 +21,8 @@ class GoogleClient{
         ]);
         $this->client->setHttpClient($guzzleClient);
         $this->client->setAuthConfig('credentials.json');
-        $this->client->setRedirectUri('http://localhost:8889');
+        $this->client->setRedirectUri('http://localhost:8889/login/loginGoogle');
+        // $this->client->setRedirectUri('http://localhost:8889/signup/finishRegistration');
         $this->client->addScope(ServiceOAuth2::USERINFO_EMAIL);
         $this->client->addScope(ServiceOAuth2::USERINFO_PROFILE);
     }

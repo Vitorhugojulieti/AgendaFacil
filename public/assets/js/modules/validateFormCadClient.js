@@ -36,6 +36,11 @@ export default class validateFormCadClient{
             formValid = false;
         }
 
+        if(!formValidator.isPasswordValid(this.inputPassword.value)){
+            this.spanErrorPassword.innerHTML = this.iconError+"Senha invalida!";
+            formValid = false;
+        }
+
         if(!formValidator.isPhoneValid(this.inputPhone.value)){
             this.spanErrorPhone.innerHTML = this.iconError+"Telefone invalido!";
             formValid = false;

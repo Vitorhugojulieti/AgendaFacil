@@ -3,7 +3,7 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "app\\": "app"
+            "app\\": "app/"
         },
         "files":[
             "app/helpers/constants.php",
@@ -20,6 +20,8 @@
         }
     ],
     "require": {
-        "google/apiclient": "^2.16"
+        "google/apiclient": "^2.16",
+        "phpmailer/phpmailer": "^6.9",
+        "vlucas/phpdotenv": "^5.6"
     }
 }

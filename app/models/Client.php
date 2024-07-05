@@ -12,8 +12,10 @@ class Client implements ModelInterface{
     private string $email;
     private string $password;
     private string $registrationDate;
+    private int $registrationComplete;
+    private string $table;
 
-    public function __construct($avatar = "", $name = "", $cpf = "", $phone = "", $email = "", $password = "", $registrationDate = ""){
+    public function __construct($avatar = "", $name = "", $cpf = "", $phone = "", $email = "", $password = "", $registrationDate = "",$registrationComplete = 0){
         $this->avatar = $avatar;
         $this->name = $name;
         $this->cpf = $cpf;
@@ -21,42 +23,49 @@ class Client implements ModelInterface{
         $this->email = $email;
         $this->password = $password;
         $this->registrationDate = $registrationDate;
+        $this->registrationComplete = $registrationComplete;
+        $this->table = "client";
     }
 
     public function getAll(Db $db){
+        $db->setTable($this->table);
         $clients = $db->query("*");
         $arrayObjectsClient =[];
         foreach ($clients as $client){
-            $newClient = new Self($client['avatar'],$client['name'],$client['cpf'],$client['phone'],$client['email'],$client['password'],$client['registrationDate']);
-            $newClient->setId($client['id']);
+            $newClient = new Client($client['avatar'],$client['name'],$client['cpf'],$client['phone'],$client['email'],$client['password'],$client['registrationDate'],$client['registrationComplete']);
+            $newClient->setId($client['idClient']);
             array_push($arrayObjectsClient,$newClient);
         }
         return $arrayObjectsClient;
     }
 
     public function getById(Db $db, int $id){
-        $clientFound = $db->query("*","id={$id}");
+        $db->setTable($this->table);
+        $clientFound = $db->query("*","idClient={$id}");
 
         if(!$clientFound){
-            return "Cliente não encontrado";
+            return false;
         }
 
-        $clientObject = new Self($clientFound[0]['avatar'],$clientFound[0]['name'],$clientFound[0]['cpf'],$clientFound[0]['phone'],$clientFound[0]['email'],$clientFound[0]['password'],$clientFound[0]['registrationDate']);
-        $clientObject->setId($clientFound[0]['id'],);
+        $clientObject = new Client($clientFound[0]['avatar'],$clientFound[0]['name'],$clientFound[0]['cpf'],$clientFound[0]['phone'],$clientFound[0]['email'],$clientFound[0]['password'],$clientFound[0]['registrationDate'],$clientFound[0]['registrationComplete']);
+        $clientObject->setId($clientFound[0]['idClient'],);
         return $clientObject;
     }
 
     public function getByEmail(Db $db, $email){
+        $db->setTable($this->table);
         $clientFound = $db->query("*","email = '{$email}'");
         if(!$clientFound){
             return false;
         }
-        $client = new Self($clientFound[0]['avatar'],$clientFound[0]['name'],$clientFound[0]['cpf'],$clientFound[0]['phone'],$clientFound[0]['email'],$clientFound[0]['password'],$clientFound[0]['registrationDate']);
+        $client = new Client($clientFound[0]['avatar'],$clientFound[0]['name'],$clientFound[0]['cpf'],$clientFound[0]['phone'],$clientFound[0]['email'],$clientFound[0]['password'],$clientFound[0]['registrationDate'],$clientFound[0]['registrationComplete']);
+        $client->setId($clientFound[0]['idClient']);
 
         return $client;
     }
 
     public function emailHasPassword(Db $db,$email){
+        $db->setTable($this->table);
         $passwordFound = $db->query('password',"email = '{$email}'");
         if ($passwordFound && !empty($passwordFound[0]['password'])) {
             return true; 
@@ -65,25 +74,8 @@ class Client implements ModelInterface{
         return false;
     }
 
-    public function cpfIsUsed(Db $db, $cpf){
-        $cpfFound = $db->query('cpf',"cpf = '{$cpf}'");
-        if(!$cpfFound){
-            return false;
-        }
-
-        return true;
-    }
-
-    public function passwordIsUsed(Db $db, $password){
-        $passwordFound = $db->query('password',"password = '{$password}'");
-        if(!$passwordFound){
-            return false;
-        }
-
-        return true;
-    }
-
     public function insert(DB $db){
+        $db->setTable($this->table);
         
             $data = [
                 'avatar' => $this->getAvatar(),
@@ -93,6 +85,7 @@ class Client implements ModelInterface{
                 'email' => $this->getEmail(),
                 'password' => $this->getPassword(),
                 'registrationDate' => $this->getRegistrationDate(),
+                'registrationComplete' => $this->getRegistrationComplete(),
             ];
     
             if($db->insert($data)){
@@ -101,10 +94,10 @@ class Client implements ModelInterface{
 
             return false;
 
-        // return "Não é possivel inserir data com campos vazios!";
     }
 
     public function update(Db $db,int $id){
+        $db->setTable($this->table);
         $data = [];
         
         if ($this->getAvatar() !== '') {
@@ -129,8 +122,12 @@ class Client implements ModelInterface{
             $data['registrationDate'] = $this->getRegistrationDate();
         }
 
+        if ($this->getRegistrationComplete() !== 0) {
+            $data['registrationComplete'] = $this->getRegistrationComplete();
+        }
+
         if(!empty($data)){
-            if($db->update("id={$id}",$data)){
+            if($db->update("idClient={$id}",$data)){
                 return true;
             }
         }
@@ -139,11 +136,14 @@ class Client implements ModelInterface{
     }
 
     public function delete(Db $db,int $id){
-        return $db->delete("id={$id}");
+        $db->setTable($this->table);
+        return $db->delete("idClient={$id}");
     }
 
-    private function hasEmptyAttribute(){
-        return empty($this->getAvatar()) || empty($this->getName()) || empty($this->getCpf()) || empty($this->getPhone()) || empty($this->getEmail()) || empty($this->getPassword()) || empty($this->getRegistrationDate());
+    public function removeAttribute($attribute) {
+        if (property_exists($this, $attribute)) {
+            unset($this->$attribute);
+        }
     }
     //getters and setters
     public function setId($id): void{
@@ -208,6 +208,14 @@ class Client implements ModelInterface{
 
     public function setRegistrationDate(string $registrationDate): void {
         $this->registrationDate = $registrationDate;
+    }
+
+    public function getRegistrationComplete(): int {
+        return $this->registrationComplete;
+    }
+
+    public function setRegistrationComplete(int $registrationComplete): void {
+        $this->registrationComplete = $registrationComplete;
     }
 }
 

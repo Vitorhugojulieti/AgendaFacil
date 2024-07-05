@@ -3,6 +3,7 @@ export default class formValidate{
         this.emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
         this.cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
         this.phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
+        this.passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*\d).{8,}$/;
     }
 
     isEmailValid(value){
@@ -23,5 +24,9 @@ export default class formValidate{
 
     isEqualValues(value1,value2){
         return value1 == value2;
+    }
+
+    isPasswordValid(value){
+        return this.passwordRegex.test(value);
     }
 }

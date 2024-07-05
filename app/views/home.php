@@ -7,6 +7,8 @@
 </head>
 <body>
     <h1>Home</h1>
+    <?php var_dump($_SESSION['user']); ?>
+    <img src="<?php echo $_SESSION['user']->getAvatar();?>" alt="">
     <a href="login/destroy">Logout</a>
     ?>
 </body>

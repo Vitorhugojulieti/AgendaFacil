@@ -9,11 +9,13 @@ ViewPassword.init();
 const validateFormClient  = new validateFormCadClient();
 validateFormClient.init();
 
-const manageModalEmail = new modals('#modalEmail','#btnOpenModalEmail','#btnCloseModalEmail');
-manageModalEmail.init();
-
 const manageModalPassword = new modals('#modalPassword','#btnOpenModalPassword','#btnCloseModalPassword');
 manageModalPassword.init();
 
 const formatInputs = new maskInput("#inputPhone","#inputCpf");
 formatInputs.init();
+
+const inputConfirmPassword = document.querySelector("#inputConfirmPassword");
+inputConfirmPassword.addEventListener('paste', function(event) {
+    event.preventDefault(); 
+});

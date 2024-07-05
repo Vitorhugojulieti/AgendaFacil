@@ -6,6 +6,7 @@ define('REQUIRED', 'ValidateRequired');
 define('EMAIL', 'ValidateEmail');
 define('CPF', 'ValidateCpf');
 define('PASSWORD', 'ValidatePassword');
+define('CNPJ', 'ValidateCnpj');
 
 // config
 define('ROOT', dirname(__FILE__, 3));
