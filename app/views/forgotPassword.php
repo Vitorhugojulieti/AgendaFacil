@@ -1,6 +1,6 @@
 <body style="overflow:none;">
     <div class="w-full min-h-screen flex flex-col justify-center items-center bg-principal10 p-4 mb-4">
-        <form action="/login/edit" method="post" id="formForgotPassword" class="w-3/5 flex flex-col items-center justify-center gap-4 ">
+        <form action="<?php echo $action; ?>" method="post" id="formForgotPassword" class="w-3/5 flex flex-col items-center justify-center gap-4 ">
             <a href="/"><img src="/assets/images/logo-white.png" alt="logo" ></a>
             <legend class="font-Urbanist font-semibold text-white text-3xl">Esqueceu a senha?</legend>
             <fieldset class="w-2/4 flex flex-col items-start justify-center gap-4 ">

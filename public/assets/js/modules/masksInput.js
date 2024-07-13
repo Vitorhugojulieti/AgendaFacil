@@ -1,7 +1,8 @@
 export default class maskInput{
-    constructor(inputPhone = null, inputCpf = null){
+    constructor(inputPhone = null, inputCpf = null, inputCep = null){
         this.inputPhone = document.querySelector(inputPhone);
         this.inputCpf = document.querySelector(inputCpf);
+        this.inputCep = document.querySelector(inputCep);
     }
 
     formatCpf(){
@@ -35,6 +36,18 @@ export default class maskInput{
         this.inputPhone.value = telefone;
     }
 
+    formatCep(){
+        let cep = this.inputCep.value.replace(/\D/g, ''); 
+    
+        if (cep.length > 5) {
+            cep = cep.replace(/^(\d{5})(\d)/, '$1-$2');
+        } else {
+            cep = cep.replace(/^(\d{0,5})/, '$1');
+        }
+    
+        this.inputCep.value = cep;
+    }
+
     init(){
         if(this.inputCpf != null){
             this.inputCpf.addEventListener('input',(e)=>{
@@ -45,6 +58,12 @@ export default class maskInput{
         if(this.inputPhone != null){
             this.inputPhone.addEventListener('input',(e)=>{
                 this.formatPhone();
+            })
+        }
+
+        if(this.inputCep != null){
+            this.inputCep.addEventListener('input',(e)=>{
+                this.formatCep();
             })
         }
     }

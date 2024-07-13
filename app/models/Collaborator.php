@@ -40,18 +40,20 @@ class Collaborator implements ModelInterface{
         $db->setTable($this->table);
         $Collaborators = $db->query("*");
         $arrayObjectsCollaborator =[];
-        foreach ($collaborators as $collaborator){
+
+        foreach ($Collaborators as $collaborator){
             $newCollaborator = new Collaborator($collaborator['avatar'],$collaborator['name'],$collaborator['cpf'],$collaborator['phone'],$collaborator['email'],$collaborator['password'],$collaborator['nivel'],$collaborator['Company_idCompany'],$collaborator['registrationDate'],$collaborator['registrationComplete']);
-            $newCollaborator->setId($company['idCollaborator']);
+            $newCollaborator->setId($collaborator['idCollaborator']);
             // $newCollaborator->services = $newCollaborator->getServices();
             array_push($arrayObjectsCollaborator,$newCollaborator);
         }
+        
         return $arrayObjectsCollaborator;
     }
 
     public function getById(Db $db, int $id){
         $db->setTable($this->table);
-        $collaboratorFound = $db->query("*","id={$id}");
+        $collaboratorFound = $db->query("*","idCollaborator={$id}");
 
         if(!$collaboratorFound){
             return false;
@@ -77,16 +79,7 @@ class Collaborator implements ModelInterface{
         return $colllaboratorObject;
     }
 
-    // public function getIdByEmail(Db $db, string $email){
-    //     $db->setTable($this->table);
-    //     $idFound = $db->query("idCollaborator","email='{$email}'");
-
-    //     if(!$idFound){
-    //         return false;
-    //     }
-    //     return $idFound;
-    // }
-
+   
     public function getServices($db){
         $db->setTable($this->tableServices);
 
@@ -176,7 +169,7 @@ class Collaborator implements ModelInterface{
 
     public function delete(Db $db,int $id){
         $db->setTable($this->table);
-        return $db->delete("id={$id}");
+        return $db->delete("idCollaborator={$id}");
     }
 
     public function removeAttribute($attribute) {

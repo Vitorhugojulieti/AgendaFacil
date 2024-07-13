@@ -6,7 +6,7 @@ use app\interfaces\ValidateInterface;
 
 class ValidateRequired implements ValidateInterface
 {
-    public function handle($field, $param)
+    public function handle($field, $param,$table)
     {
         $string = filter_input(INPUT_POST, $field, FILTER_SANITIZE_STRING);
 

@@ -38,7 +38,7 @@ class ValidateUsedFields{
     }
 
     public function cnpjIsUsed($cnpj){
-        $cnpjFound = $this->db->query('cnpj',"cnpj = '{$cnpj}'");
+        $cnpjFound = $this->db->query('cnpj',"cnpj ='{$cnpj}'");
         if(!$cnpjFound){
             return false;
         }

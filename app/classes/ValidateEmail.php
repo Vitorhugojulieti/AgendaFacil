@@ -8,13 +8,13 @@ use app\models\ValidateUsedFields;
 
 class ValidateEmail implements ValidateInterface
 {
-    public function handle($field, $param)
+    public function handle($field, $param,$table)
     {
         $email = filter_input(INPUT_POST, $field, FILTER_SANITIZE_EMAIL);
         
         $db = new Db();
         $db->connect();
-        $db->setTable('client');
+        $db->setTable($table);
 
         $validatorDb = new ValidateUsedFields($db);
         if($validatorDb->emailIsUsed($email)){

@@ -8,26 +8,28 @@ class Company implements ModelInterface{
     private string $logo;
     private string $name;
     private string $cnpj;
-    private string $cpf;
-    private string $cep;
-    private string $adress;
     private string $phone;
-    private string $email;
+    private string $cep;
+    private string $road;
+    private string $number;
+    private string $city;
+    private string $state;
     private string $plan;
     private string $category;
     private string $registrationDate;
     private int $registrationComplete;
     private string $table;
 
-    public function __construct($logo = "", $name = "", $cpf = "", $cnpj = "", $phone = "", $email = "", $cep = "", $adress = "", $plan = "", $category = "", $registrationDate = "",$registrationComplete = 0){
+    public function __construct($logo = "", $name = "", $cnpj = "", $phone = "", $category = "", $cep = "", $road = "",$number = "",$state = "",$city = "", $plan = "", $registrationDate = "",$registrationComplete = 0){
         $this->logo = $logo;
         $this->name = $name;
-        $this->cpf = $cpf;
         $this->cnpj = $cnpj;
         $this->phone = $phone;
-        $this->email = $email;
         $this->cep = $cep;
-        $this->adress = $adress;
+        $this->road = $road;
+        $this->city = $city;
+        $this->state = $state;
+        $this->number = $number;
         $this->plan = $plan;
         $this->category = $category;
         $this->registrationDate = $registrationDate;
@@ -89,13 +91,13 @@ class Company implements ModelInterface{
             $data = [
                 'logo' => $this->getLogo(),
                 'name' => $this->getName(),
-                'cpf' => $this->getCpf(),
                 'cnpj' => $this->getCnpj(),
                 'phone' => $this->getPhone(),
-                'email' => $this->getEmail(),
                 'cep' => $this->getCep(),
-                'adress' => $this->getAdress(),
-                'plan' => $this->getPlan(),
+                'road' => $this->getRoad(),
+                'number' => $this->getNumber(),
+                'city' => $this->getCity(),
+                'state' => $this->getState(),
                 'category' => $this->getCategory(),
                 'registrationDate' => $this->getRegistrationDate(),
                 'registrationComplete' => $this->getRegistrationComplete(),
@@ -119,23 +121,26 @@ class Company implements ModelInterface{
         if ($this->getName() !== '') {
             $data['name'] = $this->getName();
         }
-        if ($this->getCpf() !== '') {
-            $data['cpf'] = $this->getCpf();
-        }
         if ($this->getCnpj() !== '') {
             $data['cnpj'] = $this->getCnpj();
         }
         if ($this->getPhone() !== '') {
             $data['phone'] = $this->getPhone();
         }
-        if ($this->getEmail() !== '') {
-            $data['email'] = $this->getEmail();
-        }
         if ($this->getCep() !== '') {
             $data['cep'] = $this->getCep();
         }
-        if ($this->getAdress() !== '') {
-            $data['adress'] = $this->getAdress();
+        if ($this->getRoad() !== '') {
+            $data['road'] = $this->getRoad();
+        }
+        if ($this->getNumber() !== '') {
+            $data['number'] = $this->getNumber();
+        }
+        if ($this->getCity() !== '') {
+            $data['city'] = $this->getCity();
+        }
+        if ($this->getState() !== '') {
+            $data['state'] = $this->getState();
         }
         if ($this->getPlan() !== '') {
             $data['plan'] = $this->getPlan();
@@ -204,14 +209,6 @@ class Company implements ModelInterface{
         $this->cnpj = $cnpj;
     }
 
-    public function getCpf(): string {
-        return $this->cpf;
-    }
-
-    public function setCpf(string $cpf): void {
-        $this->cpf = $cpf;
-    }
-
     public function getCep(): string {
         return $this->cep;
     }
@@ -220,12 +217,36 @@ class Company implements ModelInterface{
         $this->cep = $cep;
     }
 
-    public function getAdress(): string {
-        return $this->adress;
+    public function getRoad() {
+        return $this->road;
     }
 
-    public function setAdress(string $adress): void {
-        $this->adress = $adress;
+    public function setRoad($road) {
+        $this->road = $road;
+    }
+
+    public function getCity() {
+        return $this->city;
+    }
+
+    public function setCity($city) {
+        $this->city = $city;
+    }
+
+    public function getState() {
+        return $this->state;
+    }
+
+    public function setState($state) {
+        $this->state = $state;
+    }
+
+    public function getNumber() {
+        return $this->number;
+    }
+
+    public function setNumber($number) {
+        $this->number = $number;
     }
 
     public function getPhone(): string {
@@ -234,14 +255,6 @@ class Company implements ModelInterface{
 
     public function setPhone(string $phone): void {
         $this->phone = $phone;
-    }
-
-    public function getEmail(): string {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): void {
-        $this->email = $email;
     }
 
     public function getPlan(): string {

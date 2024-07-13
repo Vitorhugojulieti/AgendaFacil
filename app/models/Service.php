@@ -2,7 +2,6 @@
 namespace app\models;
 use app\models\database\Db;
 use app\interfaces\ModelInterface;
-use app\models\Service;
 use app\models\Schedule;
 
 class Service implements ModelInterface{
@@ -20,7 +19,7 @@ class Service implements ModelInterface{
     private string $table = "services";
 
 
-    public function __construct($name = "", $description = "", $price = "", $duration = "", $idCompany = "" ,$visible = true){
+    public function __construct($name = "", $description = "", $price = "", $duration = "", $idCompany = 0 ,$visible = true){
         $this->name = $name;
         $this->description = $description;
         $this->price = $price;
@@ -96,24 +95,24 @@ class Service implements ModelInterface{
         if ($this->getName() !== '') {
             $data['name'] = $this->getName();
         }
-        if ($this->getCpf() !== '') {
-            $data['description'] = $this->getCpf();
+        if ($this->getDescription() !== '') {
+            $data['description'] = $this->getDescription();
         }
-        if ($this->getPhone() !== '') {
-            $data['price'] = $this->getPhone();
+        if ($this->getPrice() !== '') {
+            $data['price'] = $this->getPrice();
         }
-        if ($this->getEmail() !== '') {
-            $data['duration'] = $this->getEmail();
+        if ($this->getDuration() !== '') {
+            $data['duration'] = $this->getDuration();
         }
-        if ($this->getPassword() !== '') {
-            $data['idCompany'] = $this->getPassword();
+        if ($this->getIdCompany() !== '') {
+            $data['Company_idCompany'] = $this->getIdCompany();
         }
-        if ($this->getNivel() !== '') {
-            $data['visible'] = $this->getNivel();
+        if ($this->getVisible() !== '') {
+            $data['visible'] = $this->getVisible();
         }
 
         if(!empty($data)){
-            if($db->update("id={$id}",$data)){
+            if($db->update("idService={$id}",$data)){
                 return true;
             }
         }
@@ -123,7 +122,7 @@ class Service implements ModelInterface{
 
     public function delete(Db $db,int $id){
         $db->setTable($this->table);
-        return $db->delete("id={$id}");
+        return $db->delete("idService={$id}");
     }
 
     public function removeAttribute($attribute) {

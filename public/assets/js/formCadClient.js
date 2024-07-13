@@ -19,3 +19,8 @@ const inputConfirmPassword = document.querySelector("#inputConfirmPassword");
 inputConfirmPassword.addEventListener('paste', function(event) {
     event.preventDefault(); 
 });
+
+const inputCep = document.querySelector("#inputCep");
+inputCep.addEventListener('blur', function(event) {
+    console.log('ok');
+});

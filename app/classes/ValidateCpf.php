@@ -8,13 +8,12 @@ use app\models\ValidateUsedFields;
 
 class ValidateCpf implements ValidateInterface
 {
-    public function handle($field, $param)
-    {
+    public function handle($field, $param,$table){
         $cpf = filter_input(INPUT_POST, $field, FILTER_SANITIZE_STRING);
         
         $db = new Db();
         $db->connect();
-        $db->setTable('client');
+        $db->setTable($table);
 
         $validatorDb = new ValidateUsedFields($db);
 

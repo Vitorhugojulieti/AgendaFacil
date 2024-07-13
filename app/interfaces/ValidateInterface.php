@@ -4,7 +4,7 @@ namespace app\interfaces;
 
 interface ValidateInterface
 {
-    public function handle($field, $param);
+    public function handle($field, $param,$table);
 }
 
 ?>

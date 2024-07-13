@@ -27,9 +27,10 @@ class LoginController implements ControllerInterface{
     }
 
     public function edit(array $args){
-        $this->view = 'client/forgotPassword.php';
+        $this->view = 'forgotPassword.php';
         $this->data = [
             'title'=>'Redefinir senha | AgendaFacil',
+            'action' => '/login/edit',
         ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -78,9 +79,10 @@ class LoginController implements ControllerInterface{
     }
 
     public function update(array $args){
-        $this->view = 'client/redefinePassword.php';
+        $this->view = 'redefinePassword.php';
         $this->data = [
             'title'=>'Redefinir senha | AgendaFacil',
+            'action' => '/login/update',
         ];
 
         if(!in_array($_SESSION['resetPasswordToken'],$args)){
