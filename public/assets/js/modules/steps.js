@@ -23,8 +23,6 @@ export default class steps{
 
 
     setNextContainer(currentIndex){
-        this.activeSendButton(currentIndex -1);
-
         if(this.containers.length-1 > currentIndex && currentIndex !== -1 && this.validAllFieldsStep(currentIndex)){
             this.containers[currentIndex].classList.add('hidden');
             this.containers[currentIndex].classList.remove('flex');
@@ -34,6 +32,7 @@ export default class steps{
 
             this.updateCounter();
             this.updateStep('next');
+            this.activeSendButton(currentIndex+1);
         }
     }
 
@@ -76,36 +75,39 @@ export default class steps{
         this.steps[position].classList.toggle('complete');
     }
 
-    initializeOnInvalid(){
-        let index = 0;
+    initializeOnInvalid() {
+        let index = -1; // Inicializa como -1 para indicar que nenhum container com classe 'invalid' foi encontrado
+    
+        // Encontra o índice do primeiro container com a classe 'invalid'
         for (let i = 0; i < this.containers.length; i++) {
-            if(this.containers[i].classList.contains('invalid')){
+            if (this.containers[i].classList.contains('invalid')) {
                 index = i;
                 break;
             }
         }
-
-        if(index !== 0){
+    
+        // Se foi encontrado algum container com classe 'invalid'
+        if (index !== -1) {
             for (let z = 0; z < this.containers.length; z++) {
-                if(z === index){
+                if (z === index) {
                     this.containers[z].classList.add('flex');
                     this.containers[z].classList.remove('hidden');
-                }else{
+                } else {
                     this.containers[z].classList.remove('flex');
                     this.containers[z].classList.add('hidden');
                 }
             }
-        }else{
+        } else { // Se nenhum container com classe 'invalid' foi encontrado
             this.containers[0].classList.add('flex');
             this.containers[0].classList.remove('hidden');
-
+    
             for (let y = 1; y < this.containers.length; y++) {
                 this.containers[y].classList.remove('flex');
                 this.containers[y].classList.add('hidden');
             }
         }
     }
-
+    
     validAllFieldsStep(index){
         let validateStep = new validateStepForm();
         return validateStep.init(index);

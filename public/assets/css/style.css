@@ -45,6 +45,7 @@
     text-decoration: none;
 }
 
+/* button for form cad company */
 .circle-btn{
   width: 3rem;
   height: 3rem;
@@ -53,6 +54,7 @@
  
 }
 
+/* steps for form cad company */
 .bullet{
   width: 2rem;
   height: 2rem;
@@ -95,4 +97,40 @@
 
 .bullet.last::after,.bullet.last::before{
   content:none;
+}
+/* redond image form company */
+.redondShapeImage{
+  border-radius: 50%;
+  width: 12rem;
+  height: 10rem;
+}
+/* loader */
+.loading{
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  top: 0;
+  left: 0;
+  background-color: black;
+  opacity: 0.5;
+}
+
+.loader {
+  position: absolute;
+  z-index: 20;
+  opacity: 1;
+  top: 50%;
+  right:50%;
+  /* transform: translateX(-50%); */
+  border: 1rem solid #f3f3f3; 
+  border-top: 1rem solid #3498db; 
+  border-radius: 50%;
+  width: 6rem;
+  height: 6rem;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

@@ -70,26 +70,30 @@ class SignupController{
         ],'client');
 
         if($validateClient->errors) {
-            Flash::set('validateClient', 'invalid');
+            Flash::set('validClient', 'invalid');
             $valid = false;
         }
 
 
         //step 4
-        $validaImages = new Validate();
-        $validaImages->handle([
+        $validateImages = new Validate();
+        $validateImages->handle([
             // collaborator
             'logo'=>[IMAGE],
-            'banner1'=>[IMAGE],
-            'banner2'=>[IMAGE],
+            'image'=>[IMAGE],
             'avatar'=>[IMAGE],
         ],'client');
 
-        if($validaImages->errors) {
-            Flash::set('validaImages', 'invalid');
+        if($validateImages->errors) {
+            Flash::set('validImages', 'invalid');
             $valid = false;
         }
 
+        var_dump(flash('validImages'));
+        var_dump(flash('validClient'));
+        var_dump(flash('validDataCompany'));
+        var_dump(flash('validDataCompany2'));
+        die();
     
         if(!$valid) {
             return redirect('/admin/signup');
@@ -100,7 +104,7 @@ class SignupController{
         $db->connect();
 
         //registration company
-        $company = new Company($validaImages->data['logo']['success'] ? $validaImages->data['logo']['link'] : AVATAR_DEFAULT,$validateDataCompany->data['nameCompany'],"",$validateDataCompany->data['cnpj'],$validateDataCompany->data['phoneCompany'],$validateDataCompany->data['category'],$validateDataCompany2->data['cep'],$validateDataCompany2->data['road'],$validateDataCompany2->data['number'],$validateDataCompany2->data['state'],$validateDataCompany2->data['city'],"free",date('d/m/y'),0);
+        $company = new Company($validateImages->data['logo']['success'] ? $validateImages->data['logo']['link'] : AVATAR_DEFAULT,$validateDataCompany->data['nameCompany'],"",$validateDataCompany->data['cnpj'],$validateDataCompany->data['phoneCompany'],$validateDataCompany->data['category'],$validateDataCompany2->data['cep'],$validateDataCompany2->data['road'],$validateDataCompany2->data['number'],$validateDataCompany2->data['state'],$validateDataCompany2->data['city'],"free",date('d/m/y'),0);
         var_dump($company);
         $company->insert($db);
 
@@ -111,12 +115,12 @@ class SignupController{
         $collaborator->insert($db);
 
         //registration images company
-        $imageRegister = new Images($idCompany,"Banner",$validaImages->data['banner1']['success'] ?$validaImages->data['banner1']['link'] : "");
+        $imageRegister = new Images($idCompany,"Banner",$validateImages->data['image']['success'] ?$validateImages->data['image']['link'] : AVATAR_DEFAULT);
         // var_dump($imageRegister);
         // die();
         $imageRegister->insert($db);
-        $imageRegister->setLink($validaImages->data['banner2']['success'] ?$validaImages->data['banner2']['link'] : "");
-        $imageRegister->insert($db);
+        // $imageRegister->setLink($validaImages->data['banner2']['success'] ?$validateImages->data['banner2']['link'] : "");
+        // $imageRegister->insert($db);
 
         //generate code confirm
         $code = CodeValidate::generate();

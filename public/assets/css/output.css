@@ -640,10 +640,6 @@ video {
   grid-row: span 1 / span 1;
 }
 
-.row-start-1{
-  grid-row-start: 1;
-}
-
 .mb-2{
   margin-bottom: 0.5rem;
 }
@@ -1282,12 +1278,16 @@ input[type=number] {
   text-decoration: none;
 }
 
+/* button for form cad company */
+
 .circle-btn{
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
   background-color: #ffff;
 }
+
+/* steps for form cad company */
 
 .bullet{
   width: 2rem;
@@ -1335,6 +1335,43 @@ input[type=number] {
 
 .bullet.last::after,.bullet.last::before{
   content:none;
+}
+
+/* loader */
+
+.loading{
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  top: 0;
+  left: 0;
+  background-color: black;
+  opacity: 0.5;
+}
+
+.loader {
+  position: absolute;
+  z-index: 20;
+  opacity: 1;
+  top: 50%;
+  right:50%;
+  /* transform: translateX(-50%); */
+  border: 1rem solid #f3f3f3;
+  border-top: 1rem solid #3498db;
+  border-radius: 50%;
+  width: 6rem;
+  height: 6rem;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .focus-within\:border-white:focus-within{
