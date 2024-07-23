@@ -1,13 +1,14 @@
 <?php
-namespace app\controllers\admin;
+namespace app\controllers\client;
 use app\interfaces\ControllerInterface;
 use app\models\database\Db;
-use app\models\Service;
+use app\models\Company;
+use app\models\Images;
 use app\classes\Flash;
 use app\classes\Validate;
 use app\classes\BlockNotAdmin;
 
-class ServicesController implements ControllerInterface{
+class CompanyController implements ControllerInterface{
     public array $data = [];
     public string $view;
     public string $master = 'masterAdmin.php';
@@ -22,22 +23,35 @@ class ServicesController implements ControllerInterface{
         if(isset($_SESSION['collaborator']) && $_SESSION['collaborator']->getNivel() === 'manager'){
             $this->view = 'admin/services.php';
         }
+        $this->view = 'admin/services.php';
 
-        $this->view = 'client/services.php';
+        // $this->view = 'client/services.php';
         $this->data = [
             'title'=>'Serviços | AgendaFacil',
-            'servicos'=>$services,
+            'services'=>$services,
+            'navActive'=>'servicos',
+
         ];
     }
 
     public function edit(array $args){
         BlockNotAdmin::block($this,['edit']);
+        if(isset($args)){
+            $db = new Db();
+            $db->connect();
+    
+            $service = new Service();
+            $service = $service->getById($db,intval($args[0]));
+        }
 
-        $this->view = 'admin/editCollaborators.php';
-        $this->view = 'home.php';
+        $this->view = 'admin/registerAndUploadService.php';
         $this->data = [
             'title'=>'Editar serviço | AgendaFacil',
             'id'=>intval($args[0]),
+            'navActive'=>'servicos',
+            'legend'=>'Editar serviço',
+            'action'=>'/admin/service/update',
+            'service'=>$service,
         ];
 
     }
@@ -47,18 +61,14 @@ class ServicesController implements ControllerInterface{
             $db = new Db();
             $db->connect();
     
-            $service = new Service();
-            $service = $service->getById($db,intval($args[0]));
+            $company = new Company();
+            $company = $company->getById($db,intval($args[0]));
         }
 
-        if(isset($_SESSION['collaborator']) && $_SESSION['collaborator']->getNivel() === 'manager'){
-            $this->view = 'admin/showService.php';
-        }
-
-        $this->view = 'client/showService.php';
+        $this->view = 'client/showCompany.php';
         $this->data = [
-            'title'=>'Visualizar serviço | AgendaFacil',
-            'service'=>$service,
+            'title'=>'Visualizar empresa | AgendaFacil',
+            'company'=>$company,
         ];
     }
 
@@ -90,7 +100,7 @@ class ServicesController implements ControllerInterface{
             }
 
             if($_POST['duration']){
-                $validate->handle(['duration'=>[REQUIRED]],'service');
+                $validate->handle(['duration'=>[TIME]],'service');
                 $service->setDuration($validate->data['duration']);
             }
 
@@ -109,10 +119,11 @@ class ServicesController implements ControllerInterface{
             }
             
             if($service->update($db,$service->getId())){
+                Flash::set('resultUpdateService', 'Erro ao editar serviço!','message sucess');
                 return redirect("/admin/services");
             }
 
-            Flash::set('reultUpdateService', 'Erro ao editar serviço!');
+            Flash::set('resultUpdateService', 'Erro ao editar serviço!','message error');
             return redirect("/admin/service/edit");
         }
         
@@ -122,9 +133,12 @@ class ServicesController implements ControllerInterface{
     public function store(){
         BlockNotAdmin::block($this,['store']);
 
-        $this->view = 'admin/cadCollaborators.php';
+        $this->view = 'admin/registerAndUploadService.php';
         $this->data = [
-            'title'=>'Cadastrar colaborador | AgendaFacil',
+            'title'=>'Cadastrar serviço | AgendaFacil',
+            'navActive'=>'servicos',
+            'legend'=>'Cadastrar serviço',
+            'action'=>'/admin/service/store',
         ];
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -134,28 +148,43 @@ class ServicesController implements ControllerInterface{
                 'name'=>[REQUIRED],
                 'description'=>[REQUIRED],
                 'price'=>[REQUIRED],
-                'duration'=>[REQUIRED],
-                // 'visible'=>[REQUIRED],
-                // 'imageService'=>[IMAGE],
+                'duration'=>[TIME],
             ],'services');
 
-            if($validate->errors) {
-                return redirect('/admin/collaborator/store');
+            $validateImages = new Validate();
+            $validateImages->handle([
+                'image1'=>[IMAGE],
+                'image2'=>[IMAGE],
+                'image3'=>[IMAGE],
+            ],'services');
+
+            if($validate->errors || $validateImages->errors) {
+                return redirect('/admin/service/store');
             }
 
             $idCompany = $_SESSION['collaborator']->getIdCompany();
 
             $db = new Db();
             $db->connect();
-            //$validate->data['imageService']['success'] ? $validate->data['avatar']['link'] : AVATAR_DEFAULT
-            $service = new Service($validate->data['name'],$validate->data['description'],$validate->data['price'],$validate->data['duration'],true,$idCompany);
-                    
 
-            if($service->insert($db)){
-                return redirect("/admin/services");
+            $imagesRegister = new Images();
+            $service = new Service($validate->data['name'],$validate->data['description'],$validate->data['price'],(float)$validate->data['duration'],true,$idCompany);
+
+            $registration = $service->insert($db);
+
+            $idService = $service->getIdByName($db,$validate->data['name'],$idCompany);
+            $dataImages = [
+                ['typeImage'=>'serviceImage','link'=>$validateImages->data['image1']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService],
+                ['typeImage'=>'serviceImage','link'=>$validateImages->data['image2']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService],
+                ['typeImage'=>'serviceImage','link'=>$validateImages->data['image3']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService],
+            ];
+
+            if($imagesRegister->insert($db,$dataImages) && $registration){
+                Flash::set('resultInsertService', 'Serviço cadastrado com sucesso!','sucess');
+                return redirect("/admin/service");
             }
 
-            Flash::set('reultInsertService', 'Erro ao cadastrar serviço!');
+            Flash::set('resultInsertService', 'Erro ao cadastrar serviço!','error');
             return redirect("/admin/service/store");
         }
     }
@@ -170,11 +199,12 @@ class ServicesController implements ControllerInterface{
     
             $service = new Service();
             if($service->delete($db,intval($args[0]))){
-                return redirect("/admin/services");
+                Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','message sucess');
+                return redirect("/admin/service");
             }
 
-            Flash::set('reultDeleteCollaborator', 'Erro ao excluir colaborador!');
-            return redirect("/admin/services");
+            Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','message error');
+            return redirect("/admin/service");
         }
     }
 }

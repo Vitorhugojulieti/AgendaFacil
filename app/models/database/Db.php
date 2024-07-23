@@ -48,8 +48,9 @@ class Db {
         return $this->executeSQL($query);
     }
 
-    public function totalRecords() {
-        $sql = "SELECT count(*) as total FROM " . $this->table;
+    public function totalRecords($where) {
+        $where = is_null($where) ? '' : 'WHERE ' . $where;
+        $sql = "SELECT count(*) as total FROM " . $this->table." ".$where;
         return $this->executeSQL($sql);
     }
 
@@ -108,5 +109,34 @@ class Db {
             return false;
         }
     }
+
+    // Método de Paginação
+    public function paginate($pagina_atual = 1, $registros_por_pagina = 10, $fields = '*', $where = null, $order = null) {
+        // Calcular o ponto de início dos registros para a página atual
+        $inicio = ($pagina_atual - 1) * $registros_por_pagina;
+
+        // Montar a cláusula LIMIT para a consulta
+        $limit = $inicio . ', ' . $registros_por_pagina;
+
+        // Executar a consulta com a cláusula LIMIT
+        $resultados = $this->query($fields, $where, $order, $limit);
+
+        // Calcular o número total de registros
+        $total_registros = $this->totalRecords();
+        $total_registros = $total_registros[0]['total'];
+
+        // Calcular o número total de páginas
+        $total_paginas = ceil($total_registros / $registros_por_pagina);
+
+        // Retornar os resultados junto com a informação de paginação
+        return [
+            'pagina_atual' => $pagina_atual,
+            'registros_por_pagina' => $registros_por_pagina,
+            'total_registros' => $total_registros,
+            'total_paginas' => $total_paginas,
+            'dados' => $resultados
+        ];
+    }
+
 }
 ?>

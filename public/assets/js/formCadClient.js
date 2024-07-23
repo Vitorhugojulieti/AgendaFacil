@@ -6,7 +6,7 @@ import viewPassword from "./modules/viewPassword.js"
 const ViewPassword = new viewPassword();
 ViewPassword.init();
 
-const validateFormClient  = new validateFormCadClient();
+const validateFormClient  = new validateFormCadClient('#formCadClient');
 validateFormClient.init();
 
 const manageModalPassword = new modals('#modalPassword','#btnOpenModalPassword','#btnCloseModalPassword');

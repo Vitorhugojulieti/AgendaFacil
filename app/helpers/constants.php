@@ -8,11 +8,14 @@ define('CPF', 'ValidateCpf');
 define('PASSWORD', 'ValidatePassword');
 define('CNPJ', 'ValidateCnpj');
 define('IMAGE', 'ValidateImage');
+define('TIME', 'ValidateTime');
 
 // config
 define('ROOT', dirname(__FILE__, 3));
+define('ROOT_DIR', 'C:/Users/windows/Documents/tcc/AgendaFacil');
 define('CONTROLLER_PATH', 'app/controllers/');
 define('CONTROLLER_DEFAULT', 'Home');
 define('CONTROLLER_FOLDER_DEFAULT', 'client');
 define('AVATAR_DEFAULT', '/assets/images/avatar_default.png');
+define('IMAGE_DEFAULT', '/assets/images/image_default.png');
 ?>

@@ -1,14 +1,11 @@
 <body style="overflow:none;" class="flex">
-    <!-- div img -->
-     <div class="w-3/6 min-h-screen bg-white">
-
-     </div>
     <!-- Formulario -->
-    <div class="w-3/6 min-h-screen flex flex-col justify-center items-center bg-principal10 p-4 mb-4">
-        <form action="login/store" method="post" id="formloginClient" class="w-full flex flex-col items-center justify-center gap-4 ">
+    <div class="w-full min-h-screen flex flex-col justify-center items-center bg-hexagonal p-4 mb-4">
+        <form action="login/store" method="post" id="formloginClient" class="w-3/6 flex flex-col items-center justify-center gap-4 ">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">
             <a href="/"><img src="/assets/images/logo-white.png" alt="logo" ></a>
             <legend class="font-Urbanist font-semibold text-white text-3xl">Bem vindo de volta!</legend>
-            <fieldset class="w-2/4 flex flex-col items-start justify-center gap-4 ">
+            <fieldset class="w-2/4 flex flex-col items-start justify-center gap-1 ">
                  <!-- Campo login com google -->
                  <div class="w-full bg-white text-principal10 font-semibold font-Poppins text-base flex items-center justify-center gap-4 p-2 rounded">
                     <img src="/assets/images/google_icon.png" alt="icone google">

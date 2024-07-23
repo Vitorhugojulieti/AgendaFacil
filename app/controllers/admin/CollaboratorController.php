@@ -4,6 +4,7 @@ use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Collaborator;
 use app\classes\Flash;
+use app\classes\Old;
 use app\classes\ContactEmail;
 use app\classes\ImageUpload;
 use app\classes\Validate;
@@ -28,16 +29,28 @@ class CollaboratorController implements ControllerInterface{
         $this->data = [
             'title'=>'Colaboradores | AgendaFacil',
             'collaborators'=>$collaborators,
+            'navActive'=>'colaboradores',
         ];
     }
 
     public function edit(array $args){
         BlockNotAdmin::block($this,['edit']);
 
-        $this->view = 'admin/editCollaborators.php';
+        if(isset($args)){
+            $db = new Db();
+            $db->connect();
+            
+            $collaborator = new Collaborator();
+            $collaborator = $collaborator->getById($db,intval($args[0]));
+        }
+
+        $this->view = 'admin/registerAndUploadCollaborator.php';
         $this->data = [
             'title'=>'Editar colaborador | AgendaFacil',
-            'id'=>intval($args[0]),
+            'navActive'=>'colaboradores',
+            'legend'=>'Editar colaborador',
+            'action'=>'/admin/collaborator/update',
+            'collaborator'=>$collaborator,
         ];
 
     }
@@ -65,40 +78,40 @@ class CollaboratorController implements ControllerInterface{
     public function update(array $args){
         BlockNotAdmin::block($this,['update']);
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['idCollaborator']){
                 $db = new Db();
                 $db->connect();
               
                 $validate = new Validate();
                 $collaborator = new Collaborator();
-                $collaborator = $collaborator->getById($db,intval($_POST['id']));
+                $collaborator = $collaborator->getById($db,intval($_POST['idCollaborator']));
 
                 if($_FILES['avatar'] && $_FILES['avatar']['error'] == 0){
                     $validate->handle(['avatar'=>[IMAGE]],'collaborator');
                     $collaborator->setAvatar($validate->data['avatar']['success'] ? $validate->data['avatar']['link'] : AVATAR_DEFAULT);
                 }
 
-                if($_POST['name']){
+                if($_POST['name'] && $collaborator->getName() !== $_POST['name']){
                     $validate->handle(['name'=>[REQUIRED]],'collaborator');
                     $collaborator->setName($validate->data['name']);
                 }
 
-                if($_POST['cpf']){
+                if($_POST['cpf'] && $collaborator->getCpf() !== $_POST['cpf']){
                     $validate->handle(['cpf'=>[CPF]],'collaborator');
                     $collaborator->setCpf($validate->data['cpf']);
                 }
 
-                if($_POST['phone']){
+                if($_POST['phone'] && $collaborator->getPhone() !== $_POST['phone']){
                     $validate->handle(['phone'=>[REQUIRED]],'collaborator');
                     $collaborator->setPhone($validate->data['phone']);
                 }
 
-                if($_POST['email']){
+                if($_POST['email'] && $collaborator->getEmail() !== $_POST['email']){
                     $validate->handle(['email'=>[EMAIL]],'collaborator');
                     $collaborator->setEmail($validate->data['email']);
                 }
 
-                if($_POST['password']){
+                if($_POST['password'] && $collaborator->getPassword() !== $_POST['password'] && $_POST['password'] !== ""){
                     $validate->handle(['password'=>[PASSWORD]],'collaborator');
                     $collaborator->setPassword($validate->data['password']);
                 }
@@ -113,11 +126,12 @@ class CollaboratorController implements ControllerInterface{
                 }
                 
                 if($collaborator->update($db,$collaborator->getId())){
+                    Flash::set('resultUpdateCollaborator', 'Colaborador editado com sucesso!','messagesucess');
                     return redirect("/admin/collaborator");
                 }
 
-                Flash::set('reultUpdateCollaborator', 'Erro ao editar colaborador!');
-                return redirect("/admin/collaborator/edit");
+                Flash::set('resultUpdateCollaborator', 'Erro ao editar colaborador!','messageerror');
+                return redirect("/admin/collaborator/edit/".$collaborator->getId());
         }
         
      
@@ -127,9 +141,12 @@ class CollaboratorController implements ControllerInterface{
     public function store(){
         BlockNotAdmin::block($this,['store']);
 
-        $this->view = 'admin/cadCollaborators.php';
+        $this->view = 'admin/registerAndUploadCollaborator.php';
         $this->data = [
             'title'=>'Cadastrar colaborador | AgendaFacil',
+            'navActive'=>'colaboradores',
+            'legend'=>'Cadastrar novo colaborador',
+            'action'=>'/admin/collaborator/store',
         ];
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -142,24 +159,41 @@ class CollaboratorController implements ControllerInterface{
                         'nivel'=>[REQUIRED],
                         'email'=>[EMAIL,REQUIRED],
                         'password'=>[PASSWORD,REQUIRED],
-                        'avatar'=>[IMAGE],
                     ],'collaborator');
 
+                    if($_FILES['avatar'] && $_FILES['avatar']['error']==0){
+                        $validate->handle([
+                            'avatar'=>[IMAGE],
+                        ],'collaborator');
+                    }
+                    $avatar = $validate->data['avatar']['success'] ? $validate->data['avatar']['link'] : AVATAR_DEFAULT;
+
+                    // $avatar = AVATAR_DEFAULT;
+              
                     if($validate->errors) {
                         return redirect('/admin/collaborator/store');
                     }
                   
-                    $idCompany = $_SESSION['collaborator']->getIdCompany();
+                    // $idCompany = $_SESSION['collaborator']->getIdCompany();
+                    $idCompany = 1;
 
                     $db = new Db();
                     $db->connect();
-                    $collaborator = new Collaborator($validate->data['avatar']['success'] ? $validate->data['avatar']['link'] : AVATAR_DEFAULT,$validate->data['name'],$validate->data['cpf'],$validate->data['phone'],$validate->data['email'],$validate->data['password'],$validate->data['nivel'],$idCompany,date('d/m/y'),0);
+                    $collaborator = new Collaborator($avatar,$validate->data['name'],$validate->data['cpf'],$validate->data['phone'],$validate->data['email'],$validate->data['password'],$validate->data['nivel'],$idCompany,date('d/m/y'),1);
                 
                     if($collaborator->insert($db)){
-                        return redirect("/admin/collaborator/confirmEmail");
+                        Flash::set('resultInsertCollaborator', 'Colaborador cadastrado com sucesso!','messagesucess');
+                        unset($_SESSION['old']['name']);
+                        unset($_SESSION['old']['cpf']);
+                        unset($_SESSION['old']['phone']);
+                        unset($_SESSION['old']['email']);
+                        unset($_SESSION['old']['password']);
+                        unset($_SESSION['old']['avatar']);
+                        return redirect("/admin/collaborator");
+                        unset($_SESSION['flash']['sucessRegistrationCollaborator']);
                     }
 
-                    Flash::set('reultInsertCollaborator', 'Erro ao cadastrar colaborador!');
+                    Flash::set('resultInsertCollaborator', 'Erro ao cadastrar colaborador!','messageerror');
                     return redirect("/admin/collaborator/store");
                 }
     }
@@ -175,10 +209,11 @@ class CollaboratorController implements ControllerInterface{
     
             $collaborator = new Collaborator();
             if($collaborator->delete($db,intval($args[0]))){
+                Flash::set('reultDeleteCollaborator', 'Colaborador excluido com sucesso!','messagesucess');
                 return redirect("/admin/collaborator");
             }
 
-            Flash::set('reultDeleteCollaborator', 'Erro ao excluir colaborador!');
+            Flash::set('reultDeleteCollaborator', 'Erro ao excluir colaborador!','messageerror');
             return redirect("/admin/collaborator");
         }
     }

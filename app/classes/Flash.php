@@ -1,7 +1,7 @@
 <?php
 namespace app\classes;
 class Flash{
-    public static function set($key,$message,$alert = 'danger'){
+    public static function set($key,$message,$alert = ''){
         if(!isset($_SESSION['messages'][$key])){
             $_SESSION['messages'][$key] = [
                 'message' =>$message,

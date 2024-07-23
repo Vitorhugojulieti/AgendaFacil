@@ -1,11 +1,12 @@
 <body style="overflow:none;">
     <div class="w-full min-h-screen flex flex-col justify-center items-center bg-principal10 p-4 mb-4">
         <form action="signup/store" method="POST"  id="formCadClient" class="w-4/5 md:w-3/5 flex flex-col items-center justify-center gap-8 ">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">
             <a href="/"><img src="/assets/images/logo-white.png" alt="logo" ></a>
             <legend class="font-Urbanist font-semibold text-white text-2xl md:text-3xl">Bem vindo a plataforma!</legend>
             <fieldset class="w-full lg:grid lg:grid-rows-1 lg:grid-cols-2 gap-8 md:flex md:w-5/6 md:flex-col ">
                 <!-- container 1 -->
-                <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-4 ">
+                <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-1 ">
                     <!-- campo -->
                     <div class="field w-full focus-within:text-white text-borderFormColor">
                         <label for="inputName" >Nome</label>
@@ -35,7 +36,7 @@
                     </div>
                 </div>
                 <!-- container 2 -->
-                <div class="w-full col-span-2 row-span-1 col-start-2 flex flex-col items-start justify-center gap-4">
+                <div class="w-full col-span-2 row-span-1 col-start-2 flex flex-col items-start justify-center gap-1">
                     <!-- campo -->
                     <div class="field w-full focus-within:text-white text-borderFormColor">
                         <div>

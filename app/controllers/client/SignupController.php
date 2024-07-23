@@ -23,6 +23,19 @@ class SignupController{
         $db = new Db();
         $db->connect();
 
+        $validate = $this->validateClient();
+        if(!$validate){
+            return redirect('/signup');
+        }
+
+        if(!$this->registerClient($db,$validate)){
+            return redirect('/signup');
+        }
+
+        $this->sendConfirmationEmail($validate->data['name'],$validate->data['email']);
+    }
+
+    private function validateClient(){
         $validate = new Validate();
         $validate->handle([
             'name'=>[REQUIRED],
@@ -30,48 +43,24 @@ class SignupController{
             'email'=>[EMAIL],
             'cpf'=>[CPF,REQUIRED],
             'password'=>[PASSWORD,REQUIRED]
-        ]);
+        ],'client');
 
         if($validate->errors) {
-            return redirect('/signup');
+            return false;
         }
+        return $validate;
+    }
 
-        //registration
+    private function registerClient(Db $db,$validate){
         $registrationDate = date('d/m/y');
-        $client = new Client("",$validate->data['name'],$validate->data['cpf'],$validate->data['phone'],$validate->data['email'],$validate->data['password'],$registrationDate,0);
-
-        if($client->insert($db)){
-            //generate code confirm
-            $code = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
-            $_SESSION['codeConfirmEmail'] = $code;
-            $_SESSION['emailSend'] = $validate->data['email'];
-            $_SESSION['nameSend'] = $validate->data['name'];
-
-            //message for email
-            $message= "
-                    <div>
-                        <h1>Bem vindo ao Agenda Facil!</h1>
-                        <h2>Confirme seu E-mail</h2>
-                        <p>Codigo para confirmacaoo: {$code}</p>
-                    </div>";
-                    
-            //send email
-            try {
-                $contactEmail = new ContactEmail();
-                $contactEmail->setTo(["email"=>$validate->data['email'],"name"=>$validate->data['name']]);
-                $contactEmail->setFrom(["email"=>"vitorhugo6331@outlook.com","name"=>"vitor"]);
-                $contactEmail->setSubject("Confirmar E-mail");
-                $contactEmail->setMessage($message);
-                $contactEmail->send();
-
-            } catch (\Throwable $th) {
-                var_dump($th);
-                die();
-            }
-
-            //redirect confirm email
-            redirect('/signup/confirmEmail');
-        }
+        $client = new Client(
+            "",$validate->data['name'],
+            $validate->data['cpf'],
+            $validate->data['phone'],
+            $validate->data['email'],
+            $validate->data['password'],
+            $registrationDate,0);
+        return $client->insert($db);
     }
 
     public function finishRegistration(){
@@ -114,11 +103,11 @@ class SignupController{
         $this->data = [
             'title'=>'Confirmar email | AgendaFacil',
             'emailSend'=>$_SESSION['emailSend'] ? $_SESSION['emailSend'] : "",
-            'action'=>'/admin/signup/confirmEmail',
+            'action'=>'/signup/confirmEmail',
         ];
         
         if(in_array('resend',$args)){
-            $this->resendEmail();
+            $this->sendConfirmationEmail();
         }
     
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -184,32 +173,9 @@ class SignupController{
         }
     }
 
-    public function resendEmail(){
-        //generate code confirm
-        $code = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
-        $_SESSION['codeConfirmEmail'] = $code;
-        //message for email
-        $message= "
-               <div>
-                    <h1>Bem vindo ao Agenda Facil!</h1>
-                    <h2>Confirme seu E-mail</h2>
-                    <p>Codigo para confirmacaoo: {$code}</p>
-                </div>";
-                
-        //send email
-        try {
-            $contactEmail = new ContactEmail();
-            $contactEmail->setTo(["email"=>$_SESSION['emailSend'],"name"=>$_SESSION['nameSend']]);
-            $contactEmail->setFrom(["email"=>"vitorhugo6331@outlook.com","name"=>"vitor"]);
-            $contactEmail->setSubject("Confirmar E-mail");
-            $contactEmail->setMessage($message);
-            $contactEmail->send();
-
-
-        } catch (\Throwable $th) {
-            var_dump($th);
-            die();
-        }
+    public function sendConfirmationEmail($name,$email){
+        ContactEmail::sendConfirmationEmail($name,$email);
+        redirect('/signup/confirmEmail');
     }
 
     public function destroy(array $args){

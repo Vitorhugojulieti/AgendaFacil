@@ -19,7 +19,7 @@ module.exports = {
       'sucessColor':'#22C55E',
       'black':"#000000",
       'white':"#ffff",
-      'lightGray':"#E5E9EB",
+      'lightGray':"#C1C1C1",
       'text-gray':"#71717A",
       'transparent':'transparent'
     },

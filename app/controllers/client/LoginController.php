@@ -127,16 +127,15 @@ class LoginController implements ControllerInterface{
     
             // $passwordMatch = password_verify($password,$clientFound->getPassword());
     
-            if(!($password === $clientFound->getPassword())){
-                Flash::set('passwordLogin','Senha invalida!');
-                return redirect('/login');
-            }
-    
             // if(!$passwordMatch){
             //     Flash::set('loginPassword','Senha invalida!');
             //     return redirect('/login');
             // }
     
+            if(!($password === $clientFound->getPassword())){
+                Flash::set('loginPassword','Senha invalida!');
+                return redirect('/login');
+            }
     
             $clientFound->removeAttribute('password');
             $_SESSION['user'] = $clientFound;

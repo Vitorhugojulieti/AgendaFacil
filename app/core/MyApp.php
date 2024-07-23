@@ -30,11 +30,10 @@ class MyApp {
             if(!array_key_exists('title',$this->controller->data)){
                 throw new Exception('a propriedade title é obrigatoria em data');
             }
+
             if (!isset($this->controller->master)) {
                 throw new Exception('A propriedade master é obrigatória');
             }
-
-
 
             extract($this->controller->data);
             require '../app/views/'.$this->controller->master;

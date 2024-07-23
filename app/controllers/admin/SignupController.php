@@ -23,135 +23,166 @@ class SignupController{
     }
 
     public function store(){
-        //validations
-        $valid = true;
 
-        //step 1
-        $validateDataCompany = new Validate();
-        $validateDataCompany->handle([
-            // company
+        $validateImages = $this->validateImages();
+        $validateCompanyData = $this->validateCompanyData();
+        $validateCompanyAddress = $this->validateCompanyAddress();
+        $validateCollaboratorData = $this->validateCollaboratorData();
+        if(!$validateImages || !$validateCompanyData || !$validateCompanyAddress || ! $validateCollaboratorData){
+            return redirect('/admin/signup');
+        }
+
+        $db = new Db();
+        $db->connect();
+      
+        $company = $this->registerCompany($db,$validateCompanyData,$validateCompanyAddress,$validateImages);
+        $collaborator = $this->registerCollaborator($db,$validateCollaboratorData,$validateImages,$company);
+        $images = $this->registerCompanyImages($db,$validateImages,$company);
+
+        if(!$company || !$collaborator || !$images){
+            Flash::set('registrationCompany', 'Erro ao registrar empresa');
+            return redirect('/admin/signup');
+        }
+       
+        $this->sendConfirmationEmail($validateCollaboratorData->data['name'],$validateCollaboratorData->data['email']);
+        redirect("/admin/signup/confirmEmail");
+    }
+
+    private function validateCompanyData(){
+        $validateCompanyData = new Validate();
+        $validateCompanyData->handle([
             'nameCompany'=>[REQUIRED],
             'phoneCompany'=>[REQUIRED],
             'cnpj'=>[CNPJ,REQUIRED],
             'category'=>[REQUIRED],
+            'openingHoursStart'=>[TIME],
+            'openingHoursEnd'=>[TIME],
+                                                   
         ],'company');
-
-        if($validateDataCompany->errors) {
+      
+        if($validateCompanyData->errors) {
             Flash::set('validDataCompany', 'invalid');
-            $valid = false;
+            return false;
         }
+        return $validateCompanyData;
+    }
 
-
-        //step 2
-        $validateDataCompany2 = new Validate();
-        $validateDataCompany2->handle([
+    private function validateCompanyAddress(){
+        $validateCompanyAddress = new Validate();
+        $validateCompanyAddress->handle([
             'cep'=>[REQUIRED],
             'road'=>[REQUIRED],
             'state'=>[REQUIRED],
             'city'=>[REQUIRED],
+            'district'=>[REQUIRED],
             'number'=>[REQUIRED],
         ],'company');
 
-        if($validateDataCompany2->errors) {
+        if($validateCompanyAddress->errors) {
             Flash::set('validDataCompany2', 'invalid');
-            $valid = false;
+            return false;
         }
+        return $validateCompanyAddress;
+    }
 
-        //step 3
-        $validateClient = new Validate();
-        $validateClient->handle([
-            // collaborator
+    private function validateCollaboratorData(){
+        $validateCollaboratorData = new Validate();
+        $validateCollaboratorData->handle([
             'name'=>[REQUIRED],
             'phone'=>[REQUIRED],
             'email'=>[EMAIL],
             'cpf'=>[CPF,REQUIRED],
             'password'=>[PASSWORD,REQUIRED],
-            'avatar'=>[IMAGE],
         ],'client');
 
-        if($validateClient->errors) {
+        if($validateCollaboratorData->errors) {
             Flash::set('validClient', 'invalid');
-            $valid = false;
+            return false;
+        }
+        return  $validateCollaboratorData;
+    }
+
+    private function validateImages(){
+        $validateImages = new Validate();
+
+        if((isset($_FILES['logo']) && $_FILES['logo']['error'] == 0) ){
+            $validateImages->handle([
+                'logo'=>[IMAGE],
+            ],'client');
         }
 
+        if((isset($_FILES['avatar']) && $_FILES['avatar']['error'] == 0) ){
+            $validateImages->handle([
+                'avatar'=>[IMAGE],
+            ],'client');
+        }
 
-        //step 4
-        $validateImages = new Validate();
-        $validateImages->handle([
-            // collaborator
-            'logo'=>[IMAGE],
-            'image'=>[IMAGE],
-            'avatar'=>[IMAGE],
-        ],'client');
+        if((isset($_FILES['image']) && $_FILES['image']['error'] == 0) ){
+            $validateImages->handle([
+                'image'=>[IMAGE],
+            ],'client');
+        }
 
         if($validateImages->errors) {
             Flash::set('validImages', 'invalid');
-            $valid = false;
+            return false;
         }
-
-        var_dump(flash('validImages'));
-        var_dump(flash('validClient'));
-        var_dump(flash('validDataCompany'));
-        var_dump(flash('validDataCompany2'));
-        die();
-    
-        if(!$valid) {
-            return redirect('/admin/signup');
-        }
-
-        //registration
-        $db = new Db();
-        $db->connect();
-
-        //registration company
-        $company = new Company($validateImages->data['logo']['success'] ? $validateImages->data['logo']['link'] : AVATAR_DEFAULT,$validateDataCompany->data['nameCompany'],"",$validateDataCompany->data['cnpj'],$validateDataCompany->data['phoneCompany'],$validateDataCompany->data['category'],$validateDataCompany2->data['cep'],$validateDataCompany2->data['road'],$validateDataCompany2->data['number'],$validateDataCompany2->data['state'],$validateDataCompany2->data['city'],"free",date('d/m/y'),0);
-        var_dump($company);
-        $company->insert($db);
-
-        //registration collaborator manager
-        $idCompany = $company->getIdByCnpj($db,$company->getCnpj());
-        $collaborator = new Collaborator($validateClient->data['avatar']['success'] ? $validateClient->data['avatar']['link'] : AVATAR_DEFAULT,$validateClient->data['name'],$validateClient->data['cpf'],$validateClient->data['phone'],$validateClient->data['email'],$validateClient->data['password'],"manager",$idCompany,date('d/m/y'),0);
-        var_dump($collaborator);
-        $collaborator->insert($db);
-
-        //registration images company
-        $imageRegister = new Images($idCompany,"Banner",$validateImages->data['image']['success'] ?$validateImages->data['image']['link'] : AVATAR_DEFAULT);
-        // var_dump($imageRegister);
-        // die();
-        $imageRegister->insert($db);
-        // $imageRegister->setLink($validaImages->data['banner2']['success'] ?$validateImages->data['banner2']['link'] : "");
-        // $imageRegister->insert($db);
-
-        //generate code confirm
-        $code = CodeValidate::generate();
-        $_SESSION['emailSend'] = $validateClient->data['email'];
-        $_SESSION['nameSend'] = $validateClient->data['name'];
-
-         //message for email
-         $message= "
-         <div>
-             <h1>Bem vindo ao Agenda Facil!</h1>
-             <h2>Confirme seu E-mail</h2>
-             <p>Codigo para confirmacaoo: {$code}</p>
-         </div>";
-                
-        //send email
-        try {
-            $contactEmail = new ContactEmail();
-            $contactEmail->setTo(["email"=>$validateClient->data['email'],"name"=>$validateClient->data['name']]);
-            $contactEmail->setFrom(["email"=>"vitorhugo6331@outlook.com","name"=>"vitor"]);
-            $contactEmail->setSubject("Confirmar E-mail");
-            $contactEmail->setMessage($message);
-            $contactEmail->send();
-
-        } catch (\Throwable $th) {
-            var_dump($th);
-            die();
-        }
-
-        redirect("/admin/signup/confirmEmail");
+        return $validateImages;
     }
 
+    private function registerCompany(Db $db,$validateData,$validateAdress,$validateImages){
+        $company = new Company(
+            $validateImages->data['logo']['success'] ? $validateImages->data['logo']['link'] : AVATAR_DEFAULT,
+            $validateData->data['nameCompany'],
+            $validateData->data['cnpj'],
+            $validateData->data['phoneCompany'],
+            $validateData->data['category'],
+            $validateAdress->data['cep'],
+            $validateAdress->data['road'],
+            $validateAdress->data['number'],
+            $validateAdress->data['district'],
+            $validateAdress->data['state'],
+            $validateAdress->data['city'],
+            "free",
+            date('d/m/y'),
+            0
+            ,$validateData->data['openingHoursStart'],
+            $validateData->data['openingHoursEnd']);
+        $company->insert($db);
+        $company = $company->getIdByCnpj($db, $validateData->data['cnpj']);
+        return $company ? $company : false;
+    }
+
+    private function registerCollaborator(Db $db,$validateData,$validateImages,int $idCompany){
+        $collaborator = new Collaborator(
+            $validateImages->data['avatar']['success'] ? $validateImages->data['avatar']['link'] : AVATAR_DEFAULT,
+            $validateData->data['name'],
+            $validateData->data['cpf'],
+            $validateData->data['phone'],
+            $validateData->data['email'],
+            $validateData->data['password'],
+            "manager",
+            $idCompany,
+            date('d/m/y')
+            ,0);
+        return $collaborator->insert($db);
+    }
+
+    private function registerCompanyImages(Db $db,$validateImages,int $idCompany){
+        $imageRegister = new Images(
+            $idCompany,
+            "Banner",
+            $validateImages->data['avatar']['success'] ? $validateImages->data['avatar']['link'] : AVATAR_DEFAULT);
+        return $imageRegister->insert($db);
+    }
+
+    private function sendConfirmationEmail(String $name,String $email){
+        if(ContactEmail::sendConfirmationEmail($name,$email)){
+            return true;
+        }
+        Flash::set('sendEmail','Erro ao enviar e-mail!');
+        return false;
+    }
   
     public function confirmEmail(array $args){
         $this->view = 'confirmEmail.php';
@@ -162,7 +193,7 @@ class SignupController{
         ];
         
         if(in_array('resend',$args)){
-            $this->resendEmail();
+            $this->sendConfirmationEmail();
         }
     
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -192,56 +223,10 @@ class SignupController{
             }
         
         }
-
-
-    }
-
-    public function uploadImage($file){
-
-            if(isset($file) && $file['error'] == 0) {
-                $imgUpload = new ImageUpload();
-                $return = $imgUpload->upload($file);
-
-                if($return['success']){
-                    return $return['link'];
-                    
-                }else{
-                    Flash::set('chooseAvatar',$return['message']);
-                    redirect("/admin/signup");
-                }
-            }
-    }
-
-    public function resendEmail(){
-        //generate code confirm
-        $code = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
-        $_SESSION['codeConfirmEmail'] = $code;
-        //message for email
-        $message= "
-               <div>
-                    <h1>Bem vindo ao Agenda Facil!</h1>
-                    <h2>Confirme seu E-mail</h2>
-                    <p>Codigo para confirmacaoo: {$code}</p>
-                </div>";
-                
-        //send email
-        try {
-            $contactEmail = new ContactEmail();
-            $contactEmail->setTo(["email"=>$_SESSION['emailSend'],"name"=>$_SESSION['nameSend']]);
-            $contactEmail->setFrom(["email"=>"vitorhugo6331@outlook.com","name"=>"vitor"]);
-            $contactEmail->setSubject("Confirmar E-mail");
-            $contactEmail->setMessage($message);
-            $contactEmail->send();
-
-
-        } catch (\Throwable $th) {
-            var_dump($th);
-            die();
-        }
     }
 
     public function destroy(array $args){
-
+        //code for delete company
     }
 }
 

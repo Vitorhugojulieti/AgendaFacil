@@ -5,10 +5,27 @@ export default class modals{
         this.btnClose = document.querySelector(btnClose);
     }
 
+    setMessage(message,elementMessage){
+        if(elementMessage && message){
+            this.elementMessage = document.querySelector(elementMessage);
+            this.elementMessage.innerHTML = message;   
+        }
+    }
+
+    openModal(){
+        this.modal.showModal();
+    }
+
+    closeModal(){
+        this.modal.close();
+    }
+
     init(){
-        this.btnOpen.addEventListener('click',(e)=>{
-            this.modal.showModal();
-        });
+       if(this.btnOpen){
+            this.btnOpen.addEventListener('click',(e)=>{
+                this.modal.showModal();
+            });
+       }
 
         this.btnClose.addEventListener('click',(e)=>{
             this.modal.close();

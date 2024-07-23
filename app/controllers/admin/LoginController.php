@@ -117,16 +117,16 @@ class LoginController{
             }
     
             // $passwordMatch = password_verify($password,$clientFound->getPassword());
-    
+
+            // if(!$passwordMatch){
+            //     Flash::set('loginPassword','Senha invalida!');
+            //     return redirect('/login');
+            // }
             if(!($password === $collaboratorFound->getPassword())){
                 Flash::set('passwordLoginCollaborator','Senha invalida!');
                 return redirect('/admin/login');
             }
     
-            // if(!$passwordMatch){
-            //     Flash::set('loginPassword','Senha invalida!');
-            //     return redirect('/login');
-            // }
     
     
             $collaboratorFound->removeAttribute('password');

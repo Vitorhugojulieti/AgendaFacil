@@ -12,15 +12,19 @@ class Company implements ModelInterface{
     private string $cep;
     private string $road;
     private string $number;
+    private string $district;
     private string $city;
     private string $state;
     private string $plan;
     private string $category;
     private string $registrationDate;
     private int $registrationComplete;
+    private string $openingHoursStart;
+    private string $openingHoursEnd;
+    private array $images = [];
     private string $table;
 
-    public function __construct($logo = "", $name = "", $cnpj = "", $phone = "", $category = "", $cep = "", $road = "",$number = "",$state = "",$city = "", $plan = "", $registrationDate = "",$registrationComplete = 0){
+    public function __construct($logo = "", $name = "", $cnpj = "", $phone = "", $category = "", $cep = "", $road = "",$number = "",$district = "",$state = "",$city = "", $plan = "", $registrationDate = "",$registrationComplete = 0,$openingHoursStart = 0,$openingHoursEnd = 0){
         $this->logo = $logo;
         $this->name = $name;
         $this->cnpj = $cnpj;
@@ -30,10 +34,13 @@ class Company implements ModelInterface{
         $this->city = $city;
         $this->state = $state;
         $this->number = $number;
+        $this->district = $district;
         $this->plan = $plan;
         $this->category = $category;
         $this->registrationDate = $registrationDate;
         $this->registrationComplete = $registrationComplete;
+        $this->openingHoursStart = $openingHoursStart;
+        $this->openingHoursEnd = $openingHoursEnd;
         $this->table = "company";
     }
 
@@ -42,8 +49,8 @@ class Company implements ModelInterface{
         $companys = $db->query("*");
         $arrayObjectsCompany =[];
         foreach ($companys as $company){
-            $newCompany = new Company($company['logo'],$company['name'],$company['cpf'],$company['cnpj'],$company['phone'],$company['email'],$company['cep'],$company['adress'],$company['plan'],$company['category'],$company['registrationDate'],$company['registrationComplete']);
-            $newCompany->setId($company['id']);
+            $newCompany = new Company($company['logo'],$company['name'],$company['cnpj'],$company['phone'],$company['category'],$company['cep'],$company['road'],$company['number'],$company['district'],$company['state'],$company['city'],$company['plan'],$company['registrationDate'],$company['registrationComplete']);
+            $newCompany->setId($company['idCompany']);
             array_push($arrayObjectsCompany,$newCompany);
         }
         return $arrayObjectsCompany;
@@ -51,26 +58,28 @@ class Company implements ModelInterface{
 
     public function getById(Db $db, int $id){
         $db->setTable($this->table);
-        $companyFound = $db->query("*","id={$id}");
+        $companyFound = $db->query("*","idCompany={$id}");
 
         if(!$companyFound){
             return false;
         }
 
-        $companyObject = new Company($companyFound[0]['logo'],$companyFound[0]['name'],$companyFound[0]['cpf'],$companyFound[0]['cnpj'],$companyFound[0]['phone'],$companyFound[0]['email'],$companyFound[0]['cep'],$companyFound[0]['adress'],$companyFound[0]['plan'],$companyFound[0]['category'],$companyFound[0]['registrationDate'],$companyFound[0]['registrationComplete']);
+        $companyObject = new Company($companyFound[0]['logo'],$companyFound[0]['name'],$companyFound[0]['cnpj'],$companyFound[0]['phone'],$companyFound[0]['category'],$companyFound[0]['cep'],$companyFound[0]['road'],$companyFound[0]['number'],$companyFound[0]['district'],$companyFound[0]['state'],$companyFound[0]['city'],$companyFound[0]['plan'],$companyFound[0]['registrationDate'],$companyFound[0]['registrationComplete']);
         $companyObject->setId($companyFound[0]['idCompany'],);
+        
+        // get images for company
+        $imagesManager = new Images();
+        $companyObject->setImages($imagesManager->getByCompany($db,$companyFound[0]['idCompany']));
         return $companyObject;
     }
 
     public function getByCnpj(Db $db, string $cnpj){
         $db->setTable($this->table);
         $companyFound = $db->query("*","cnpj='{$cnpj}'");
-
         if(!$companyFound){
             return false;
         }
-
-        $companyObject = new Company($companyFound[0]['logo'],$companyFound[0]['name'],$companyFound[0]['cpf'],$companyFound[0]['cnpj'],$companyFound[0]['phone'],$companyFound[0]['email'],$companyFound[0]['cep'],$companyFound[0]['adress'],$companyFound[0]['plan'],$companyFound[0]['category'],$companyFound[0]['registrationDate'],$companyFound[0]['registrationComplete']);
+        $companyObject = new Company($companyFound[0]['logo'],$companyFound[0]['name'],$companyFound[0]['cnpj'],$companyFound[0]['phone'],$companyFound[0]['category'],$companyFound[0]['cep'],$companyFound[0]['road'],$companyFound[0]['number'],$companyFound[0]['district'],$companyFound[0]['state'],$companyFound[0]['city'],$companyFound[0]['plan'],$companyFound[0]['registrationDate'],$companyFound[0]['registrationComplete']);
         $companyObject->setId($companyFound[0]['idCompany'],);
         return $companyObject;
     }
@@ -96,15 +105,18 @@ class Company implements ModelInterface{
                 'cep' => $this->getCep(),
                 'road' => $this->getRoad(),
                 'number' => $this->getNumber(),
+                'district' => $this->getDistrict(),
                 'city' => $this->getCity(),
                 'state' => $this->getState(),
                 'category' => $this->getCategory(),
                 'registrationDate' => $this->getRegistrationDate(),
                 'registrationComplete' => $this->getRegistrationComplete(),
+                'openingHoursStart' => $this->getOpeningHoursStart(),
+                'openingHoursEnd' => $this->getOpeningHoursEnd(),
             ];
     
-            if($db->insert($data)){
-                return true;
+            if ($db->insert($data)) {
+               return true;
             }
 
             return false;
@@ -135,6 +147,9 @@ class Company implements ModelInterface{
         }
         if ($this->getNumber() !== '') {
             $data['number'] = $this->getNumber();
+        }
+        if ($this->getDistrict() !== '') {
+            $data['district'] = $this->getDistrict();
         }
         if ($this->getCity() !== '') {
             $data['city'] = $this->getCity();
@@ -249,6 +264,15 @@ class Company implements ModelInterface{
         $this->number = $number;
     }
 
+    public function getDistrict() {
+        return $this->district;
+    }
+
+    public function setDistrict($district) {
+        $this->district = $district;
+    }
+
+
     public function getPhone(): string {
         return $this->phone;
     }
@@ -287,6 +311,30 @@ class Company implements ModelInterface{
 
     public function setRegistrationComplete(int $registrationComplete): void {
         $this->registrationComplete = $registrationComplete;
+    }
+
+    public function getOpeningHoursStart(): string {
+        return $this->openingHoursStart;
+    }
+
+    public function setOpeningHoursStart(string $OpeningHoursStart): void {
+        $this->openingHoursStart = $openingHoursStart;
+    }
+
+    public function getOpeningHoursEnd(): string {
+        return $this->openingHoursEnd;
+    }
+
+    public function setOpeningHoursEnd(string $OpeningHoursEnd): void {
+        $this->openingHoursEnd = $openingHoursEnd;
+    }
+
+    public function getImages(): array {
+        return $this->images;
+    }
+
+    public function setImages(array $images): void {
+        $this->images = $images;
     }
 
 }

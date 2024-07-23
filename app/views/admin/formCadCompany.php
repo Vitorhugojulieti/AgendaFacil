@@ -1,6 +1,7 @@
 <body style="overflow-y:auto; overflow-x:hidden;">
     <div class="absolute w-full min-h-screen flex flex-col justify-center items-center bg-principal10 p-4 mb-4">
-        <form action="/admin/signup/store" method="post" enctype="multipart/form-data" class="w-5/6 md:w-3/5 flex flex-col items-center justify-center gap-10 ">
+        <form action="/admin/signup/store" method="post" enctype="multipart/form-data" class="w-5/6 md:w-3/5 flex flex-col items-center justify-center gap-8 ">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">
             <a href="/"><img src="/assets/images/logo-white.png" alt="logo" ></a>
             <legend class="font-Urbanist font-semibold text-white text-2xl md:text-3xl">Bem vindo a plataforma!</legend>
             
@@ -42,7 +43,7 @@
             <fieldset id="containerDataCompany" class="w-full flex justify-center items-center  <? echo flash('validDataCompany');?>">
                 <div class="w-full lg:grid lg:grid-rows-1 lg:grid-cols-2 gap-8 md:flex md:w-5/6 md:flex-col ">
                             <!-- column 1 -->
-                            <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-4 ">
+                            <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-1 ">
                                 <!-- campo -->
                                 <div class="field w-full focus-within:text-white text-borderFormColor">
                                     <div>
@@ -63,12 +64,20 @@
                                     </div>
                                     <span class="text-errorColor " id="msgPhoneCompanyError"><?php echo flash('phoneCompany');  ?></span>
                                 </div>
-                               
 
+                                <!-- campo -->
+                                <div class="field w-full focus-within:text-white text-borderFormColor">
+                                    <label for="inputCnpjCompany" >CNPJ</label>
+                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-white focus-within:text-white">
+                                        <i class='bx bx-id-card' style='padding-left:1rem; padding-right:1rem;'></i>
+                                        <input type="text" name="cnpj" id="inputCnpjCompany" maxlength="14" value="<?php echo old('cnpjCompany') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite o CNPJ da empresa">
+                                    </div>
+                                    <span class="text-errorColor " id="msgCnpjError"><?php echo flash('cnpjCompany');  ?></span>
+                                </div>
                             </div>
 
                             <!-- column 2 -->
-                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-4 ">
+                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-1 ">
                                 <!-- campo -->
                                 <div class="field w-full focus-within:text-white text-borderFormColor">
                                     <div>
@@ -85,14 +94,29 @@
                                     <span class="text-errorColor " id="msgCategoryCompanyError"><?php echo flash('category');  ?></span>
                                 </div>
 
-                                 <!-- campo -->
-                                 <div class="field w-full focus-within:text-white text-borderFormColor">
-                                    <label for="inputCnpjCompany" >CNPJ</label>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-white focus-within:text-white">
-                                        <i class='bx bx-id-card' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="text" name="cnpjCompany" id="inputCnpjCompany" maxlength="14" value="<?php echo old('cnpjCompany') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite o CNPJ da empresa">
+                                  <!-- campo -->
+                                  <div class="field w-full focus-within:text-white text-borderFormColor">
+                                    <div>
+                                        <label for="inputOpeningHoursStart" >Horario de funcionamento *inicio</label>
                                     </div>
-                                    <span class="text-errorColor " id="msgCnpjError"><?php echo flash('cnpjCompany');  ?></span>
+                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-white focus-within:text-white">
+                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
+                                        <input type="time" name="openingHoursStart" id="inputOpeningHoursStart" value="<?php echo old('openingHoursStart') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite seu nome completo">
+                                    </div>
+                                    <span class="text-errorColor " id="msgOpeningHoursStartError"><?php echo flash('openingHoursStart');  ?></span>
+                                </div>
+                                 
+
+                                <!-- campo -->
+                                <div class="field w-full focus-within:text-white text-borderFormColor">
+                                    <div>
+                                        <label for="inputOpeningHoursEnd" >Horario de funcionamento *final</label>
+                                    </div>
+                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-white focus-within:text-white">
+                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
+                                        <input type="time" name="openingHoursEnd" id="inputOpeningHoursEnd" value="<?php echo old('openingHoursEnd') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite seu nome completo">
+                                    </div>
+                                    <span class="text-errorColor " id="msgOpeningHoursEndError"><?php echo flash('openingHoursEnd');  ?></span>
                                 </div>
                         </div>
                     <!-- btns -->
@@ -102,7 +126,7 @@
               <fieldset id="containerDataCompany2" class="w-full hidden justify-center items-center <? echo flash('validDataCompany2');?>">
                 <div class="w-full lg:grid lg:grid-rows-1 lg:grid-cols-2 gap-8 md:flex md:w-5/6 md:flex-col ">
                             <!-- column 1 -->
-                            <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start  gap-4 ">
+                            <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start  gap-1 ">
                                 <!-- campo -->
                                 <div class="field w-full focus-within:text-white text-borderFormColor">
                                     <div>
@@ -166,7 +190,7 @@
                             </div>
 
                             <!-- column 2 -->
-                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start  gap-4 ">
+                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start  gap-1 ">
                                 <!-- campo -->
                                 <div class="field w-full focus-within:text-white text-borderFormColor">
                                     <label for="inputNumber" >Numero</label>
@@ -209,7 +233,7 @@
             <fieldset id="containerDataAdmin" class="hidden w-full  justify-center items-center <? echo flash('validDataClient');?>">
                 <div class="w-full lg:grid lg:grid-rows-1 lg:grid-cols-2 gap-8 md:flex md:w-5/6 md:flex-col ">
                         <!-- column 1 -->
-                        <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-4 ">
+                        <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-1 ">
                             <!-- campo -->
                             <div class="field w-full focus-within:text-white text-borderFormColor">
                                 <div>
@@ -243,7 +267,7 @@
                         </div>
 
                         <!-- column 2 -->
-                        <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-4 ">
+                        <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-1 ">
                             <!-- campo -->
                             <div class="field w-full focus-within:text-white text-borderFormColor">
                                 <div>

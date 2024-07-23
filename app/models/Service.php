@@ -31,6 +31,23 @@ class Service implements ModelInterface{
         $this->images = [];
     }
 
+    public function totalRecords(Db $db){
+        $db->setTable($this->table);
+        $total = $db->totalRecords("Company_idCompany = {$this->getIdCompany()}");
+        return $total[0]['total'];
+    }
+
+    public function getIdByName(Db $db, $name,$idCompany){
+        $db->setTable($this->table);
+        $idFound = $db->query("idService","name='{$name}' AND Company_idCompany = {$idCompany}");
+
+        if(!$idFound){
+            return false;
+        }
+
+        return $idFound[0]['idService'];
+    }
+
     public function getAll(Db $db){
         $db->setTable($this->table);
         $services = $db->query("*");
@@ -55,9 +72,12 @@ class Service implements ModelInterface{
 
         $serviceObject = new Service($serviceFound[0]['name'],$serviceFound[0]['description'],$serviceFound[0]['price'],$serviceFound[0]['duration'],$serviceFound[0]['Company_idCompany'],$serviceFound[0]['visible']);
         $serviceObject->setId($serviceFound[0]['idService'],);
-        return $serviceObject;
         //logica para trazer imagens
-
+        $imagesManager = new Images();
+        $images = $imagesManager->getByService($db,$id,$serviceFound[0]['Company_idCompany']);
+        $serviceObject->setImages($images);
+     
+        return $serviceObject;
     }
 
     public function getByIdCollaborator(Db $db){
@@ -186,6 +206,14 @@ class Service implements ModelInterface{
 
     public function setIdCompany(int $idCompany): void {
         $this->idCompany = $idCompany;
+    }
+
+    public function getImage($index): string {
+        return $this->images[$index]['link'];
+    }
+
+    public function setImages(array $images): void {
+        $this->images = $images;
     }
 }
 

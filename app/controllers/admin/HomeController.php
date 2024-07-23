@@ -2,7 +2,8 @@
 namespace app\controllers\admin;
 use app\models\database\Db;
 use app\models\Client;
-use app\models\Company;
+use app\models\Collaborator;
+use app\models\Service;
 use app\classes\Old;
 
 class HomeController{
@@ -11,13 +12,21 @@ class HomeController{
     public string $master = 'masterAdmin.php';
 
     public function index(){
-        $this->view = 'home.php';
+        $db = new Db();
+        $db->connect();
+   
+        $service = new Service();
+        $service->setIdCompany($_SESSION['collaborator']->getIdCompany());
+
+        $this->view = 'admin/homeAdmin.php';
         $this->data = [
             'title'=>'Agenda facil',
+            'navActive'=>'dashboard',
+            'totalCollaborators'=>0,
+            'totalServices'=>$service->totalRecords($db),
         ];
 
-        var_dump("home admin");
-        die();
+       
     }
 }
 

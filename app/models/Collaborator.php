@@ -36,6 +36,12 @@ class Collaborator implements ModelInterface{
         $this->services = [];
     }
 
+    public function totalRecords(Db $db){
+        $db->setTable($this->table);
+        $total = $db->totalRecords();
+        return $total[0]['total'];
+    }
+
     public function getAll(Db $db){
         $db->setTable($this->table);
         $Collaborators = $db->query("*");

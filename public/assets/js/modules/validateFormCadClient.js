@@ -1,8 +1,8 @@
 import formValidate from "./formValidate.js"
 
 export default class validateFormCadClient{
-    constructor(){
-        this.form = document.querySelector("#formCadClient");
+    constructor(form){
+        this.form = document.querySelector(form);
         // fields
         this.inputName = document.querySelector("#inputName");
         this.inputCpf = document.querySelector("#inputCpf");
@@ -17,6 +17,9 @@ export default class validateFormCadClient{
         this.spanErrorEmail = document.querySelector("#msgEmailError");
         this.spanErrorPassword = document.querySelector("#msgPasswordError");
         this.spanErrorConfirmPassword = document.querySelector("#msgConfirmPasswordError");
+        this.spanServices = document.querySelector('#msgServicesError') ? document.querySelector('#msgServicesError'):false;
+        this.arrayCheckbox = document.querySelectorAll('.check') ? document.querySelectorAll('.check') : false;
+
         // icon error
         this.iconError = "<i class='bx bxs-info-circle' style='color:#fd837c'  ></i>";
     }
@@ -36,11 +39,27 @@ export default class validateFormCadClient{
             formValid = false;
         }
 
-        if(!formValidator.isPasswordValid(this.inputPassword.value)){
-            this.spanErrorPassword.innerHTML = this.iconError+"Senha invalida!";
-            formValid = false;
+        if(!this.isFormEdit()){
+            if(!formValidator.isPasswordValid(this.inputPassword.value)){
+                this.spanErrorPassword.innerHTML = this.iconError+"Senha invalida!";
+                formValid = false;
+            }
+            if(formValidator.isEmpty(this.inputPassword.value)){
+                this.spanErrorPassword.innerHTML = this.iconError+"Campo senha está vazio!";
+                formValid = false;
+            }
+    
+            if(!formValidator.isEqualValues(this.inputPassword.value,this.inputConfirmPassword.value)){
+                this.spanErrorConfirmPassword.innerHTML = this.iconError+"senhas não são iguais!";
+                formValid = false;
+            }
+    
+            if(formValidator.isEmpty(this.inputConfirmPassword.value)){
+                this.spanErrorConfirmPassword.innerHTML = this.iconError+"Campo confirmar senha está vazio!";
+                formValid = false;
+            }
         }
-
+        
         if(!formValidator.isPhoneValid(this.inputPhone.value)){
             this.spanErrorPhone.innerHTML = this.iconError+"Telefone invalido!";
             formValid = false;
@@ -66,22 +85,29 @@ export default class validateFormCadClient{
             formValid = false;
         }
 
-        if(formValidator.isEmpty(this.inputPassword.value)){
-            this.spanErrorPassword.innerHTML = this.iconError+"Campo senha está vazio!";
-            formValid = false;
-        }
+        if(this.arrayCheckbox && this.arrayCheckbox.length > 0){
+            let valid = false;
+            this.arrayCheckbox.forEach(checkbox => {
+                if(checkbox.checked){
+                    valid = true;
+                }
+            });
 
-        if(!formValidator.isEqualValues(this.inputPassword.value,this.inputConfirmPassword.value)){
-            this.spanErrorConfirmPassword.innerHTML = this.iconError+"senhas não são iguais!";
-            formValid = false;
-        }
-
-        if(formValidator.isEmpty(this.inputConfirmPassword.value)){
-            this.spanErrorConfirmPassword.innerHTML = this.iconError+"Campo confirmar senha está vazio!";
-            formValid = false;
+            if(!valid){
+                this.spanServices.innerHTML = this.iconError+"Selecione ao menos um serviço!";
+                formValid = false;
+            }
         }
       
         return formValid;
+    }
+
+    isFormEdit(){
+        let legend = document.querySelector('#legendForm') ? document.querySelector('#legendForm') : false;
+        if(legend && legend.innerText.includes('Editar')){
+            return true;
+        }
+        return false;
     }
 
     cleanAllSpans(){
@@ -95,12 +121,16 @@ export default class validateFormCadClient{
         this.spanErrorPassword.innerHTML = "";
         this.spanErrorConfirmPassword.innerHTML = "";
         this.spanErrorConfirmPassword.innerHTML = "";
+        if(this.spanServices){this.spanServices.innerHTML = "";}
     }
 
     sendForm(){
         this.form.addEventListener('submit',(e)=>{
             if(this.isAllFieldsValid()){
-                e.target.submit();
+                console.log(this.isAllFieldsValid());
+                // e.target.submit();
+                e.preventDefault();
+
             }
             e.preventDefault();
         })
