@@ -17,12 +17,14 @@ class Collaborator implements ModelInterface{
     private int $idCompany;
     private string $registrationDate;
     private int $registrationComplete;
-    private array $services;
+    private int $mainAdministrator;
+    private array $services = [];
     private string $tableServices = "services";
     private string $tableSchedules = "schedules";
     private string $table = "collaborator";
+    private string $tableServiceHasCollaborators = "collaborator_has_services";
 
-    public function __construct($avatar = "", $name = "", $cpf = "", $phone = "", $email = "", $password = "", $nivel = "", $idCompany = 0, $registrationDate = "",$registrationComplete = 0){
+    public function __construct($avatar = "", $name = "", $cpf = "", $phone = "", $email = "", $password = "", $nivel = "", $idCompany = 0, $registrationDate = "",$registrationComplete = 0,$mainAdministrator = 0){
         $this->avatar = $avatar;
         $this->name = $name;
         $this->cpf = $cpf;
@@ -33,7 +35,7 @@ class Collaborator implements ModelInterface{
         $this->idCompany = $idCompany;
         $this->registrationDate = $registrationDate;
         $this->registrationComplete = $registrationComplete;
-        $this->services = [];
+        $this->mainAdministrator = $mainAdministrator;
     }
 
     public function totalRecords(Db $db){
@@ -85,14 +87,19 @@ class Collaborator implements ModelInterface{
         return $colllaboratorObject;
     }
 
+    public function setServices(array $services){
+        $this->services = $services;
+    }
+
    
-    public function getServices($db){
-        $db->setTable($this->tableServices);
-
-        $services = new Service();
-        $services = $services->getByIdCollaborator($this->getId());
-
-        return $services;
+    public function getServices(Db $db){
+        $db->setTable($this->tableServiceHasCollaborators);
+        $idServices = $db->query("Services_idService","Collaborator_idCollaborator={$this->getId()} AND Collaborator_Company_idCompany={$this->getIdCompany()}");
+        $arrayServices =[];
+        foreach ($idServices as $idService){
+            array_push($arrayServices,$idService['Services_idService']);
+        }
+        return $arrayServices;
     }
 
     public function getSchedules(){
@@ -118,6 +125,7 @@ class Collaborator implements ModelInterface{
                 'Company_idCompany' => $this->getIdCompany(),
                 'registrationDate' => $this->getRegistrationDate(),
                 'registrationComplete' => $this->getRegistrationComplete(),
+                'mainAdministrator' => $this->getMainAdministrator(),
             ];
     
             if($db->insert($data)){
@@ -125,7 +133,39 @@ class Collaborator implements ModelInterface{
             }
 
             return false;
+    }
 
+    public function insertCollaboratorHasService(Db $db,$idService,$idCollaborator,$idCompany){
+        $db->setTable($this->tableServiceHasCollaborators);
+        
+        $data = [
+            'Collaborator_idCollaborator' => $idCollaborator,
+            'Collaborator_Company_idCompany' => $idCompany,
+            'Services_idService' => $idService,
+        ];
+
+        if($db->insert($data)){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function updateCollaboratorHasService(Db $db,$idService,$idCollaborator,$idCompany){
+        $db->setTable($this->tableServiceHasCollaborators);
+        
+        $data = [
+            'Collaborator_idCollaborator' => $idCollaborator,
+            'Collaborator_Company_idCompany' => $idCompany,
+            'Services_idService' => $idService,
+            'Services_Company_idCompany' => $idCompany,
+        ];
+
+        if($db->insert($data)){
+            return true;
+        }
+
+        return false;
     }
 
     public function update(Db $db,int $id){
@@ -162,6 +202,10 @@ class Collaborator implements ModelInterface{
 
         if ($this->getRegistrationComplete() !== 0) {
             $data['registrationComplete'] = $this->getRegistrationComplete();
+        }
+
+        if ($this->getMainAdministrator() !== '') {
+            $data['mainAdministrator'] = $this->getMainAdministrator();
         }
 
         if(!empty($data)){
@@ -271,6 +315,14 @@ class Collaborator implements ModelInterface{
 
     public function setRegistrationComplete(int $registrationComplete): void {
         $this->registrationComplete = $registrationComplete;
+    }
+
+    public function getMainAdministrator(): int {
+        return $this->mainAdministrator;
+    }
+
+    public function setMainAdministrator(int $mainAdministrator): void {
+        $this->mainAdministrator = $mainAdministrator;
     }
 }
 

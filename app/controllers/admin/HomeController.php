@@ -24,6 +24,7 @@ class HomeController{
             'navActive'=>'dashboard',
             'totalCollaborators'=>0,
             'totalServices'=>$service->totalRecords($db),
+            'nameCollaborator'=>$_SESSION['collaborator']->getName(),
         ];
 
        

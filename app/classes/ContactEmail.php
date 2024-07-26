@@ -1,6 +1,7 @@
 <?php
 
 namespace app\classes;
+use app\classes\CodeGenerator;
 
 class ContactEmail extends Email{
     public function send(){
@@ -22,13 +23,9 @@ class ContactEmail extends Email{
     }
 
     public static function sendConfirmationEmail(String $name,String $email){
-        $name = $_SESSION['nameSend'] ? $_SESSION['nameSend'] : $name;
-        $email = $_SESSION['emailSend'] ? $_SESSION['emailSend'] : $email;
          //generate code confirm
-         $code = CodeValidate::generate();
-         $_SESSION['emailSend'] = $email;
-         $_SESSION['nameSend'] = $name;
- 
+         $code = CodeGenerator::generate(4);
+         $_SESSION['codeConfirmEmail'] = $code;
           //message for email
           $message= "
           <div>

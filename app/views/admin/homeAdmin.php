@@ -3,8 +3,8 @@
         <?php  require __DIR__ . '/../includes/nav.php'; ?>
 
 
-        <main id="container" class="w-full p-4 flex flex-col overflow-y-scroll">
-            <h2 class="font-Urbanist font-semibold italic text-4xl text-black w-full border-b-2 border-b-lightGray p-2">Olá administrador</h2>
+        <main id="container" class="w-full p-4 flex flex-col gap-8 overflow-y-scroll">
+            <h2 class="font-Urbanist font-semibold italic text-4xl text-black w-full border-b-2 border-b-lightGray p-2">Olá <?php echo $nameCollaborator;?>!</h2>
             <!-- details -->
             <div class="w-full flex items-center gap-4 mt-4">
                 <!-- item  skeleton-->
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <!-- teste graficos -->
-            <div class="w-full flex mt-8">
+            <!-- <div class="w-full flex mt-8">
                 <div class="w-3/4">
                     <canvas id="chart1" width="200" height="200"></canvas> 
                 </div>   
@@ -60,12 +60,23 @@
                             <i class='bx bxs-info-circle text-text-gray'></i>
                         </div>
                         <span class="text-2xl font-semibold">5.987</span>
-                        <!-- <span class="font-Poppins font-medium text-text-gray">Junho 2024</span> -->
                     </div>
                     <canvas id="chart2" width="100" height="100"></canvas> 
-                </div> 
+                </div>  -->
+
+
+                    <div class="w-full flex items-start gap-8">
+                        <div class="w-2/4">
+                            <div class="box" id="line-chart"></div>
+                        </div>
+                        <div class="w-2/4">
+                            <div class="box" id="donut-chart"></div>
+                        </div>
+                    </div>
             </div>
         <main>
     </div>
     <script type="module" src="/assets/js/indexAdm.js" deffer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </body>

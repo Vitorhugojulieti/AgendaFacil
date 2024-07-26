@@ -13,6 +13,8 @@ class SignupController{
     public string $master = 'master.php';
 
     public function index(array $args){
+        unset($_SESSION['user']);
+
         $this->view = 'client/formCadClient.php';
         $this->data = [
             'title'=>'Cadastre-se | AgendaFacil',
@@ -27,6 +29,8 @@ class SignupController{
         if(!$validate){
             return redirect('/signup');
         }
+        $_SESSION['emailSend'] = $validate->data['email'];
+        $_SESSION['nameSend'] = $validate->data['name'];
 
         if(!$this->registerClient($db,$validate)){
             return redirect('/signup');
@@ -89,7 +93,6 @@ class SignupController{
 
                 $client->update($db,$clientUpdate->getId());
                 $_SESSION['user']->setPhone($phone);
-                //validar cpf?
                 $_SESSION['user']->setCpf($cpf);
                 $_SESSION['user']->setRegistrationComplete(1);
 
@@ -149,28 +152,39 @@ class SignupController{
         ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $db = new Db();
+            $db->connect();
+            $validateAvatar = $this->validateAvatar();
 
-            if(isset($_FILES['avatar']) && $_FILES['avatar']['error'] == 0) {
-                $imgUpload = new ImageUpload();
-                $return = $imgUpload->upload($_FILES['avatar']);
-
-                if($return['success']){
-                    $db = new Db();
-                    $db->connect();
-                    
-                    $client = new Client();
-                    $client->setAvatar($return['link']);
-                    if($client->update($db,$_SESSION['user']->getId())){
-                        $_SESSION['user']->setAvatar($return['link']);
-                        $_SESSION['auth'] = true;
-                        redirect("/");
-                    }
-                }else{
-                    Flash::set('chooseAvatar',$return['message']);
-                    redirect("/signup/chooseAvatar");
-                }
+            if(!$validateAvatar){
+                return redirect("/signup/chooseAvatar");
             }
+                    
+            $client = new Client();
+          
+            $client->setAvatar($validateAvatar->data['avatar']['link']);
+            if($client->update($db,$_SESSION['user']->getId())){
+                $_SESSION['user']->setAvatar($validateAvatar->data['avatar']['link']);
+                $_SESSION['auth'] = true;
+                return redirect("/");
+            }
+
+            Flash::set('chooseAvatar','Erro ao cadastrar avatar','message error');
+            redirect("/signup/chooseAvatar");
         }
+    }
+
+    private function validateAvatar(){
+        $validateImages = new Validate();
+        $validateImages->handle([
+            'avatar'=>[IMAGE],
+        ],'client');
+
+        if($validateImages->errors) {
+            return false;
+        }
+       
+        return $validateImages;
     }
 
     public function sendConfirmationEmail($name,$email){

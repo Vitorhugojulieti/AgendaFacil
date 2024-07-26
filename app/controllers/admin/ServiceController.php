@@ -137,7 +137,7 @@ class ServiceController implements ControllerInterface{
      
     }
 
-    public function store(){
+    public function store(array $args){
         BlockNotAdmin::block($this,['store']);
 
         $this->view = 'admin/registerAndUploadService.php';

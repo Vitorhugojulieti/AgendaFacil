@@ -17,6 +17,7 @@ class Service implements ModelInterface{
     private array $images;
     private string $tableImages;
     private string $table = "services";
+    private string $tableCollaboratorsHasService = "collaborator_has_services";
 
 
     public function __construct($name = "", $description = "", $price = "", $duration = "", $idCompany = 0 ,$visible = true){
@@ -80,12 +81,29 @@ class Service implements ModelInterface{
         return $serviceObject;
     }
 
-    public function getByIdCollaborator(Db $db){
 
+    public function getByCompany(Db $db,int $idCompany){
+        $db->setTable($this->table);
+        $services = $db->query("*","Company_idCompany={$idCompany}");
+        $arrayObjectsService =[];
+        foreach ($services as $service){
+            $newService = new Service($service['name'],$service['description'],$service['price'],$service['duration'],$service['Company_idCompany'],$service['visible']);
+            $newService->setId($service['idService']);
+            array_push($arrayObjectsService,$newService);
+        }
+        return $arrayObjectsService;
     }
 
-    public function getByIdCompany(Db $db){
-
+    public function getCollaboratorByService($db,$idService,$idCompany){
+        $db->setTable($this->tableCollaboratorsHasService);
+        $collaboratorManager = new Collaborator();
+        $idsCollaborators = $db->query("Collaborator_idCollaborator","Services_idService={$idService} AND Collaborator_Company_idCompany={$idCompany}");
+        $arrayObjectsCollaborators =[];
+        foreach ($idsCollaborators as $id){
+            $collaborator = $collaboratorManager->getById($db,$id['Collaborator_idCollaborator']);
+            array_push($arrayObjectsCollaborators,$collaborator);
+        }
+        return $arrayObjectsCollaborators;
     }
 
     public function insert(DB $db){
@@ -105,8 +123,8 @@ class Service implements ModelInterface{
             }
 
             return false;
-
     }
+
 
     public function update(Db $db,int $id){
         $db->setTable($this->table);

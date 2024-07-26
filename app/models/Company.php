@@ -2,8 +2,9 @@
 namespace app\models;
 use app\models\database\Db;
 use app\interfaces\ModelInterface;
+use JsonSerializable;
 
-class Company implements ModelInterface{
+class Company implements ModelInterface, JsonSerializable{
     private int $id;
     private string $logo;
     private string $name;
@@ -22,7 +23,9 @@ class Company implements ModelInterface{
     private string $openingHoursStart;
     private string $openingHoursEnd;
     private array $images = [];
-    private string $table;
+    private array $services = [];
+    private string $table = "company";
+    private string $tableServices = "services";
 
     public function __construct($logo = "", $name = "", $cnpj = "", $phone = "", $category = "", $cep = "", $road = "",$number = "",$district = "",$state = "",$city = "", $plan = "", $registrationDate = "",$registrationComplete = 0,$openingHoursStart = 0,$openingHoursEnd = 0){
         $this->logo = $logo;
@@ -41,7 +44,10 @@ class Company implements ModelInterface{
         $this->registrationComplete = $registrationComplete;
         $this->openingHoursStart = $openingHoursStart;
         $this->openingHoursEnd = $openingHoursEnd;
-        $this->table = "company";
+    }
+
+    public function jsonSerialize() {
+        return get_object_vars($this);
     }
 
     public function getAll(Db $db){
@@ -63,13 +69,15 @@ class Company implements ModelInterface{
         if(!$companyFound){
             return false;
         }
-
-        $companyObject = new Company($companyFound[0]['logo'],$companyFound[0]['name'],$companyFound[0]['cnpj'],$companyFound[0]['phone'],$companyFound[0]['category'],$companyFound[0]['cep'],$companyFound[0]['road'],$companyFound[0]['number'],$companyFound[0]['district'],$companyFound[0]['state'],$companyFound[0]['city'],$companyFound[0]['plan'],$companyFound[0]['registrationDate'],$companyFound[0]['registrationComplete']);
-        $companyObject->setId($companyFound[0]['idCompany'],);
+        $companyObject = new Company($companyFound[0]['logo'],$companyFound[0]['name'],$companyFound[0]['cnpj'],$companyFound[0]['phone'],$companyFound[0]['category'],$companyFound[0]['cep'],$companyFound[0]['road'],$companyFound[0]['number'],$companyFound[0]['district'],$companyFound[0]['state'],$companyFound[0]['city'],$companyFound[0]['plan'],$companyFound[0]['registrationDate'],$companyFound[0]['registrationComplete'],$companyFound[0]['openingHoursStart'],$companyFound[0]['openingHoursEnd']);
+        $companyObject->setId($companyFound[0]['idCompany']);
         
         // get images for company
         $imagesManager = new Images();
         $companyObject->setImages($imagesManager->getByCompany($db,$companyFound[0]['idCompany']));
+        //get services for company
+        $serviceManager = new Service();
+        $companyObject->setServices($serviceManager->getByCompany($db,$companyFound[0]['idCompany']));
         return $companyObject;
     }
 
@@ -336,7 +344,12 @@ class Company implements ModelInterface{
     public function setImages(array $images): void {
         $this->images = $images;
     }
-
+    public function setServices(array $services): void {
+        $this->services = $services;
+    }
+    public function getServices(): array {
+        return $this->services;
+    }
 }
 
 ?>

@@ -3,6 +3,7 @@ namespace app\controllers\admin;
 use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Collaborator;
+use app\models\Service;
 use app\classes\Flash;
 use app\classes\Old;
 use app\classes\ContactEmail;
@@ -42,6 +43,10 @@ class CollaboratorController implements ControllerInterface{
             
             $collaborator = new Collaborator();
             $collaborator = $collaborator->getById($db,intval($args[0]));
+            $servicesCollaborator = $collaborator->getServices($db);
+
+            $services = new Service();
+            $services = $services->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
         }
 
         $this->view = 'admin/registerAndUploadCollaborator.php';
@@ -51,6 +56,8 @@ class CollaboratorController implements ControllerInterface{
             'legend'=>'Editar colaborador',
             'action'=>'/admin/collaborator/update',
             'collaborator'=>$collaborator,
+            'services'=>$services,
+            'servicesCollaborator'=>$servicesCollaborator,
         ];
 
     }
@@ -121,6 +128,11 @@ class CollaboratorController implements ControllerInterface{
                     $collaborator->setNivel($validate->data['nivel']);
                 }
 
+                // $validateServices = $this->validateCollaboratorServices();
+                // if($validateServices){
+                //     $collaborator->setServices($validateServices);
+                // }
+
                 if($validate->errors) {
                     return redirect('/admin/collaborator/edit');
                 }
@@ -138,8 +150,13 @@ class CollaboratorController implements ControllerInterface{
     }
 
     //ok
-    public function store(){
+    public function store(array $args){
         BlockNotAdmin::block($this,['store']);
+        $db = new Db();
+        $db->connect();
+
+        $services = new Service();
+        $services = $services->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
 
         $this->view = 'admin/registerAndUploadCollaborator.php';
         $this->data = [
@@ -147,55 +164,100 @@ class CollaboratorController implements ControllerInterface{
             'navActive'=>'colaboradores',
             'legend'=>'Cadastrar novo colaborador',
             'action'=>'/admin/collaborator/store',
+            'services'=>$services,
+            'servicesCollaborator'=>[],
         ];
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $db = new Db();
+            $db->connect();
 
-                    $validate = new Validate();
-                    $validate->handle([
-                        'cpf'=>[CPF,REQUIRED],
-                        'name'=>[REQUIRED],
-                        'phone'=>[REQUIRED],
-                        'nivel'=>[REQUIRED],
-                        'email'=>[EMAIL,REQUIRED],
-                        'password'=>[PASSWORD,REQUIRED],
-                    ],'collaborator');
+            $validateData = $this->validateCollaboratorData();
+            $validateAvatar = $this->validateCollaboratorAvatar();
+            $validateServices = $this->validateCollaboratorServices();
+          
+            if(!$validateData || !$validateServices){
+                return redirect("/admin/collaborator/store");
+            }
 
-                    if($_FILES['avatar'] && $_FILES['avatar']['error']==0){
-                        $validate->handle([
-                            'avatar'=>[IMAGE],
-                        ],'collaborator');
-                    }
-                    $avatar = $validate->data['avatar']['success'] ? $validate->data['avatar']['link'] : AVATAR_DEFAULT;
+            $collaborator = $this->registerCollaborator($db,$validateData,$validateAvatar,$_SESSION['collaborator']->getIdCompany());
+            $services = $this->registerCollaboratorServices($db,$validateServices,$collaborator->getId(),$_SESSION['collaborator']->getIdCompany());
+            
+            if(!$collaborator || !$services){
+                Flash::set('resultInsertCollaborator', 'Erro ao cadastrar colaborador!','message error');
+                return redirect("/admin/collaborator/store");
+            }
 
-                    // $avatar = AVATAR_DEFAULT;
-              
-                    if($validate->errors) {
-                        return redirect('/admin/collaborator/store');
-                    }
-                  
-                    // $idCompany = $_SESSION['collaborator']->getIdCompany();
-                    $idCompany = 1;
+            Flash::set('resultInsertCollaborator', 'Colaborador cadastrado com sucesso!','message sucess');
+            unset($_SESSION['old']);
+            return redirect("/admin/collaborator");
+        }
+    }
 
-                    $db = new Db();
-                    $db->connect();
-                    $collaborator = new Collaborator($avatar,$validate->data['name'],$validate->data['cpf'],$validate->data['phone'],$validate->data['email'],$validate->data['password'],$validate->data['nivel'],$idCompany,date('d/m/y'),1);
-                
-                    if($collaborator->insert($db)){
-                        Flash::set('resultInsertCollaborator', 'Colaborador cadastrado com sucesso!','messagesucess');
-                        unset($_SESSION['old']['name']);
-                        unset($_SESSION['old']['cpf']);
-                        unset($_SESSION['old']['phone']);
-                        unset($_SESSION['old']['email']);
-                        unset($_SESSION['old']['password']);
-                        unset($_SESSION['old']['avatar']);
-                        return redirect("/admin/collaborator");
-                        unset($_SESSION['flash']['sucessRegistrationCollaborator']);
-                    }
+    private function validateCollaboratorData(){
+        $validate = new Validate();
+        $validate->handle([
+            'cpf'=>[CPF,REQUIRED],
+            'name'=>[REQUIRED],
+            'phone'=>[REQUIRED],
+            'nivel'=>[REQUIRED],
+            'email'=>[EMAIL,REQUIRED],
+            'password'=>[PASSWORD,REQUIRED],
+        ],'collaborator');
+        if($validate->errors) {
+            return false;
+        }
+        return $validate;
+    }
 
-                    Flash::set('resultInsertCollaborator', 'Erro ao cadastrar colaborador!','messageerror');
-                    return redirect("/admin/collaborator/store");
-                }
+    private function validateCollaboratorAvatar(){
+        $validate = new Validate();
+        $validate->handle([
+            'avatar'=>[IMAGE],
+        ],'collaborator');
+        if($validate->errors) {
+            return false;
+        }
+        return $validate;
+    }
+
+    private function validateCollaboratorServices(){
+        $arrayServices = [];
+        if($_POST['services']){
+            $services = $_POST['services'];
+            foreach ($services as $service) {
+                $service = htmlspecialchars($service, ENT_QUOTES, 'UTF-8');
+                array_push($arrayServices,intval($service));
+            }
+            return $arrayServices;
+        }
+        return false;
+    }
+
+    private function registerCollaborator(Db $db,$validateData,$validateImage,$idCompany){
+        $collaborator = new Collaborator(
+            $validateImage->data['avatar']['success'] ? $validateImage->data['avatar']['link'] : AVATAR_DEFAULT,
+            $validateData->data['name'],
+            $validateData->data['cpf'],
+            $validateData->data['phone'],
+            $validateData->data['email'],
+            $validateData->data['password'],
+            $validateData->data['nivel'],
+            $idCompany,date('d/m/y'),1);
+            $collaborator->insert($db);
+            $collaborator = $collaborator->getByEmail($db,$validateData->data['email']);
+            return $collaborator ? $collaborator : false;
+    }
+
+    private function registerCollaboratorServices(Db $db,array $arrayIdServices,$idCollaborator,$idCompany){
+        $collaborator = new Collaborator();
+        $insertResult = true;
+        foreach ($arrayIdServices as $idService) {
+            if(!$collaborator->insertCollaboratorHasService($db,$idService,$idCollaborator,$idCompany)){
+                $insertResult = false;
+            }
+        }
+        return $insertResult;
     }
 
     //ok

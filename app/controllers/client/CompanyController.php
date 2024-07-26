@@ -3,6 +3,7 @@ namespace app\controllers\client;
 use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Company;
+use app\models\Service;
 use app\models\Images;
 use app\classes\Flash;
 use app\classes\Validate;
@@ -71,7 +72,6 @@ class CompanyController implements ControllerInterface{
             'company'=>$company,
         ];
     }
-
     public function update(array $args){
         BlockNotAdmin::block($this,['update']);
         //adcicionar validate 
@@ -130,7 +130,7 @@ class CompanyController implements ControllerInterface{
      
     }
 
-    public function store(){
+    public function store(array $args){
         BlockNotAdmin::block($this,['store']);
 
         $this->view = 'admin/registerAndUploadService.php';

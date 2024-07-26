@@ -128,9 +128,7 @@ export default class validateFormCadClient{
         this.form.addEventListener('submit',(e)=>{
             if(this.isAllFieldsValid()){
                 console.log(this.isAllFieldsValid());
-                // e.target.submit();
-                e.preventDefault();
-
+                e.target.submit();
             }
             e.preventDefault();
         })

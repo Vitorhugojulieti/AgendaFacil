@@ -114,21 +114,11 @@
                                     </div>
 
                                     <div class="pl-5">
-                                        <label for="checkCorte" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
-                                            <input type="checkbox" name="services[]" value="1" id="checkCorte" class="check">Serviço exemplo 1
-                                        </label>
-
-                                        <label for="checkCorte2" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
-                                            <input type="checkbox" name="services[]" value="1" id="checkCorte2" class="check">Serviço exemplo 1
-                                        </label>
-
-                                        <label for="checkCorte3" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
-                                            <input type="checkbox" name="services[]" value="1" id="checkCorte3" class="check">Serviço exemplo 1
-                                        </label>
-
-                                        <label for="checkCorte4" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
-                                            <input type="checkbox" name="services[]" value="1" id="checkCorte4" class="check">Serviço exemplo 1
-                                        </label>
+                                        <?php foreach ($services as $service) { ?>
+                                            <label for="checkCorte2" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
+                                                <input type="checkbox" name="services[]" value="<?php echo $service->getId() ?>" <?php echo in_array($service->getId(), $servicesCollaborator) ? "checked" : ''; ?> class="check"><?php echo $service->getName() ?>
+                                            </label>
+                                        <?php } ?>
                                     </div>
                                     <span class="text-errorColor " id="msgServicesError"></span>
                                 </div>

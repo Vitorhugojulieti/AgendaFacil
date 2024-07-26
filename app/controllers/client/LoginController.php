@@ -109,7 +109,7 @@ class LoginController implements ControllerInterface{
      
     }
 
-    public function store(){
+    public function store(array $args){
         $email = filter_input(INPUT_POST,'email',FILTER_SANITIZE_EMAIL);
         $password = filter_input(INPUT_POST,'password',FILTER_SANITIZE_STRING);
 

@@ -8,7 +8,7 @@ use app\classes\Validate;
 use app\classes\ContactEmail;
 use app\classes\ImageUpload;
 use app\classes\Flash;
-use app\classes\CodeValidate;
+use app\classes\CodeGenerator;
 
 class SignupController{
     public array $data = [];
@@ -43,7 +43,10 @@ class SignupController{
             Flash::set('registrationCompany', 'Erro ao registrar empresa');
             return redirect('/admin/signup');
         }
-       
+        
+        $_SESSION['emailSend'] = $validateCollaboratorData->data['email'];
+        $_SESSION['nameSend'] = $validateCollaboratorData->data['name'];
+
         $this->sendConfirmationEmail($validateCollaboratorData->data['name'],$validateCollaboratorData->data['email']);
         redirect("/admin/signup/confirmEmail");
     }
@@ -164,7 +167,8 @@ class SignupController{
             "manager",
             $idCompany,
             date('d/m/y')
-            ,0);
+            ,0,
+            true);
         return $collaborator->insert($db);
     }
 
@@ -193,7 +197,7 @@ class SignupController{
         ];
         
         if(in_array('resend',$args)){
-            $this->sendConfirmationEmail();
+            $this->sendConfirmationEmail( $_SESSION['nameSend'], $_SESSION['emailSend']);
         }
     
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -207,7 +211,7 @@ class SignupController{
                 $field3 = filter_input(INPUT_POST,'field3',FILTER_SANITIZE_STRING);
                 $field4 = filter_input(INPUT_POST,'field4',FILTER_SANITIZE_STRING);
                 
-                if(CodeValidate::get() === $field1.$field2.$field3.$field4){
+                if(CodeGenerator::get() === $field1.$field2.$field3.$field4){
                     $collaborator = new Collaborator();
                     $collaborator =  $collaborator->getByEmail($db,$_SESSION['emailSend']);
                     $collaborator->setRegistrationComplete(1);
