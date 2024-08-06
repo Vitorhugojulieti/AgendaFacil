@@ -1,7 +1,6 @@
 <?php
 
-function welcome($index)
-{
+function welcome($index){
     if (isset($_SESSION[$index])) {
         $user = $_SESSION[$index];
 
@@ -10,5 +9,6 @@ function welcome($index)
 
     return 'Visitante';
 }
+
 
 ?>

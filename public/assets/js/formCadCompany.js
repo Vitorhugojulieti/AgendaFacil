@@ -4,6 +4,7 @@ import maskInput from "./modules/masksInput.js"
 import CepSearch from "./CepSearch.js"
 import modals from "./modules/modals.js";
 import previewImage from "./modules/previewImage.js";
+import activeLoader from "./modules/activeLoader.js";
 
 const ViewPassword = new viewPassword();
 ViewPassword.init();
@@ -42,3 +43,9 @@ previewLogo.init();
 
 const previewImageCompany = new previewImage('#previewImage','#inputImage');
 previewImageCompany.init();
+
+const form = document.querySelector('#formCadCompany');
+const loader = new activeLoader();
+form.addEventListener('submit',()=>{
+    loader.setEnabled();
+});

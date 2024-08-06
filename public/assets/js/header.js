@@ -1,4 +1,7 @@
 import popUp from "./modules/popUp.js";
 
-const popUpManager = new popUp('#popUpAvatar','#btnOpenPopUpAvatar');
-popUpManager.init();
+const popUpManagerAvatar = new popUp('#popUpAvatar','#btnOpenPopUpAvatar');
+popUpManagerAvatar.init();
+
+const popUpManagerNotification = new popUp('#popUpNotification','#btnOpenPopUpNotification');
+popUpManagerNotification.init();

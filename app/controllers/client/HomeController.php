@@ -5,6 +5,7 @@ use app\models\Client;
 use app\models\Company;
 use app\models\Service;
 use app\classes\Old;
+use app\classes\Cart;
 
 class HomeController{
     public array $data = [];
@@ -12,6 +13,7 @@ class HomeController{
     public string $master = 'master.php';
 
     public function index(array $args){
+        Cart::delete();
         $db = new Db();
         $db->connect();
         $companys = new Company();

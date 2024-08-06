@@ -66,6 +66,10 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
         array (
             'Firebase\\JWT\\' => 13,
         ),
+        'E' => 
+        array (
+            'ElephantIO\\' => 11,
+        ),
         'D' => 
         array (
             'Dotenv\\' => 7,
@@ -157,6 +161,10 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
         'Firebase\\JWT\\' => 
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
+        'ElephantIO\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/elephantio/elephant.io/src',
         ),
         'Dotenv\\' => 
         array (

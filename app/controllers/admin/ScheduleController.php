@@ -29,7 +29,8 @@ class ScheduleController implements ControllerInterface{
         // $intervals = $this->generateIntervals('14:00','21:00',30);
         // $db,array $idsServices,$idCompany
         // var_dump($this->getHours($db,[1],1));
-        var_dump($this->getMonthDays());
+        $days = $this->getAvailableDate($db,[1],1);
+        var_dump($days[2]);
         // var_dump($this->calculateTotalTime($db,[1]));
         die();
 
@@ -154,14 +155,13 @@ class ScheduleController implements ControllerInterface{
         $db->connect();
 
         //pegar datas disponiveis
-        $dates = 3;
         //pegar horarios disponiveis
-        $hours = $this->getHours($db,[1],1);
+        $hours = $this->getAvailableTimes($db,$args,1);
 
         //pegar colaboradores
         // $collaborators = new Collaborator();
         // $collaborators = $collaborators->get
-        $this->view = 'admin/registerAndUploadSchedule.php';
+        $this->view = 'admin/storeSchedule.php';
         $this->data = [
             'title'=>'Realizar agendamento | AgendaFacil',
             'navActive'=>'Agenda',
@@ -249,30 +249,18 @@ class ScheduleController implements ControllerInterface{
         return $collaborators;
     }
 
-    private function getAvailableDays(Db $db,$idCompany){
-        // dias do mes
-        $allDays = $this->getMonthDays();
-        //dias agendados completamente
-        $scheduledTimes = new Schedule();
-
-        $availableDays = [];
-        foreach ($allDays as $day) {
-            # code...
-        }
-    }
-
     private function getMonthDays(){
         $today = new \DateTime();
         $fisrtDay = new \DateTime($today->format('Y-m-01'));
         $daysOfMonth = [];
         while ($fisrtDay->format('m') == $today->format('m')) {
-            $daysOfMonth[] = intval($fisrtDay->format('j')); // 'j' para o dia do mês sem zeros à esquerda
+            $daysOfMonth[] = $fisrtDay->format('Y-m-j'); // 'j' para o dia do mês sem zeros à esquerda
             $fisrtDay->modify('+1 day');
         }
         return $daysOfMonth;
     }
-    
-    private function getAvailableTimes(Db $db,array $idsServices,$idCompany){
+
+    private function getAvailableTimes(Db $db,array $idsServices,$idCompany,$day){
         $amountServicesTime = $this->calculateTotalTime($db,$idsServices);
         $intervalString = "PT{$amountServicesTime->i}M";
         $amountServicesTime = new \DateInterval($intervalString);
@@ -286,7 +274,9 @@ class ScheduleController implements ControllerInterface{
         $intervals = $this->generateIntervals($start,$end,$amountServicesTime);
         //pegar horarios agendados
         $scheduledTimes = new Schedule();
-        $scheduledTimes  = $scheduledTimes->getScheduledTimes($db,$day);
+        $scheduledTimes  = $scheduledTimes->getScheduledTimes($db,2);
+        var_dump($scheduledTimes);
+        die();
         //criar novo array somente com horarios disponiveis
         $availableTimes = [];
         foreach ($intervals as $interval) {
@@ -294,13 +284,39 @@ class ScheduleController implements ControllerInterface{
                 $availableTimes[] = $interval;
             }
         }
-
-        //pensamento
-        if(count($availableTimes) === 0){
-            $day['available'] = false;
-        }
-        //retornar se horarios disponiveis
         return $availableTimes;
+    }
+
+    private function getAvailableDate(Db $db,array $idsServices,$idCompany){
+        $amountServicesTime = $this->calculateTotalTime($db,$idsServices);
+        $intervalString = "PT{$amountServicesTime->i}M";
+        $amountServicesTime = new \DateInterval($intervalString);
+        //pegar id da empresa
+        $company = new Company;
+        $company = $company->getById($db,$idCompany);
+        //pegar horarios
+        $start = new \DateTime($company->getOpeningHoursStart());
+        $end = new \DateTime($company->getOpeningHoursEnd());
+        //gerar intervalos possiveis
+        $intervals = $this->generateIntervals($start,$end,$amountServicesTime);
+        //pegar horarios agendados
+        $schedule = new Schedule();
+        $avaliableDays =[];
+       // –pegar um array somente com os dias que restam do mês a partir do atual —-
+       $monthDays = $this->getMonthDays();
+       foreach($monthDays as $day){
+            $scheduledTimes = $schedule->getScheduledTimes($db,$day);
+            //criar novo array somente com horarios disponiveis
+            $availableTimes = [];
+            foreach ($intervals as $interval) {
+                if(!$this->isScheduled($interval,$scheduledTimes,$amountServicesTime)){
+                    array_push($availableTimes,$interval);
+                }
+            }
+            Array_push($avaliableDays,["day"=>$day,"times"=>$availableTimes]);
+        }
+        //retornar se dias com horários disponiveis
+        return $avaliableDays;
     }
 
     public function isScheduled($interval, $blockedIntervals, \DateInterval $amountServicesTime) {

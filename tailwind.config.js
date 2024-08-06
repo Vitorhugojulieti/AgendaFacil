@@ -21,7 +21,9 @@ module.exports = {
       'white':"#ffff",
       'lightGray':"#C1C1C1",
       'text-gray':"#71717A",
-      'transparent':'transparent'
+      'transparent':'transparent',
+      'red':'#E22B20',
+      'orange':'#FFA500'
     },
     fontFamily: {
       Urbanist: ['Urbanist', 'sans'], 

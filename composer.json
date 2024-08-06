@@ -22,6 +22,7 @@
     "require": {
         "google/apiclient": "^2.16",
         "phpmailer/phpmailer": "^6.9",
-        "vlucas/phpdotenv": "^5.6"
+        "vlucas/phpdotenv": "^5.6",
+        "elephantio/elephant.io": "^4.7"
     }
 }

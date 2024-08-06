@@ -139,6 +139,7 @@ class LoginController implements ControllerInterface{
     
             $clientFound->removeAttribute('password');
             $_SESSION['user'] = $clientFound;
+            $_SESSION['auth'] = true;
     
             return redirect('/');
         }

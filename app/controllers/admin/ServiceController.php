@@ -126,11 +126,11 @@ class ServiceController implements ControllerInterface{
             }
             
             if($service->update($db,$service->getId())){
-                Flash::set('resultUpdateService', 'Serviço atualizado com sucesso!','message sucess');
+                Flash::set('resultUpdateService', 'Serviço atualizado com sucesso!','notification sucess');
                 return redirect("/admin/service");
             }
 
-            Flash::set('resultUpdateService', 'Erro ao editar serviço!','message error');
+            Flash::set('resultUpdateService', 'Erro ao editar serviço!','notification error');
             return redirect("/admin/service/edit");
         }
         
@@ -163,11 +163,11 @@ class ServiceController implements ControllerInterface{
             $images = $this->registerImages($db,$service,$_SESSION['collaborator']->getIdCompany(),$validateImages);   
 
             if(!$service || !$images){
-                Flash::set('resultInsertService', 'Erro ao cadastrar serviço!','error');
+                Flash::set('resultInsertService', 'Erro ao cadastrar serviço!','notification error');
                 return redirect("/admin/service/store");
             }
 
-            Flash::set('resultInsertService', 'Serviço cadastrado com sucesso!','sucess');
+            Flash::set('resultInsertService', 'Serviço cadastrado com sucesso!','notification sucess');
             return redirect("/admin/service");
         }
     }
@@ -235,11 +235,11 @@ class ServiceController implements ControllerInterface{
     
             $service = new Service();
             if($service->delete($db,intval($args[0]))){
-                Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','message sucess');
+                Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','notification sucess');
                 return redirect("/admin/service");
             }
 
-            Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','message error');
+            Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','notification error');
             return redirect("/admin/service");
         }
     }

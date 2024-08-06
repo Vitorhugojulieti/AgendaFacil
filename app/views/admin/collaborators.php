@@ -5,7 +5,7 @@
         <div class="w-full border-2 border-lightGray rounded-lg">
             <div class="flex items-center justify-between p-4 ">
                 <div class="flex flex-col items-start">
-                    <h2 class="text-black text-xl font-Urbanist font-normal flex items-center gap-2">Colaboradores <span class="text-xs font-medium text-principal10 bg-principal5 rounded p-1"><?php echo count($collaborators);?> resultados</span></h2>
+                    <h2 class="text-black text-xl font-Urbanist font-normal flex items-center gap-2">Colaboradores <span class="text-xs font-medium text-white bg-principal5 rounded p-1"><?php echo count($collaborators);?> resultados</span></h2>
                     <h3 class="text-sm text-borderFormColor">Gerencie os colaboradores de sua empresa.</h3>
                 </div>
                 <div class="flex items-center gap-4">

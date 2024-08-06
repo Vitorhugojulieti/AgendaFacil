@@ -1,7 +1,11 @@
 <main class="flex">
     <?php require __DIR__ . '/../includes/nav.php'; ?>
+    <!-- crud flash messages -->
+    <?php echo flash('resultInsertService');  ?>
+    <?php echo flash('resultUpdateService');  ?>
+    <?php echo flash('reultDeleteService');  ?>
 
-    <div class="w-full min-h-screen flex flex-col justify-start items-start bg-white p-4">
+    <div class="w-full min-h-screen flex flex-col justify-start items-start bg-white p-4 ">
         <div class="w-full border-2 border-lightGray rounded-lg">
             <div class="flex items-center justify-between p-4 ">
                 <div class="flex flex-col items-start">
@@ -72,10 +76,7 @@
             </div>
         </div>
     </div>
-    <!-- crud flash messages -->
-    <?php echo flash('resultInsertService');  ?>
-    <?php echo flash('resultUpdateService');  ?>
-    <?php echo flash('reultDeleteService');  ?>
+
 
      <!-- modais -->
      <dialog id="modalService" class="w-2/4 bg-white text-black rounded p-4 ">

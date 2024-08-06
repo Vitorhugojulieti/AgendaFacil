@@ -1,6 +1,6 @@
 <body style="overflow-y:auto; overflow-x:hidden;">
     <div class="absolute w-full min-h-screen flex flex-col justify-center items-center bg-principal10 p-4 mb-4">
-        <form action="/admin/signup/store" method="post" enctype="multipart/form-data" class="w-5/6 md:w-3/5 flex flex-col items-center justify-center gap-8 ">
+        <form action="/admin/signup/store" id="formCadCompany" method="post" enctype="multipart/form-data" class="w-5/6 md:w-3/5 flex flex-col items-center justify-center gap-8 ">
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">
             <a href="/"><img src="/assets/images/logo-white.png" alt="logo" ></a>
             <legend class="font-Urbanist font-semibold text-white text-2xl md:text-3xl">Bem vindo a plataforma!</legend>

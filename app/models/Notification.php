@@ -9,17 +9,18 @@ class Notification implements ModelInterface{
     private int $idSender;
     private string $message;
     private string $link;
-    private string $typeNotification;
-    private string $date;
-    private string $table = "notifications";
+    private \Datatime $date;
+    private int $notified;
+    private string $table = "Notifications";
 
-    public function __construct($idRecipient = 0, $idSender = 0, $message = "", $link = "", $typeNotification = "",$date = ""){
+    public function __construct($idRecipient = 0, $idSender = 0, $message = "", $link = "", $typeNotification = "",$date = new \Datatime(),$notified = 0){
         $this->idRecipient = $idRecipient;
         $this->idSender = $idSender;
         $this->message = $message;
         $this->link = $link;
         $this->typeNotification = $typeNotification;
         $this->date = $date;
+        $this->notified = $notified;
     }
 
     public function getAll(Db $db){
@@ -56,6 +57,7 @@ class Notification implements ModelInterface{
             'link' => $this->getLink(),
             'typeNotification'=>$this->getTypeNotification(),
             'date'=>$this->getDate(),
+            'notified'=>$this->getNotified(),
         ];
         if ($db->insert($data)) {
             return true;
@@ -149,12 +151,20 @@ class Notification implements ModelInterface{
         $this->typeNotification = $typeNotification;
     }
 
-    function getDate(): string{
+    function getDate(): \Datatime{
         return $this->date;
     }
 
-    function setDate(string $date): void{
+    function setDate(Datatime $date): void{
         $this->date = $date;
+    }
+
+    function getNotified(): int{
+        return $this->notified;
+    }
+
+    function setNotified(int $notified): void{
+        $this->notified = $notified;
     }
 }
 

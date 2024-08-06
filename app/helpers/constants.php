@@ -9,6 +9,7 @@ define('PASSWORD', 'ValidatePassword');
 define('CNPJ', 'ValidateCnpj');
 define('IMAGE', 'ValidateImage');
 define('TIME', 'ValidateTime');
+define('DATE', 'ValidateDate');
 
 // config
 define('ROOT', dirname(__FILE__, 3));

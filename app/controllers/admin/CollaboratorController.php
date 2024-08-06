@@ -138,11 +138,11 @@ class CollaboratorController implements ControllerInterface{
                 }
                 
                 if($collaborator->update($db,$collaborator->getId())){
-                    Flash::set('resultUpdateCollaborator', 'Colaborador editado com sucesso!','messagesucess');
+                    Flash::set('resultUpdateCollaborator', 'Colaborador editado com sucesso!','notification sucess');
                     return redirect("/admin/collaborator");
                 }
 
-                Flash::set('resultUpdateCollaborator', 'Erro ao editar colaborador!','messageerror');
+                Flash::set('resultUpdateCollaborator', 'Erro ao editar colaborador!','notification error');
                 return redirect("/admin/collaborator/edit/".$collaborator->getId());
         }
         
@@ -184,11 +184,11 @@ class CollaboratorController implements ControllerInterface{
             $services = $this->registerCollaboratorServices($db,$validateServices,$collaborator->getId(),$_SESSION['collaborator']->getIdCompany());
             
             if(!$collaborator || !$services){
-                Flash::set('resultInsertCollaborator', 'Erro ao cadastrar colaborador!','message error');
+                Flash::set('resultInsertCollaborator', 'Erro ao cadastrar colaborador!','notification error');
                 return redirect("/admin/collaborator/store");
             }
 
-            Flash::set('resultInsertCollaborator', 'Colaborador cadastrado com sucesso!','message sucess');
+            Flash::set('resultInsertCollaborator', 'Colaborador cadastrado com sucesso!','notification sucess');
             unset($_SESSION['old']);
             return redirect("/admin/collaborator");
         }
@@ -271,11 +271,11 @@ class CollaboratorController implements ControllerInterface{
     
             $collaborator = new Collaborator();
             if($collaborator->delete($db,intval($args[0]))){
-                Flash::set('reultDeleteCollaborator', 'Colaborador excluido com sucesso!','messagesucess');
+                Flash::set('reultDeleteCollaborator', 'Colaborador excluido com sucesso!','notification sucess');
                 return redirect("/admin/collaborator");
             }
 
-            Flash::set('reultDeleteCollaborator', 'Erro ao excluir colaborador!','messageerror');
+            Flash::set('reultDeleteCollaborator', 'Erro ao excluir colaborador!','notification error');
             return redirect("/admin/collaborator");
         }
     }

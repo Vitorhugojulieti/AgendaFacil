@@ -1,5 +1,5 @@
 <!-- HEADER FOR COMPANY -->
-<?php if(isset($_SESSION['collaborator'])){ ?>
+<?php if(isset($_SESSION['collaborator']) && $_SESSION['auth']){ ?>
 <header class="flex flex-col  gap-4 p-4 border-b-2 border-lightGray">
     <div class="w-full flex justify-between items-center">
         <a href="#"><img src="/assets/images/logo.png" alt="logo agendaFacil"></a>
@@ -12,17 +12,22 @@
         <div class="buttons flex items-center gap-6">
             <button class="flex items-center gap-2">
                 <i class='bx bx-bell' ></i>
-                <span>Notificações</span>
+                <span id="btnOpenPopUpNotification">Notificações</span>
                 <span>1</span>
+
+                <div id="popUpNotification" class="hidden flex-col items-start bg-white  rounded-xl pop-menu-notification shadow-sm shadow-black ">
+                    <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
+                    <a href="/login/destroy" class="p-2 flex items-center gap-1 hover:bg-lightGray" ><i class='bx bx-log-out' style='color:#223249' ></i>Logout</a>
+                </div>
             </button>
 
             <div class="avatar-user relative">
                 <!-- <img src="" alt=""> -->
                 <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['collaborator']) ? '../'.$_SESSION['collaborator']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator">
 
-                <div id="popUpAvatar" class="hidden flex-col items-start bg-white  rounded-xl pop-menu shadow-sm shadow-black ">
-                    <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
-                    <a href="/admin/login/destroy" class="p-2 flex items-center gap-1 hover:bg-lightGray" ><i class='bx bx-log-out' style='color:#223249' ></i>Logout</a>
+                <div id="popUpAvatar" class="hidden flex-col items-start bg-white  rounded-xl pop-menu-avatar shadow-sm shadow-black ">
+                    <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray rounded-t-xl hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
+                    <a href="/admin/login/destroy" class="p-2 flex items-center gap-1 rounded-b-xl hover:bg-lightGray" ><i class='bx bx-log-out' style='color:#223249' ></i>Logout</a>
                 </div>
             </div>
         </div>
@@ -33,7 +38,7 @@
 </header>
 
 <!-- HEADER FOR USER -->
-<?php    }else if(isset($_SESSION['user'])){ ?>
+<?php    }else if(isset($_SESSION['user']) && $_SESSION['auth']){ ?>
 
 <header class="flex flex-col  gap-4 p-4 border-b-2 border-lightGray">
     <div class="w-full flex justify-between items-center">
@@ -47,15 +52,20 @@
         <div class="buttons flex items-center gap-6">
             <button class="flex items-center gap-2">
                 <i class='bx bx-bell' ></i>
-                <span>Notificações</span>
+                <span id="btnOpenPopUpNotification">Notificações</span>
                 <span>1</span>
+
+                <div id="popUpNotification" class="hidden flex-col items-start bg-white  rounded-xl pop-menu-notification shadow-sm shadow-black ">
+                    <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
+                    <a href="/login/destroy" class="p-2 flex items-center gap-1 hover:bg-lightGray" ><i class='bx bx-log-out' style='color:#223249' ></i>Logout</a>
+                </div>
             </button>
 
             <div class="avatar-user relative">
                 <!-- <img src="" alt=""> -->
                 <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['user']) ? $_SESSION['user']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator">
 
-                <div id="popUpAvatar" class="hidden flex-col items-start bg-white  rounded-xl pop-menu shadow-sm shadow-black ">
+                <div id="popUpAvatar" class="hidden flex-col items-start bg-white  rounded-xl pop-menu-avatar shadow-sm shadow-black ">
                     <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
                     <a href="/login/destroy" class="p-2 flex items-center gap-1 hover:bg-lightGray" ><i class='bx bx-log-out' style='color:#223249' ></i>Logout</a>
                 </div>

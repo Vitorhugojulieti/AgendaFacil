@@ -3,13 +3,22 @@
         'name' => 'windows/agenda-facil',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '53bfb69fed03fc02be91b5fb0190a018f3a5fcd9',
+        'reference' => 'b97bd190b7b866ef2ce7a7bf4f3cb92a466003ad',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
+        'elephantio/elephant.io' => array(
+            'pretty_version' => 'v4.7.2',
+            'version' => '4.7.2.0',
+            'reference' => '3941a473f5c0d3c1755bf63e7bdd9ac07578752f',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../elephantio/elephant.io',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'firebase/php-jwt' => array(
             'pretty_version' => 'v6.10.1',
             'version' => '6.10.1.0',
@@ -262,7 +271,7 @@
         'windows/agenda-facil' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '53bfb69fed03fc02be91b5fb0190a018f3a5fcd9',
+            'reference' => 'b97bd190b7b866ef2ce7a7bf4f3cb92a466003ad',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

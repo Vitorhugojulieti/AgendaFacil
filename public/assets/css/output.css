@@ -652,6 +652,10 @@ video {
   margin-bottom: 1rem;
 }
 
+.mb-8{
+  margin-bottom: 2rem;
+}
+
 .ml-2{
   margin-left: 0.5rem;
 }
@@ -717,8 +721,8 @@ video {
   height: 100vh;
 }
 
-.max-h-80{
-  max-height: 20rem;
+.max-h-48{
+  max-height: 12rem;
 }
 
 .min-h-full{
@@ -773,10 +777,6 @@ video {
   width: 83.333333%;
 }
 
-.w-9{
-  width: 2.25rem;
-}
-
 .w-full{
   width: 100%;
 }
@@ -788,6 +788,10 @@ video {
 
 .w-screen{
   width: 100vw;
+}
+
+.flex-1{
+  flex: 1 1 0%;
 }
 
 .scale-110{
@@ -928,6 +932,16 @@ video {
   border-radius: 0.75rem;
 }
 
+.rounded-b-xl{
+  border-bottom-right-radius: 0.75rem;
+  border-bottom-left-radius: 0.75rem;
+}
+
+.rounded-t-xl{
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+
 .border{
   border-width: 1px;
 }
@@ -1025,6 +1039,11 @@ video {
   background-color: rgb(193 193 193 / var(--tw-bg-opacity));
 }
 
+.bg-orange{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 165 0 / var(--tw-bg-opacity));
+}
+
 .bg-principal10{
   --tw-bg-opacity: 1;
   background-color: rgb(34 50 73 / var(--tw-bg-opacity));
@@ -1038,6 +1057,16 @@ video {
 .bg-principal9{
   --tw-bg-opacity: 1;
   background-color: rgb(50 80 118 / var(--tw-bg-opacity));
+}
+
+.bg-red{
+  --tw-bg-opacity: 1;
+  background-color: rgb(226 43 32 / var(--tw-bg-opacity));
+}
+
+.bg-sucessColor{
+  --tw-bg-opacity: 1;
+  background-color: rgb(34 197 94 / var(--tw-bg-opacity));
 }
 
 .bg-transparent{
@@ -1102,6 +1131,10 @@ video {
 
 .pb-28{
   padding-bottom: 7rem;
+}
+
+.pl-0{
+  padding-left: 0px;
 }
 
 .pl-2{
@@ -1424,6 +1457,65 @@ input[type=number] {
   content:none;
 }
 
+/* steps for details schedule */
+
+.bullet.schedule{
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: #223249;
+  color: black;
+  font-weight: bold;
+  position: relative;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bullet.schedule.complete > span{
+  display: block;
+}
+
+/* .bullet.schedule > i{
+  display: block;
+} */
+
+.bullet.schedule.complete > i{
+  display: block;
+}
+
+.bullet.schedule::before{
+  position: absolute;
+  content: '';
+  bottom: 11px;
+  left: 3rem;
+  height: 3px;
+  width: 18rem;
+  background-color: #fff;
+}
+
+.bullet.schedule.complete{
+  background-color: #223249;
+}
+
+.bullet.schedule.complete > span > i{
+  color: #22C55E;
+}
+
+.bullet.schedule.complete + span{
+  color: #22C55E;
+}
+
+.bullet.schedule.complete::before{
+  z-index: 10;
+  background-color: #22C55E;
+}
+
+.bullet.schedule.last::before{
+  content:none;
+}
+
 /* redond image form company */
 
 .redondShapeImage{
@@ -1479,16 +1571,44 @@ input[type=number] {
 
 /* message style  */
 
-.message{
-  color: #CBE3F2;
-  text-shadow: 1px 1px 1px #000;
-  padding: 1rem;
-  border-radius: .5rem;
+.notification{
   position: absolute;
-  left: 80%;
-  top:80%;
+  transform: translateX(-50%);
+  left: 45%;
+  top:3%;
+  display: inline-block;
+  max-width: 300px;
+  padding: 20px 15px;
+  border-radius: 4px;
+  background-color: #141619;
+  color: #f6f5f9;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   opacity: 0;
-  animation: fadeInOut 4s forwards;
+  visibility: hidden;
+  animation: fade 4s linear forwards;
+  z-index: 10;
+}
+
+@keyframes fade{
+  5%{
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0px);
+  }
+
+  90%{
+    opacity: 1;
+    transform: translateY(0px);
+  }
+
+  95%{
+    opacity: 0;
+  }
+
+  100%{
+    opacity: 0;
+    transform: translateY(-30px);
+  }
 }
 
 .sucess{
@@ -1521,16 +1641,20 @@ input[type=number] {
 
 .assessment{
   top: 80%;
-  left: 65%
+  left: 55%
 }
 
 /* pop menu  */
 
-.pop-menu{
+.pop-menu-avatar,.pop-menu-notification{
   position: absolute;
   z-index: 10;
   left: -190%;
   top: 110%;
+}
+
+.pop-menu-notification{
+  left: -180%;
 }
 
 /* span config */
@@ -1538,6 +1662,20 @@ input[type=number] {
 fieldset > div > div > div > span,fieldset > div > div > span,fieldset > div > span{
   content: "";
   padding: .25rem;
+}
+
+.day-selected{
+  background-color: #223249;
+  color: #fff;
+}
+
+.time-selected{
+  background-color: red !important;
+  color: #fff;
+}
+
+.collaborator-selected{
+  border:2px solid #000;
 }
 
 /* bg-chart for login adm */

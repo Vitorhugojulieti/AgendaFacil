@@ -45,9 +45,9 @@
         <h2 class="border-b-2 border-b-white">Menu</h2>
 
         <li class="<?php echo $navActive ==='home' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-home'></i><a  href="/" class="hover:underline">Home</a></li>
-        <li class="<?php echo $navActive ==='Agenda' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-calendar'></i><a  href="#" class="hover:underline">Agenda</a></li>
+        <li class="<?php echo $navActive ==='Agenda' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-calendar'></i><a  href="/schedule/" class="hover:underline">Agenda</a></li>
         <li class="<?php echo $navActive ==='Cupons' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class="fa-solid fa-ticket"></i><a href="#"  class="hover:underline">Cupons</a> <span class="border-2 border-principal5 text-principal5 rounded px-2 text-sm">Pro</span></li>
-        <li class="<?php echo $navActive ==='Dados' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-data'></i><a href="#"  class="hover:underline">Dados usuario</a></li>
+        <li class="<?php echo $navActive ==='Dados' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-data'></i><a href="/data"  class="hover:underline">Dados usuario</a></li>
     </ul>
 
     <div class="btns flex flex-col gap-4">
