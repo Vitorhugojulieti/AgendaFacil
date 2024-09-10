@@ -2,16 +2,16 @@
     <?php require __DIR__ . '/../includes/nav.php'; ?>
 
     <div class="w-full min-h-screen flex flex-col justify-start items-start bg-white p-4">
-        <div class="w-full border-2 border-lightGray rounded-lg">
+        <div class="w-full border border-lightGray rounded-lg">
             <div class="flex items-center justify-between p-4 ">
                 <div class="flex flex-col items-start">
                     <h2 class="text-black text-xl font-Urbanist font-normal flex items-center gap-2">Colaboradores <span class="text-xs font-medium text-white bg-principal5 rounded p-1"><?php echo count($collaborators);?> resultados</span></h2>
                     <h3 class="text-sm text-borderFormColor">Gerencie os colaboradores de sua empresa.</h3>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="search w-2/4 text-lightGray flex border-lightGray border-2 rounded focus-within:border-principal10 focus-within:text-principal10">
+                    <div class="search w-2/4 text-lightGray flex border-lightGray border rounded focus-within:border-principal10 focus-within:text-principal10">
                         <input type="text" id="inputSearch" class="w-full ml-2 outline-none" placeholder="Faça sua pesquisa">
-                        <i class='bx bx-search p-2 border-l-2'></i>
+                        <i class='bx bx-search p-2 border-l'></i>
                     </div>
 
                     <div class="btns flex items-center gap-4">
@@ -39,7 +39,7 @@
                                 <div class="flex items-center gap-2">
                                     <img src="<?php echo $collaborator ? '../'.$collaborator->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator">
                                     <div class="flex flex-col ">
-                                        <h3><?php echo $collaborator->getName();?></h3>
+                                        <h3 class="font-semibold"><?php echo $collaborator->getName();?></h3>
                                         <h3><?php echo $collaborator->getEmail();?></h3>
                                     </div>
                                 </div>
@@ -80,15 +80,16 @@
     <?php echo flash('reultDeleteCollaborator');  ?>
 
      <!-- modais -->
-     <dialog id="modalCollaborators" class="w-2/4 bg-white text-black rounded p-4 ">
+     <dialog id="modalCollaborators" class="w-1/4 bg-white text-black rounded p-4 ">
         <div class="w-full flex justify-between items-center mb-4">
-            <div class="flex gap-4 items-center">
-                <h2 id="messageDelete"></h2>  
+            <div class="flex flex-col gap-4 items-start ">
+                <i class='bx bx-trash text-3xl' style='color:#223249'  ></i>
+                <h2 class="text-xl text-principal10 font-Poppins font-semibold" id="messageDelete"></h2>  
             </div>
-            <button id="btnCloseModalCollaborator" class="outline-none"><i class='bx bx-x-circle text-3xl'></i></button>
         </div>
-        <div>
-            <a id="btnDelete" href="">Excluir</a>
+        <div class="w-full flex items-center gap-4">
+            <button id="btnCloseModalCollaborator"  class="w-full border border-grayInput text-principal10 p-2 rounded hover:underline ">Cancelar</button>
+            <button id="btnDelete"  class="w-full bg-errorColor text-white rounded p-2 border border-red hover:underline ">Excluir</button>
         </div>
     </dialog>
 

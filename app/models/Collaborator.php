@@ -40,7 +40,7 @@ class Collaborator implements ModelInterface{
 
     public function totalRecords(Db $db){
         $db->setTable($this->table);
-        $total = $db->totalRecords();
+        $total = $db->totalRecords("Company_idCompany = {$this->getIdCompany()}");
         return $total[0]['total'];
     }
 
@@ -85,6 +85,21 @@ class Collaborator implements ModelInterface{
         $colllaboratorObject->setId($collaboratorFound[0]['idCollaborator'],);
         // $colllaboratorObject->services = $colllaboratorObject->getServices();
         return $colllaboratorObject;
+    }
+
+    public function getByCompany(Db $db,$idCompany){
+        $db->setTable($this->table);
+        $Collaborators = $db->query("*","Company_idCompany={$idCompany}");
+        $arrayObjectsCollaborator =[];
+
+        foreach ($Collaborators as $collaborator){
+            $newCollaborator = new Collaborator($collaborator['avatar'],$collaborator['name'],$collaborator['cpf'],$collaborator['phone'],$collaborator['email'],$collaborator['password'],$collaborator['nivel'],$collaborator['Company_idCompany'],$collaborator['registrationDate'],$collaborator['registrationComplete']);
+            $newCollaborator->setId($collaborator['idCollaborator']);
+            // $newCollaborator->services = $newCollaborator->getServices();
+            array_push($arrayObjectsCollaborator,$newCollaborator);
+        }
+        
+        return $arrayObjectsCollaborator;
     }
 
     public function setServices(array $services){
@@ -219,7 +234,7 @@ class Collaborator implements ModelInterface{
 
     public function delete(Db $db,int $id){
         $db->setTable($this->table);
-        return $db->delete("idCollaborator={$id}");
+        return $db->delete("idCollaborator={$id} AND Company_idCompany={$idCompany}");
     }
 
     public function removeAttribute($attribute) {

@@ -95,6 +95,7 @@ class SignupController{
                 $_SESSION['user']->setPhone($phone);
                 $_SESSION['user']->setCpf($cpf);
                 $_SESSION['user']->setRegistrationComplete(1);
+                $_SESSION['auth'] = true;
 
                 redirect('/');
             }

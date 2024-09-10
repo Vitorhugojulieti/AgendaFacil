@@ -10,6 +10,9 @@ use app\classes\Validate;
 use app\classes\BlockNotAdmin;
 use app\classes\Flash;
 use app\classes\Cart;
+use app\classes\Breadcrumb;
+use app\classes\MercadoPagoIntegration;
+
 
 class ScheduleController implements ControllerInterface{
     public array $data = [];
@@ -17,28 +20,32 @@ class ScheduleController implements ControllerInterface{
     public string $master = 'master.php';
 
     public function index(array $args){
+        verifySession();
+
         $db = new Db();
         $db->connect();
         // var_dump('agendouuuu');
         // die();
    
-        $schedules = new Schedule();
-        $schedules = $schedules->getByClient($db,$_SESSION['user']->getId());
+        // $schedules = new Schedule();
+        // $schedules = $schedules->getByClient($db,$_SESSION['user']->getId());
 
-        if(isset($args)){
-            if(count($args) > 0){
-                if($args[0] === "status"){
-                    $schedules = $this->filterByStatus($schedules,ucfirst($args[1]));
-                    var_dump($schedules);
+        // if(isset($args)){
+        //     if(count($args) > 0){
+        //         if($args[0] === "status"){
+        //             $schedules = $this->filterByStatus($schedules,ucfirst($args[1]));
+        //             var_dump($schedules);
 
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
 
         $this->view = 'client/agenda.php';
         $this->data = [
             'title'=>'Agenda | AgendaFacil',
-            'schedules'=>$schedules,
+            // 'schedules'=>$schedules,
+            'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+            'breadcrumb'=>Breadcrumb::get()
         ];
     }
 
@@ -64,6 +71,8 @@ class ScheduleController implements ControllerInterface{
     }
 
     public function show(array $args){
+        verifySession();
+
         $db = new Db();
         $db->connect();
         // var_dump('agendouuuu');
@@ -75,6 +84,8 @@ class ScheduleController implements ControllerInterface{
         $this->data = [
             'title'=>'Detalhes agendamento | AgendaFacil',
             'schedule'=>$schedule,
+            'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+            'breadcrumb'=>Breadcrumb::get()
         ];
     }
 
@@ -88,21 +99,25 @@ class ScheduleController implements ControllerInterface{
     }
 
     public function store(array $args){
+        verifySession();
+
         $db = new Db();
         $db->connect();
         $serviceManager = new Service();
         
-        var_dump($_SESSION['cart']);
         
-        if($args){
-            Cart::add($serviceManager->getById($db,intval($args[0])));
+        if(isset($args[0])){
+            $service = $serviceManager->getById($db,intval($args[0]));
+            if($service){
+                Cart::add($service);
+            }
             $collaborators = $this->getCollaboratorsByServices($db,Cart::get(),Cart::getIdCompany());
-
             $idCompany = Cart::getIdCompany();
         }
 
         if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])){
             //get services for modal add service
+            $collaborators = $this->getCollaboratorsByServices($db,Cart::get(),Cart::getIdCompany());
             $services = $serviceManager->getByCompany($db,Cart::getIdCompany());
             $servicesNotInCart = [];
             foreach ($services as $service) {
@@ -127,6 +142,8 @@ class ScheduleController implements ControllerInterface{
             'services'=>isset($services) ? $services : [],
             'amount'=>isset($amount) ? $amount : '0.00',
             'servicesCompany'=> isset($servicesNotInCart) ? $servicesNotInCart : [],
+            'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+
         ];
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -149,8 +166,8 @@ class ScheduleController implements ControllerInterface{
                     return redirect("/schedule/store/show");
                 }
 
-                Flash::set('resultInsertSchedule', 'Serviço agendado com sucesso!','message sucess');
-                return redirect("/schedule");
+                // Flash::set('resultInsertSchedule', 'Serviço agendado com sucesso!','message sucess');
+                return redirect("/schedule/paymentSchedule/".$schedule->getTotalPaid());
             }
             return redirect("/");
         }
@@ -181,6 +198,8 @@ class ScheduleController implements ControllerInterface{
 
             $day = intval($_GET['day']);
             $cart = Cart::get();
+            // var_dump($cart);
+            // die();
 
             $amountServicesTime = $this->calculateTotalTime($cart);
       
@@ -190,10 +209,7 @@ class ScheduleController implements ControllerInterface{
             $company = new Company;
             $company = $company->getById($db,Cart::getIdCompany());
   
-            $start = new \DateTime($company->getOpeningHoursStart());
-            $end = new \DateTime($company->getOpeningHoursEnd());
-       
-            $intervals = $this->generateIntervals($start, $end, $amountServicesTime);
+            $intervals = $this->generateIntervals($company->getOpeningHoursStart(), $company->getOpeningHoursEnd(), $amountServicesTime);
          
             $scheduledTimes = new Schedule();
             $scheduledTimes = $scheduledTimes->getScheduledTimes($db, $day);
@@ -213,6 +229,42 @@ class ScheduleController implements ControllerInterface{
             echo json_encode(['error' => 'Parameter "day" is required']);
         }
     }
+
+    public function getSchedules(){
+        //evita erros com o mvc
+        $this->master = 'masterapi.php';
+        $this->view = 'api.php';
+        $this->data = [
+            'title'=>'api',
+        ];
+
+        if (isset($_GET['day']) && isset($_GET['month']) ) {
+            // if (isset($_GET['day']) && isset($_GET['month']) && isset($_SESSION['user']) && isset($_SESSION['auth'])) {
+            // returnin ['schedules'=> $schedulesDayForMonth];
+            $day = intval($_GET['day']);
+            $month = intval($_GET['month']);
+
+            $date = new \DateTime();
+            $date->setDate(date('Y'), $month, $day);
+            $date->setTime(0, 0, 0);
+
+            $db = new Db();
+            $db->connect();
+
+            $schedules = new Schedule();
+            $schedules = $schedules->getByClient($db,1);
+            // $schedules = $schedules->getByClient($db,$_SESSION['user']->getId());
+            
+            $schedules = array_filter($schedules, fn($schedule) => $schedule->getDateSchedule() == $date);
+
+            header('Content-Type: application/json');
+            echo json_encode($schedules);
+            exit();
+        }else {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Parameter "day" and "month" is required']);
+        }
+    }
    
 
     public function isScheduled($interval, $blockedIntervals, \DateInterval $amountServicesTime) {
@@ -229,21 +281,38 @@ class ScheduleController implements ControllerInterface{
         return false;
     }
 
-    private function calculateTotalTime(array $services){
-        $amountServicesTime = new \DateInterval('PT0H0M');
-        for ($i=0; $i < count($services); $i++) { 
-            list($h, $m) = explode(':', $services[$i]->getDuration());
-            $amountServicesTime->h += $h;
-            $amountServicesTime->i += $m;
-
-            if ($amountServicesTime->i >= 60) {
-                $amountServicesTime->h += floor($amountServicesTime->i / 60);
-                $amountServicesTime->i = $amountServicesTime->i % 60;
+    private function calculateTotalTime(array $services) {
+        $totalTime = new \DateInterval('PT0H0M');
+        $now = new \DateTime();
+        $baseDateTime =new \DateTime($now->format('Y-m-d') . ' 00:00:00');
+        // var_dump($baseDateTime);
+        // die();
+    
+        foreach ($services as $service) {
+            $duration = $service->getDuration(); // Isso é um DateTime
+            
+            // Calcula a diferença entre a baseDateTime e a duração
+            $interval = $baseDateTime->diff($duration);
+            
+            // Adiciona o intervalo à totalTime
+            $totalTime->h += $interval->h;
+            $totalTime->i += $interval->i;
+            $totalTime->s += $interval->s;
+    
+            // Normaliza o tempo
+            if ($totalTime->s >= 60) {
+                $totalTime->i += intdiv($totalTime->s, 60);
+                $totalTime->s %= 60;
+            }
+            if ($totalTime->i >= 60) {
+                $totalTime->h += intdiv($totalTime->i, 60);
+                $totalTime->i %= 60;
             }
         }
-        return $amountServicesTime;
+    
+        return $totalTime;
     }
-
+ 
     function generateIntervals(\DateTime $start, \DateTime $end, \DateInterval $interval) {
         $intervals = [];
         $current = clone $start;
@@ -281,19 +350,21 @@ class ScheduleController implements ControllerInterface{
     private function registerSchedule($db,$validateData,$idClient,$idCompany){
         $durationServices = $this->calculateTotalTime(Cart::get());
        
-        $endTime =  new \DateTime($validateData->data['time']);
+        $endTime =  $validateData->data['time'];
         $endTime->add($durationServices);
-   
+
         $schedule = new Schedule($idClient,
             $idCompany,
-            0,0,'','',
+            0,10,0,'',
+            'obs',
             'Aguardando pagamento',
-            new \DateTime($validateData->data['time']),
+            $validateData->data['time'],
             $endTime,
             $validateData->data['day']);
-            
+            // var_dump($schedule);
+            // die();
         $schedule->insert($db);
-        $schedule = $schedule->getByDataTime($db,$validateData->data['day'],new \DateTime($validateData->data['time']),$idCompany);
+        $schedule = $schedule->getByDataTime($db,$validateData->data['day'],$validateData->data['time'],$idCompany);
         return $schedule ? $schedule : false;
     }
 
@@ -315,6 +386,56 @@ class ScheduleController implements ControllerInterface{
             }
         }
        return $ok;
+    }
+
+    public function paymentSchedule(array $args){
+        
+        $this->view = 'client/payment.php';
+        $this->data = [
+            'title'=>'Realizar agendamento | AgendaFacil',
+            'navActive'=>'Agenda',
+            'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+            // 'amount'=>$amount,
+            // 'preference_id'=>1
+            // pegar id do agendamento criado para vincular esse pagamento
+        ];
+
+
+
+        $scheduleId = 2;
+        $accessToken =  $_ENV['ACESSSTOKEN'];
+
+        $mercadoPago = new MercadoPagoIntegration($accessToken);
+
+        if(isset($args)){
+            $amount = floatval($args[0]);
+        }
+
+        if ($scheduleId) {
+            $paymentData = $mercadoPago->createPayment($amount,$scheduleId);
+
+            var_dump($paymentData);
+            if ($paymentData) {
+                $preferenceId = $paymentData['preference_id'];
+                $externalReference = $paymentData['external_reference'];
+
+                echo "<h3>{$amount} #{$externalReference}</h3> <br />";
+                if (in_array('card',$args)) {
+                    // Display the preference ID and external reference
+                    echo "<input type='hidden' id='preference_id' value='{$preferenceId}'>";
+                    echo "<input type='hidden' id='external_reference' value='{$externalReference}'>";
+                } else {
+                    // Redirect to the checkout page
+                    redirect('/schedule/store');
+                }
+            } else {
+                // Handle payment creation failure
+                echo 'Error creating payment';
+            }
+        } else {
+            // Handle payment addition failure
+            echo 'Error adding payment';
+        }
     }
 
     public function destroy(array $args){

@@ -24,6 +24,10 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
     );
 
     public static $prefixLengthsPsr4 = array (
+        'v' => 
+        array (
+            'vendor\\' => 7,
+        ),
         'p' => 
         array (
             'phpseclib3\\' => 11,
@@ -77,6 +81,10 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
     );
 
     public static $prefixDirsPsr4 = array (
+        'vendor\\' => 
+        array (
+            0 => 'C:\\Users\\windows\\Documents\\tcc\\AgendaFacil\\vendor',
+        ),
         'phpseclib3\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',

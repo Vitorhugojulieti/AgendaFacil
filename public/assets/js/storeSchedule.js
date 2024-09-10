@@ -16,11 +16,11 @@ document.addEventListener('change', function(event) {
     }
 });
 
-var socket = io('http://localhost:3000');
-    socket.on('connect', function() {
-      console.log('Conectado ao servidor WebSocket');
-      socket.send('Olá, servidor!');
-    });
-    socket.on('response', function(data) {
-      console.log('Resposta do servidor:', data);
-    });
+// var socket = io('http://localhost:3000');
+//     socket.on('connect', function() {
+//       console.log('Conectado ao servidor WebSocket');
+//       socket.send('Olá, servidor!');
+//     });
+//     socket.on('response', function(data) {
+//       console.log('Resposta do servidor:', data);
+//     });

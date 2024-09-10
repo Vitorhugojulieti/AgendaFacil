@@ -25,8 +25,7 @@ class NotificationController {
 
         $this->view = 'admin/vouchers.php';
         $this->data = [
-            'title'=>'Vales de serviços | AgendaFacil',
-            'vouchers'=>$vouchers,
+            'title'=>'Notificações | AgendaFacil',
             'navActive'=>'Cupons',
         ];
     }

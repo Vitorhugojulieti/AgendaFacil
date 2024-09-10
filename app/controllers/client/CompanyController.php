@@ -15,6 +15,8 @@ class CompanyController implements ControllerInterface{
     public string $master = 'masterAdmin.php';
 
     public function index(array $args){
+        verifySession();
+
         $db = new Db();
         $db->connect();
 
@@ -36,6 +38,7 @@ class CompanyController implements ControllerInterface{
     }
 
     public function edit(array $args){
+
         BlockNotAdmin::block($this,['edit']);
         if(isset($args)){
             $db = new Db();
@@ -58,6 +61,8 @@ class CompanyController implements ControllerInterface{
     }
 
     public function show(array $args){
+        verifySession();
+
         if(isset($args)){
             $db = new Db();
             $db->connect();

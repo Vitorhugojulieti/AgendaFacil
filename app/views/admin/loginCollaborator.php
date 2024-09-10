@@ -7,24 +7,24 @@
             <legend class="font-Urbanist font-semibold text-white text-3xl">Bem vindo de volta!</legend>
             <fieldset class="w-2/4 flex flex-col items-start justify-center gap-1 ">
                 <!-- campo -->
-                <div class="field w-full focus-within:text-white text-borderFormColor">
+                <div class="field w-full focus-within:text-white text-lightGrayInput">
                     <div>
                         <label for="inputEmail" >Email</label>
                     </div>
-                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-white focus-within:text-white">
+                    <div class="flex items-center border-2 border-lightGrayInput rounded focus-within:border-white focus-within:text-white">
                         <i class='bx bx-envelope' style='padding-left:1rem; padding-right:1rem;' ></i>
-                        <input type="text" name="email" id="inputEmail" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite seu email">
+                        <input type="text" name="email" id="inputEmail" class="w-full p-2 outline-none bg-transparent border-l-2 border-lightGrayInput transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite seu email">
                     </div>
                     <span class="text-errorColor " id="msgEmailError"><?php echo flash('loginCollaborator');  ?></span>
                 </div>
                 <!-- campo -->
-                <div class="field w-full focus-within:text-white text-borderFormColor">
+                <div class="field w-full focus-within:text-white text-lightGrayInput">
                     <div>
                         <label for="inputPassword" >Senha</label>
                     </div>
-                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-white focus-within:text-white">
+                    <div class="flex items-center border-2 border-lightGrayInput rounded focus-within:border-white focus-within:text-white">
                         <i class='bx bx-lock-alt' style='padding-left:1rem; padding-right:1rem; ' ></i>
-                        <input type="password" name="password" id="inputPassword" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite sua senha">
+                        <input type="password" name="password" id="inputPassword" class="w-full p-2 outline-none bg-transparent border-l-2 border-lightGrayInput transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite sua senha">
                         <i class="fa-regular fa-eye pl-2 pr-2" id="btnNotViewPassword" style="display:none;"></i>
                         <i class="fa-regular fa-eye-slash pl-2 pr-2" id="btnViewPassword"></i>
                     </div>

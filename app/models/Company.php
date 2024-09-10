@@ -20,14 +20,14 @@ class Company implements ModelInterface, JsonSerializable{
     private string $category;
     private string $registrationDate;
     private int $registrationComplete;
-    private string $openingHoursStart;
-    private string $openingHoursEnd;
+    private \DateTime $openingHoursStart;
+    private \DateTime $openingHoursEnd;
     private array $images = [];
     private array $services = [];
     private string $table = "company";
     private string $tableServices = "services";
 
-    public function __construct($logo = "", $name = "", $cnpj = "", $phone = "", $category = "", $cep = "", $road = "",$number = "",$district = "",$state = "",$city = "", $plan = "", $registrationDate = "",$registrationComplete = 0,$openingHoursStart = 0,$openingHoursEnd = 0){
+    public function __construct($logo = "", $name = "", $cnpj = "", $phone = "", $category = "", $cep = "", $road = "",$number = "",$district = "",$state = "",$city = "", $plan = "", $registrationDate = "",$registrationComplete = 0,$openingHoursStart = new \DateTime(),$openingHoursEnd = new \DateTime()){
         $this->logo = $logo;
         $this->name = $name;
         $this->cnpj = $cnpj;
@@ -55,9 +55,21 @@ class Company implements ModelInterface, JsonSerializable{
         $companys = $db->query("*");
         $arrayObjectsCompany =[];
         foreach ($companys as $company){
-            $newCompany = new Company($company['logo'],$company['name'],$company['cnpj'],$company['phone'],$company['category'],$company['cep'],$company['road'],$company['number'],$company['district'],$company['state'],$company['city'],$company['plan'],$company['registrationDate'],$company['registrationComplete']);
-            $newCompany->setId($company['idCompany']);
-            array_push($arrayObjectsCompany,$newCompany);
+            $companyObject = new Company($company['logo'],$company['name'],$company['cnpj'],$company['phone'],$company['category'],$company['cep'],$company['road'],$company['number'],$company['district'],$company['state'],$company['city'],$company['plan'],$company['registrationDate'],$company['registrationComplete'],new \DateTime($company['openingHoursStart']),new \DateTime($company['openingHoursEnd']));
+            $companyObject->setId($company['idCompany']);
+            array_push($arrayObjectsCompany,$companyObject);
+        }
+        return $arrayObjectsCompany;
+    }
+
+    public function getByLocation(Db $db, String $city,String $uf){
+        $db->setTable($this->table);
+        $companys = $db->query("*","city='{$city}' AND state='{$uf}'");
+        $arrayObjectsCompany =[];
+        foreach ($companys as $company){
+            $companyObject = new Company($company['logo'],$company['name'],$company['cnpj'],$company['phone'],$company['category'],$company['cep'],$company['road'],$company['number'],$company['district'],$company['state'],$company['city'],$company['plan'],$company['registrationDate'],$company['registrationComplete'],new \DateTime($company['openingHoursStart']),new \DateTime($company['openingHoursEnd']));
+            $companyObject->setId($company['idCompany']);
+            array_push($arrayObjectsCompany,$companyObject);
         }
         return $arrayObjectsCompany;
     }
@@ -69,7 +81,7 @@ class Company implements ModelInterface, JsonSerializable{
         if(!$companyFound){
             return false;
         }
-        $companyObject = new Company($companyFound[0]['logo'],$companyFound[0]['name'],$companyFound[0]['cnpj'],$companyFound[0]['phone'],$companyFound[0]['category'],$companyFound[0]['cep'],$companyFound[0]['road'],$companyFound[0]['number'],$companyFound[0]['district'],$companyFound[0]['state'],$companyFound[0]['city'],$companyFound[0]['plan'],$companyFound[0]['registrationDate'],$companyFound[0]['registrationComplete'],$companyFound[0]['openingHoursStart'],$companyFound[0]['openingHoursEnd']);
+        $companyObject = new Company($companyFound[0]['logo'],$companyFound[0]['name'],$companyFound[0]['cnpj'],$companyFound[0]['phone'],$companyFound[0]['category'],$companyFound[0]['cep'],$companyFound[0]['road'],$companyFound[0]['number'],$companyFound[0]['district'],$companyFound[0]['state'],$companyFound[0]['city'],$companyFound[0]['plan'],$companyFound[0]['registrationDate'],$companyFound[0]['registrationComplete'],new \DateTime($companyFound[0]['openingHoursStart']),new \DateTime($companyFound[0]['openingHoursEnd']));
         $companyObject->setId($companyFound[0]['idCompany']);
         
         // get images for company
@@ -123,6 +135,10 @@ class Company implements ModelInterface, JsonSerializable{
                 'openingHoursEnd' => $this->getOpeningHoursEnd(),
             ];
     
+            $data = array_map(function($value) {
+                return $value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value;
+            }, $data);
+            
             if ($db->insert($data)) {
                return true;
             }
@@ -321,19 +337,19 @@ class Company implements ModelInterface, JsonSerializable{
         $this->registrationComplete = $registrationComplete;
     }
 
-    public function getOpeningHoursStart(): string {
+    public function getOpeningHoursStart(): \DateTime {
         return $this->openingHoursStart;
     }
 
-    public function setOpeningHoursStart(string $OpeningHoursStart): void {
+    public function setOpeningHoursStart(\DateTime $OpeningHoursStart): void {
         $this->openingHoursStart = $openingHoursStart;
     }
 
-    public function getOpeningHoursEnd(): string {
+    public function getOpeningHoursEnd(): \DateTime {
         return $this->openingHoursEnd;
     }
 
-    public function setOpeningHoursEnd(string $OpeningHoursEnd): void {
+    public function setOpeningHoursEnd(\DateTime $OpeningHoursEnd): void {
         $this->openingHoursEnd = $openingHoursEnd;
     }
 

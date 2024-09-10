@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/output.css">
+    <link rel="stylesheet" href="/assets/css/slick-theme.css">
+    <link rel="stylesheet" href="/assets/css/slick.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon">
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
     <title><?php echo $title?></title>
 </head>
 <body>

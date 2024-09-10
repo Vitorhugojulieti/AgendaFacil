@@ -3,7 +3,8 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "app\\": "app/"
+            "app\\": "app/",
+            "vendor\\": "vendor/"
         },
         "files":[
             "app/helpers/constants.php",

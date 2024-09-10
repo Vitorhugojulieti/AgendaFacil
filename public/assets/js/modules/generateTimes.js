@@ -6,7 +6,17 @@ export default class generateTimes{
         this.day = day;
     }
 
+    filterTimes(times) {
+        let now = new Date(); 
+        const timesFiltered = times.filter(time => {
+          const timeObj = new Date(`${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${time}`);
+          return timeObj >= now;
+        });
+        return timesFiltered;
+    }
+
     generateTimesElements(){
+        let now = new Date(); 
         console.log(this.day);
         fetch(`http://localhost:8889/Schedule/getAvailableTimes/?day=${this.day}`)
         .then(response => {
@@ -20,9 +30,16 @@ export default class generateTimes{
             container.innerHTML = '';
             this.legend.innerHTML = '';
 
+            console.log(this.day == now.getDate())
+            console.log(this.day)
+            console.log(now.getDate())
+            if(this.day == now.getDate()){
+                data = this.filterTimes(data);
+            }
+
             data.forEach((time) => {
-                let timeHtml =  `<div class='times w-12 bg-principal10 text-white font-Poppins p-2 rounded'>
-                    <label for='time${time}' class='hover:cursor-pointer'>${time}</label>
+                let timeHtml =  `<div class='times w-full bg-principal10 text-white font-Poppins p-2 rounded'>
+                    <label for='time${time}' class='w-full hover:cursor-pointer'>${time}</label>
                     <input type='radio' name='time' value='${time}' id='time${time}' class='hidden'>
                 </div>`;
             container.innerHTML += timeHtml;

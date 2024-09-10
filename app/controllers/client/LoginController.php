@@ -158,6 +158,7 @@ class LoginController implements ControllerInterface{
 
     public function destroy(array $args){
         unset($_SESSION['user']);
+        unset($_SESSION['auth']);
         return redirect('/');
     }
 }

@@ -42,6 +42,7 @@ class ServiceController implements ControllerInterface{
     
             $service = new Service();
             $service = $service->getById($db,intval($args[0]));
+            // var_dump($service->getDuration()->format('H:i'));
         }
 
         $this->view = 'admin/registerAndUploadService.php';
@@ -112,7 +113,7 @@ class ServiceController implements ControllerInterface{
             }
 
             if($_POST['duration'] && $service->getDuration() !== $_POST['duration']){
-                $validate->handle(['duration'=>[REQUIRED]],'service');
+                $validate->handle(['duration'=>[TIME]],'service');
                 $service->setDuration($validate->data['duration']);
             }
 
@@ -130,7 +131,7 @@ class ServiceController implements ControllerInterface{
                 return redirect("/admin/service");
             }
 
-            Flash::set('resultUpdateService', 'Erro ao editar serviço!','notification error');
+            Flash::set('resultUpdateService', 'Erro ao atualizar serviço!','notification error');
             return redirect("/admin/service/edit");
         }
         
@@ -166,6 +167,7 @@ class ServiceController implements ControllerInterface{
                 Flash::set('resultInsertService', 'Erro ao cadastrar serviço!','notification error');
                 return redirect("/admin/service/store");
             }
+            unset($_SESSION['old']);
 
             Flash::set('resultInsertService', 'Serviço cadastrado com sucesso!','notification sucess');
             return redirect("/admin/service");
@@ -202,12 +204,14 @@ class ServiceController implements ControllerInterface{
     }
 
     private function registerService(Db $db,$validate,$idCompany){
+        var_dump($idCompany);
+
         $service = new Service(
             $validate->data['name'],
             $validate->data['description'],
             $validate->data['price'],
-            (float)$validate->data['duration'],
-            true,$idCompany);
+            $validate->data['duration'],
+            $idCompany,true);
 
         $service->insert($db);
         $service = $service->getIdByName($db,$validate->data['name'],$idCompany);
@@ -235,11 +239,11 @@ class ServiceController implements ControllerInterface{
     
             $service = new Service();
             if($service->delete($db,intval($args[0]))){
-                Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','notification sucess');
+                Flash::set('reultDeleteService', 'Serviço excluido com sucesso!','notification sucess');
                 return redirect("/admin/service");
             }
 
-            Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','notification error');
+            Flash::set('reultDeleteService', 'Erro ao excluir serviço!','notification error');
             return redirect("/admin/service");
         }
     }

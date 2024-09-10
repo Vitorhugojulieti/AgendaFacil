@@ -15,15 +15,23 @@ module.exports = {
       'principal10': '#223249',
       'iconFormColor':'#AFB6C2',
       'borderFormColor':'#868686',
-      'errorColor':'#FD837C',
-      'sucessColor':'#22C55E',
+      'errorColor':'#F3A29F',
+      'sucessColor':'#8EF1B3',
       'black':"#000000",
       'white':"#ffff",
       'lightGray':"#C1C1C1",
       'text-gray':"#71717A",
       'transparent':'transparent',
       'red':'#E22B20',
-      'orange':'#FFA500'
+      'orange':'#FFA500',
+      // ooooo
+      'grayInput':'#979797',
+      'lightGrayInput':'#DBDBDB',
+      'placeholder':'#ababab',
+      'grayNotification':'#F4F4F5',
+      'graySearchInput':'#f1f1f1',
+      'grayBg':'#f2f4f6',
+      'bgPrincipal':'#F8F8FF'
     },
     fontFamily: {
       Urbanist: ['Urbanist', 'sans'], 

@@ -1,5 +1,6 @@
 <?php
 namespace app\classes;
+use app\models\Service;
 
 class Cart{
     public static function get(){
@@ -22,16 +23,17 @@ class Cart{
     }
     
     public static function add($service){
-        if(isset($_SESSION['cart'])  && !empty($_SESSION['cart'])){
+        if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])){
             if(!Cart::inToCart($service)){
-                array_push($_SESSION['cart'],$service);
+                array_push($_SESSION['cart'], $service);
             }
-        }else{
+        } else {
             $_SESSION['cart'] = [$service];
         }
     }
     
-    public static function inToCart($service){
+    
+    public static function inToCart(Service $service){
         if(isset($_SESSION['cart'])  && !empty($_SESSION['cart'])){
             $exist = false;
             foreach ($_SESSION['cart'] as $serviceCart) {

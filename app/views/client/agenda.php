@@ -1,108 +1,67 @@
-<main class="flex">
+<main class="flex overflow-x-hidden">
     <?php require __DIR__ . '/../includes/nav.php'; ?>
 
-    <div class="w-full min-h-screen flex flex-col justify-start items-start bg-white p-4">
-        <div class="w-full border-2 border-lightGray rounded-lg">
-            <div class="flex items-center justify-between p-4 ">
-                <div class="flex flex-col items-start">
-                    <h2 class="text-black text-xl font-Urbanist font-normal flex items-center gap-2">Minha agenda <span class="text-xs font-medium text-principal10 bg-principal5 rounded p-1"><?php echo count($schedules);?> resultados</span></h2>
-                    <h3 class="text-sm text-borderFormColor">Gerencie seus agendamentos.</h3>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="search w-2/4 text-lightGray flex border-lightGray border-2 rounded focus-within:border-principal10 focus-within:text-principal10">
-                        <input type="text" id="inputSearch" class="w-full ml-2 outline-none" placeholder="Faça sua pesquisa">
-                        <i class='bx bx-search p-2 border-l-2'></i>
-                    </div>
-                    <button type="button"  id="btnOpenModalFilters"><i class='bx bx-filter' style='color:#223249' ></i>Filtros</button>
+    <div class="w-full min-h-screen flex flex-col justify-start items-start bg-white p-4 pr-6">
+        <?php echo $breadcrumb?>
 
-                </div>
-            </div>
-            <table class="w-full ">
-                <thead class="border-b-2 border-lightGray">
-                    <tr>
-                        <th class="font-Urbanist font-normal text-start p-2">Data</th>
-                        <th class="font-Urbanist font-normal text-start p-2">Horario</th>
-                        <th class="font-Urbanist font-normal text-start p-2">Status</th>
-                        <th class="font-Urbanist font-normal text-start p-2">Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                
-                    <?php foreach ($schedules as $schedule) { ?>
-                        <tr class="border-b-2 border-lightGray">
-                            <!-- collaborator image -->
-                            <td class="p-2">
-                                <div class="flex items-center gap-2">
-                                    <div class="flex flex-col ">
-                                        <h3><?php echo $schedule->getDateSchedule()->format('d/m/Y');?></h3>
-                                    </div>
-                                </div>
-                            </td>
-                            <!-- collaborator service -->
-                            <td class="p-2">
-                                <h3><?php echo $schedule->getStartTime()->format('H:i');?></h3>
-                            </td>
-                            <!-- collaborator date -->
-                            <?php if($schedule->getStatus() === "Confirmado"){?>
-                                <td class="p-2">
-                                    <h3 class="w-max text-sm font-medium text-white bg-sucessColor rounded p-1"><?php echo $schedule->getStatus()?></h3>
-                                </td>
-                            <?php }else if($schedule->getStatus() === "Aguardando pagamento"){ ?>
-                                <td class="p-2">
-                                    <h3 class="w-max text-sm font-medium text-white bg-orange rounded p-1"><?php echo $schedule->getStatus()?></h3>
-                                </td>
-                            <?php }else if($schedule->getStatus() === "Cancelado"){ ?>
-                                <td class="p-2">
-                                    <h3 class="w-max text-sm font-medium text-white bg-red rounded p-1"><?php echo $schedule->getStatus()?></h3>
-                                </td>
-                            <?php } ?>
-                            <!-- collaborator actions -->
-                            <td class="p-2 ">
-                                <a class="bg-principal10 text-white p-2 rounded hover:cursor-pointer"  href="/schedule/show/<?php echo $schedule->getId();?>">Detalhes</a>
-                            </td>
-                        </tr> 
-                    <?php } ?>
-                </tbody>
-            </table>
-            <div class="w-full flex items-center justify-between p-4 ">
-                    <span>Pagina 1 de 10</span>
-                    <div class="buttons flex items-center gap-4">
-                        <button class="border-2 border-lightGray rounded-xl p-2 hover:underline">Anterior</button>
-                        <button class="border-2 border-lightGray rounded-xl p-2 hover:underline">Proxima</button>
-                    </div>
-            </div>
+        <h2 class="font-Urbanist font-semibold italic text-4xl text-black w-full border-b border-b-grayInput p-2">Minha agenda</h2>
+        <div class="scrolls w-full border-b border-grayInput pb-4 p-4 flex flex-col gap-2">
+            <div class="w-full flex items-center gap-12 font-Poppins " id="scrollMonths"></div>
+            <div class="w-full flex items-center gap-4  font-Poppins p-2" id="scrollDays"></div>
         </div>
+
+        <ul id="listSchedules" class="schedules w-full p-4">
+                <li class="w-full flex flex-col items-start gap-2">
+                    <span class="w-full border-b border-grayInput text-grayInput">16:00</span>
+                    <div class="schedules w-full flex flex-col gap-4">
+                        
+                        <span  class="schedule w-full p-4 bg-errorColor rounded-md flex items-center gap-2 mt-2 ml-8">
+                            <i class='bx bx-calendar-check text-3xl' style='color:#223249'  ></i>
+                            <div class="details flex flex-col">
+                                <span class="text-xl font-Urbanist font-semibold">Agendamento</span>
+                                <span>13:00 - 17:00</span>
+                            </div>
+                        </span >
+
+                        <span  class="schedule w-full p-4 bg-errorColor rounded-md flex items-center gap-2 mt-2 ml-8">
+                            <i class='bx bx-calendar-check text-3xl' style='color:#223249'  ></i>
+                            <div class="details flex flex-col">
+                                <span class="text-xl font-Urbanist font-semibold">Agendamento</span>
+                                <span>13:00 - 17:00</span>
+                            </div>
+                        </span >
+
+                    </div>
+                    <span class="w-full border-t border-dotted border-grayInput">17:00</span>
+                </li>  
+
+                <li class="w-full flex flex-col items-start gap-2">
+                    <span class="w-full border-b border-dotted border-grayInput">16:00</span>
+                    <span  class="w-full p-4 bg-sucessColor rounded-md flex items-center gap-2 mt-2 ml-8">
+                        <i class='bx bx-calendar-check text-3xl' style='color:#223249'  ></i>
+                        <div class="details flex flex-col">
+                            <span class="text-xl font-Urbanist font-semibold">Agendamento</span>
+                            <span>13:00 - 17:00</span>
+                        </div>
+                    </span >
+                    <span class="w-full border-t border-dotted border-grayInput">17:00</span>
+                </li> 
+
+                <li class="w-full flex flex-col items-start gap-2">
+                    <span class="w-full border-b border-dotted border-grayInput">16:00</span>
+                    <span  class="w-full p-4 bg-principal3 rounded-md flex items-center gap-2 mt-2 ml-8">
+                        <i class='bx bx-calendar-check text-3xl' style='color:#223249'  ></i>
+                        <div class="details flex flex-col">
+                            <span class="text-xl font-Urbanist font-semibold">Agendamento</span>
+                            <span>13:00 - 17:00</span>
+                        </div>
+                    </span >
+                    <span class="w-full border-t border-dotted border-grayInput">17:00</span>
+                </li> 
+            </ul>
     </div>
-    <!-- crud flash messages -->
-    <?php echo flash('resultInsertService');  ?>
-    <?php echo flash('resultUpdateService');  ?>
-    <?php echo flash('reultDeleteService');  ?>
-
-     <!-- modais -->
-     <dialog id="modalService" class="w-2/4 bg-white text-black rounded p-4 ">
-        <div class="w-full flex justify-between items-center mb-4">
-            <div class="flex gap-4 items-center">
-                <h2 id="messageDelete"></h2>  
-            </div>
-            <button id="btnCloseModalService" class="outline-none"><i class='bx bx-x-circle text-3xl'></i></button>
-        </div>
-        <div>
-            <a id="btnDelete" href="">Excluir</a>
-        </div>
-    </dialog>
-
-     <dialog id="modalFilters" class="w-2/4 bg-white text-black rounded p-4 ">
-        <div class="w-full flex justify-between items-center mb-4">
-            <div class="flex gap-4 items-center">
-                <h2 >Filtros</h2>  
-            </div>
-            <button id="btnCloseModalFilters" class="outline-none"><i class='bx bx-x-circle text-3xl'></i></button>
-        </div>
-        <div>
-            <a id="btnDelete" href="">Excluir</a>
-        </div>
-    </dialog>
-
-    <script type="module"  src="/assets/js/service.js"></script>
+    <script type="module" src="/assets/js/agenda.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/assets/js/slick.min.js"></script>
 
 </main>

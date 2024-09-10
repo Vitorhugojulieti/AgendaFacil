@@ -24,6 +24,7 @@ class SignupController{
 
     public function store(){
 
+        // validar crsm token
         $validateImages = $this->validateImages();
         $validateCompanyData = $this->validateCompanyData();
         $validateCompanyAddress = $this->validateCompanyAddress();
@@ -58,8 +59,8 @@ class SignupController{
             'phoneCompany'=>[REQUIRED],
             'cnpj'=>[CNPJ,REQUIRED],
             'category'=>[REQUIRED],
-            'openingHoursStart'=>[TIME],
-            'openingHoursEnd'=>[TIME],
+            'openingHoursStart'=>[TIME,REQUIRED],
+            'openingHoursEnd'=>[TIME,REQUIRED],
                                                    
         ],'company');
       
@@ -93,7 +94,7 @@ class SignupController{
         $validateCollaboratorData->handle([
             'name'=>[REQUIRED],
             'phone'=>[REQUIRED],
-            'email'=>[EMAIL],
+            'email'=>[EMAIL,REQUIRED],
             'cpf'=>[CPF,REQUIRED],
             'password'=>[PASSWORD,REQUIRED],
         ],'client');
@@ -153,6 +154,7 @@ class SignupController{
             $validateData->data['openingHoursEnd']);
         $company->insert($db);
         $company = $company->getIdByCnpj($db, $validateData->data['cnpj']);
+        unset($_SESSION['old']);
         return $company ? $company : false;
     }
 
@@ -169,6 +171,7 @@ class SignupController{
             date('d/m/y')
             ,0,
             true);
+        unset($_SESSION['old']);
         return $collaborator->insert($db);
     }
 
@@ -176,7 +179,8 @@ class SignupController{
         $imageRegister = new Images(
             $idCompany,
             "Banner",
-            $validateImages->data['avatar']['success'] ? $validateImages->data['avatar']['link'] : AVATAR_DEFAULT);
+            $validateImages->data['image']['success'] ? $validateImages->data['image']['link'] : AVATAR_DEFAULT);
+        unset($_SESSION['old']);
         return $imageRegister->insert($db);
     }
 

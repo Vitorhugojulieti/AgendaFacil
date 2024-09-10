@@ -9,7 +9,7 @@ class Service implements ModelInterface{
     private string $name;
     private string $description;
     private string $price;
-    private string $duration;
+    private \DateTime $duration;
     private bool $visible;
     private int $idCompany;
     //configurar relação servico - colaborador para muitos para muitos
@@ -20,7 +20,7 @@ class Service implements ModelInterface{
     private string $tableCollaboratorsHasService = "collaborator_has_services";
 
 
-    public function __construct($name = "", $description = "", $price = "", $duration = "", $idCompany = 0 ,$visible = true){
+    public function __construct($name = "", $description = "", $price = "", $duration = new \DateTime(), $idCompany = 0 ,$visible = true){
         $this->name = $name;
         $this->description = $description;
         $this->price = $price;
@@ -54,7 +54,7 @@ class Service implements ModelInterface{
         $services = $db->query("*");
         $arrayObjectsService =[];
         foreach ($services as $service){
-            $newService = new Service($service['name'],$service['description'],$service['price'],$service['duration'],$service['Company_idCompany'],$service['visible']);
+            $newService = new Service($service['name'],$service['description'],$service['price'],new \DateTime($service['duration']),$service['Company_idCompany'],$service['visible']);
             $newService->setId($service['idService']);
             array_push($arrayObjectsService,$newService);
         }
@@ -71,7 +71,7 @@ class Service implements ModelInterface{
             return false;
         }
 
-        $serviceObject = new Service($serviceFound[0]['name'],$serviceFound[0]['description'],$serviceFound[0]['price'],$serviceFound[0]['duration'],$serviceFound[0]['Company_idCompany'],$serviceFound[0]['visible']);
+        $serviceObject = new Service($serviceFound[0]['name'],$serviceFound[0]['description'],$serviceFound[0]['price'],new \DateTime($serviceFound[0]['duration']),$serviceFound[0]['Company_idCompany'],$serviceFound[0]['visible']);
         $serviceObject->setId($serviceFound[0]['idService'],);
         //logica para trazer imagens
         $imagesManager = new Images();
@@ -87,7 +87,7 @@ class Service implements ModelInterface{
         $services = $db->query("*","Company_idCompany={$idCompany}");
         $arrayObjectsService =[];
         foreach ($services as $service){
-            $newService = new Service($service['name'],$service['description'],$service['price'],$service['duration'],$service['Company_idCompany'],$service['visible']);
+            $newService = new Service($service['name'],$service['description'],$service['price'],new \DateTime($service['duration']),$service['Company_idCompany'],$service['visible']);
             $newService->setId($service['idService']);
             array_push($arrayObjectsService,$newService);
         }
@@ -118,6 +118,10 @@ class Service implements ModelInterface{
                 'visible' => $this->getVisible(),
             ];
     
+            $data = array_map(function($value) {
+                return $value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value;
+            }, $data);
+
             if($db->insert($data)){
                 return true;
             }
@@ -149,6 +153,11 @@ class Service implements ModelInterface{
             $data['visible'] = $this->getVisible();
         }
 
+        $data = array_map(function($value) {
+            return $value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value;
+        }, $data);
+
+        
         if(!empty($data)){
             if($db->update("idService={$id}",$data)){
                 return true;
@@ -202,11 +211,11 @@ class Service implements ModelInterface{
         $this->price = $price;
     }
 
-    public function getDuration(): string {
+    public function getDuration(): \DateTime {
         return $this->duration;
     }
 
-    public function setDuration(string $duration): void {
+    public function setDuration(\DateTime $duration): void {
         $this->duration = $duration;
     }
 

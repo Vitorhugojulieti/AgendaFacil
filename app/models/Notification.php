@@ -2,25 +2,32 @@
 namespace app\models;
 use app\models\database\Db;
 use app\interfaces\ModelInterface;
+use JsonSerializable;
 
-class Notification implements ModelInterface{
+
+class Notification implements ModelInterface, JsonSerializable{
     private int $id;
-    private int $idRecipient;
     private int $idSender;
     private string $message;
     private string $link;
-    private \Datatime $date;
+    private \DateTime $date;
     private int $notified;
+    private int $idCompanyRecipient;
+    private int $idUserRecipient;
     private string $table = "Notifications";
 
-    public function __construct($idRecipient = 0, $idSender = 0, $message = "", $link = "", $typeNotification = "",$date = new \Datatime(),$notified = 0){
-        $this->idRecipient = $idRecipient;
+    public function __construct($idSender = 0, $message = "", $link = "",$date = new \DateTime(),$notified = 0,$idCompanyRecipient = 0, $idUserRecipient = 0){
         $this->idSender = $idSender;
         $this->message = $message;
         $this->link = $link;
-        $this->typeNotification = $typeNotification;
         $this->date = $date;
         $this->notified = $notified;
+        $this->idCompanyRecipient = $idCompanyRecipient;
+        $this->idUserRecipient = $idUserRecipient;
+    }
+
+    public function jsonSerialize() {
+        return get_object_vars($this);
     }
 
     public function getAll(Db $db){
@@ -48,17 +55,46 @@ class Notification implements ModelInterface{
         return $notificationObject;
     }
 
+    public function getByUser(Db $db, int $idUsere){
+        $db->setTable($this->table);
+        $notifications = $db->query("*","idUserRecipient={$idCompany}");
+        $arrayObjectsNotifications =[];
+        foreach ($notifications as $notification){
+            $notificationObj = new Notification($notification['idSender'],$notification['message'],$notification['link'],$notification['date'],$notification['notified'],$notification['idCompanyRecipient'],$notification['idUserRecipient']);
+            $notificationObj->setId($notification['idNotification']);
+            array_push($arrayObjectsNotifications,$notificationObj);
+        }
+        return $arrayObjectsNotifications;
+    }
+
+    public function getByCompany(Db $db, int $idCompany){
+        $db->setTable($this->table);
+        $notifications = $db->query("*","idCompanyRecipient={$idCompany}");
+        $arrayObjectsNotifications =[];
+        foreach ($notifications as $notification){
+            $notificationObj = new Notification($notification['idSender'],$notification['message'],$notification['link'],new \DateTime($notification['date']),$notification['notified'],$notification['idCompanyRecipient'],$notification['idUserRecipient']);
+            $notificationObj->setId($notification['idNotification']);
+            array_push($arrayObjectsNotifications,$notificationObj);
+        }
+        return $arrayObjectsNotifications;
+    }
+
     public function insert(Db $db){
         $db->setTable($this->table);
         $data = [
-            'idRecipient' => $this->getIdRecipient(),
+            'idCompanyRecipient' => $this->getIdCompanyRecipient(),
+            'idUserRecipient' => $this->getIdUserRecipient(),
             'idSender' => $this->getIdSender(),
             'message' => $this->getMessage(),
             'link' => $this->getLink(),
-            'typeNotification'=>$this->getTypeNotification(),
             'date'=>$this->getDate(),
             'notified'=>$this->getNotified(),
         ];
+
+        $data = array_map(function($value) {
+            return $value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value;
+        }, $data);
+
         if ($db->insert($data)) {
             return true;
         }
@@ -69,8 +105,11 @@ class Notification implements ModelInterface{
         $db->setTable($this->table);
         $data = [];
         
-        if ($this->getIdRecipient() !== 0) {
-            $data['idRecipient'] = $this->getIdRecipient();
+        if ($this->getIdUserRecipient() !== 0) {
+            $data['idUserRecipient'] = $this->getIdUserRecipient();
+        }
+        if ($this->getIdCompanyRecipient() !== 0) {
+            $data['idCompanyRecipient'] = $this->getIdCompanyRecipient();
         }
         if ($this->getIdSender() !== 0) {
             $data['idSender'] = $this->getIdSender();
@@ -81,11 +120,11 @@ class Notification implements ModelInterface{
         if ($this->getLink() !== 0) {
             $data['link'] = $this->getLink();
         }
-        if ($this->getTypeNotification() !== 0) {
-            $data['typeNotification'] = $this->getTypeNotification();
-        }
         if ($this->getDate() !== 0) {
             $data['date'] = $this->getDate();
+        }
+        if ($this->getNotified() !== 0) {
+            $data['notified'] = $this->getNotified();
         }
        
         if(!empty($data)){
@@ -111,12 +150,20 @@ class Notification implements ModelInterface{
         $this->id = $id;
     }
 
-    function getIdRecipient(): int{
-        return $this->idRecipient;
+    function getIdUserRecipient(): int{
+        return $this->idUserRecipient;
     }
 
-    function setIdRecipient(int $idRecipient): void{
-        $this->idRecipient = $idRecipient;
+    function setIdUserRecipient(int $idUserRecipient): void{
+        $this->idUserRecipient = $idUserRecipient;
+    }
+
+    function getIdCompanyRecipient(): int{
+        return $this->idCompanyRecipient;
+    }
+
+    function setIdCompanyRecipient(int $idCompanyRecipient): void{
+        $this->idCompanyRecipient = $idCompanyRecipient;
     }
 
     function getIdSender(): int{
@@ -143,19 +190,11 @@ class Notification implements ModelInterface{
         $this->link = $link;
     }
 
-    function getTypeNotification(): string{
-        return $this->typeNotification;
-    }
-
-    function setTypeNotification(string $typeNotification): void{
-        $this->typeNotification = $typeNotification;
-    }
-
-    function getDate(): \Datatime{
+    function getDate(): \DateTime{
         return $this->date;
     }
 
-    function setDate(Datatime $date): void{
+    function setDate(DateTime $date): void{
         $this->date = $date;
     }
 

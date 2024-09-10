@@ -9,12 +9,14 @@
                 <!-- container data admin -->
                 <fieldset id="containerDataAdmin" class="w-full  justify-start items-start">
 
-                    <div class="w-max flex flex-col gap-4 justify-start items-start">
+                    <div class="upload-avatar hover:cursor-pointer flex flex-col items-center justify-center p-4 gap-4 border-2 border-grayInput border-dashed rounded-full ">
                         <input type="file" name="avatar" id="inputAvatar" class="hidden">
-                        <label for="inputAvatar" class="hover:cursor-pointer w-4/5 flex flex-col items-center justify-center p-2">
-                            <img id="previewAvatar" src="<?php echo isset($collaborator) ? $collaborator->getAvatar() : AVATAR_DEFAULT?>"  alt="avatar" class="redondShapeImage" style="width:10rem; height:8rem;">
+                        <label for="inputAvatar" class="flex flex-col items-center justify-center gap-1 pt-4 pb-4">
+                            <img id="previewAvatar"  alt="avatar" class="redondShapeImage" src="<?php echo isset($collaborator) ? '../../../'.$collaborator->getAvatar() : ''?>">
+                            <i class='bx bxs-user-circle text-7xl text-grayInput' id="iconAvatar"></i>
+                            <span id="spanAvatar" class="text-grayInput text-center hover:underline hover:cursor-pointer w-28"><span class="font-semibold text-principal5">Insira</span> a imagem aqui</span>
                         </label>
-                        <span class="text-errorColor " id="msgAvatarError"><?php echo flash('avatar');  ?></span>
+                        <span class="text-errorColor " id="msgInputAvatar"><?php echo flash('avatar');  ?></span>
                     </div>
 
                     <h2 class="w-full font-Urbanist font-semibold text-black text-xl md:text-2xl border-b-2 border-b-lightGray mb-4">Dados do colaborador</h2>
@@ -23,67 +25,67 @@
                             <!-- column 1 -->
                             <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-4 ">
                                 <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
+                                <div class="field w-full focus-within:text-principal10 text-grayInput">
                                     <div>
                                         <label for="inputName" >Nome</label>
                                     </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
                                         <i class='bx bx-user' style=' padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="text" name="name" id="inputName" value="<?php echo old('name') ?? (isset($collaborator) ? $collaborator->getName() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu nome completo">
+                                        <input type="text" name="name" id="inputName" value="<?php echo old('name') ?? (isset($collaborator) ? $collaborator->getName() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu nome completo">
                                     </div>
                                     <span class="text-errorColor " id="msgNameError"><?php echo flash('name');  ?></span>
                                 </div>
                                 <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
+                                <div class="field w-full focus-within:text-principal10 text-grayInput">
                                     <label for="inputPhone" >Telefone</label>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
                                         <i class='bx bx-phone' style='padding-left:1rem; padding-right:1rem; '></i>
-                                        <input type="text" name="phone" id="inputPhone" maxlength="15" value="<?php echo old('phone') ?? (isset($collaborator) ? $collaborator->getPhone() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu telefone">
+                                        <input type="text" name="phone" id="inputPhone" maxlength="15" value="<?php echo old('phone') ?? (isset($collaborator) ? $collaborator->getPhone() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu telefone">
                                     </div>
                                     <span class="text-errorColor " id="msgPhoneError"><?php echo flash('phone');  ?></span>
                                 </div>
                                 <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
+                                <div class="field w-full focus-within:text-principal10 text-grayInput">
                                     <label for="inputCpf" >CPF</label>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
                                         <i class='bx bx-id-card' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="text" name="cpf" id="inputCpf" maxlength="14" value="<?php echo old('cpf') ?? (isset($collaborator) ? $collaborator->getCpf() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu cpf">
+                                        <input type="text" name="cpf" id="inputCpf" maxlength="14" value="<?php echo old('cpf') ?? (isset($collaborator) ? $collaborator->getCpf() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu cpf">
                                     </div>
                                     <span class="text-errorColor " id="msgCpfError"><?php echo flash('cpf');  ?></span>
                                 </div>
 
                                 <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
+                                <div class="field w-full focus-within:text-principal10 text-grayInput">
                                     <div>
                                         <label for="inputEmail" >Email</label>
                                     </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
                                         <i class='bx bx-envelope' style='padding-left:1rem; padding-right:1rem;' ></i>
-                                        <input type="text" name="email" id="inputEmail" value="<?php echo old('email') ?? (isset($collaborator) ? $collaborator->getEmail() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu email">
+                                        <input type="text" name="email" id="inputEmail" value="<?php echo old('email') ?? (isset($collaborator) ? $collaborator->getEmail() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu email">
                                     </div>
                                     <span class="text-errorColor " id="msgEmailError"><?php echo flash('email');  ?></span>
                                 </div>
                                 <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
+                                <div class="field w-full focus-within:text-principal10 text-grayInput">
                                     <div>
                                         <label for="inputPassword" >Senha</label>
                                         <i class='bx bxs-help-circle hover:text-white hover:cursor-pointer' id="btnOpenModalPassword"></i>
                                     </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
                                         <i class='bx bx-lock-alt' style='padding-left:1rem; padding-right:1rem; ' ></i>
-                                        <input type="password" name="password" id="inputPassword" value="<?php echo old('password') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite sua senha">
+                                        <input type="password" name="password" id="inputPassword" value="<?php echo old('password') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite sua senha">
                                         <i class="fa-regular fa-eye pl-2 pr-2" id="btnNotViewPassword" style="display:none;"></i>
                                         <i class="fa-regular fa-eye-slash pl-2 pr-2" id="btnViewPassword"></i>
                                     </div>
                                     <span class="text-errorColor " id="msgPasswordError"><?php echo flash('password');  ?></span>
                                 </div>
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
+                                <div class="field w-full focus-within:text-principal10 text-grayInput">
                                     <div>
                                         <label for="inputPassword" >Confirmar senha</label>
                                     </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
                                         <i class='bx bx-lock-alt' style='padding-left:1rem; padding-right:1rem; ' ></i>
-                                        <input type="password" name="password" id="inputConfirmPassword" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Confirme sua senha">
+                                        <input type="password" name="password" id="inputConfirmPassword" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Confirme sua senha">
                                         <i class="fa-regular fa-eye pl-2 pr-2" id="btnNotViewConfirmPassword" style="display:none;"></i>
                                         <i class="fa-regular fa-eye-slash pl-2 pr-2" id="btnViewConfirmPassword"></i>
                                     </div>
@@ -94,13 +96,13 @@
 
                             <!-- column 2 -->
                             <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-4 ">
-                                <div  class="field w-full focus-within:text-principal10 text-borderFormColor">
+                                <div  class="field w-full focus-within:text-principal10 text-grayInput">
                                     <div>
                                         <label for="inputNivel" >Nivel</label>
                                     </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
                                         <i class='bx bx-envelope' style='padding-left:1rem; padding-right:1rem;' ></i>
-                                        <select name="nivel" id="inputNivel" value="<?php echo old('nivel') ?? (isset($collaborator) ? $collaborator->getNivel() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black">
+                                        <select name="nivel" id="inputNivel" value="<?php echo old('nivel') ?? (isset($collaborator) ? $collaborator->getNivel() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black">
                                             <option value="manager">Administrador</option>
                                             <option value="collaborator">colaborador</option>
                                         </select>
@@ -108,7 +110,7 @@
                                     <span class="text-errorColor " id="msgNivelError"><?php echo flash('state');  ?></span>
                                 </div>
 
-                                <div  class="field w-full h-full  text-borderFormColor flex flex-col items-start gap-2 ">
+                                <div  class="field w-full h-full  text-grayInput flex flex-col items-start gap-2 ">
                                     <div class="w-full mb-2 border-b-2 border-lightGray text-xl">
                                         <label  >Serviços realizados</label>
                                     </div>

@@ -22,7 +22,7 @@ class Authenticate{
             $clientActual->setRegistrationComplete(0);
             $clientActual->insert($db);
             $_SESSION['user'] = $clientActual;
-            $_SESSION['auth'] = true;
+            // $_SESSION['auth'] = true;
             header("location:/signup/finishRegistration");
         }else{
             $_SESSION['user'] = $client;

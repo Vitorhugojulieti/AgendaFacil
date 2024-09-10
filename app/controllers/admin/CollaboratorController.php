@@ -246,6 +246,7 @@ class CollaboratorController implements ControllerInterface{
             $idCompany,date('d/m/y'),1);
             $collaborator->insert($db);
             $collaborator = $collaborator->getByEmail($db,$validateData->data['email']);
+            unset($_SESSION['old']);
             return $collaborator ? $collaborator : false;
     }
 
@@ -270,7 +271,7 @@ class CollaboratorController implements ControllerInterface{
             $db->connect();
     
             $collaborator = new Collaborator();
-            if($collaborator->delete($db,intval($args[0]))){
+            if($collaborator->delete($db,intval($args[0]),$_SESSION['collaborator']->getIdCompany())){
                 Flash::set('reultDeleteCollaborator', 'Colaborador excluido com sucesso!','notification sucess');
                 return redirect("/admin/collaborator");
             }

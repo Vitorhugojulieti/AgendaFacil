@@ -7,6 +7,8 @@ export default class popUp{
     openPopUp(){
         this.btnOpen.addEventListener('click',()=>{
             this.popUp.classList.toggle('hidden');
+        console.log('aqui');
+
         })
     }
 

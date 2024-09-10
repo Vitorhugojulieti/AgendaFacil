@@ -12,6 +12,7 @@ class ValidateImage implements ValidateInterface
         $imgUploader = new ImageUpload();
         $image = $_FILES[$field];
 
+        //criar validacao para tipo do arquivo caso passe do front
         if(isset($image) && $image['error'] == 0){
             $return = $imgUploader->upload($image);
             if($return['success']){

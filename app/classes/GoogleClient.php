@@ -16,7 +16,7 @@ class GoogleClient{
     public function init(){
         $guzzleClient = new GuzzleClient([
             'curl' => [
-                CURLOPT_SSL_VERIFYPEER => false, // ou false, dependendo das suas necessidades
+                CURLOPT_SSL_VERIFYPEER => false, 
             ]
         ]);
         $this->client->setHttpClient($guzzleClient);

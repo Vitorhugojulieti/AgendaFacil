@@ -3,6 +3,8 @@
         <?php require __DIR__ . '../../includes/nav.php'; ?>
 
         <main class="w-full flex flex-col">
+                <span class="mb-4"><a href="/">Home</a> / Company / show /</span>
+
                 <img src="<?php echo '../../'.$company->getLogo() ?>" alt="" class="w-full max-h-48">
           
                 <div class="details p-4 w-full flex justify-between items-center border-b-2 border-lightGray ">
@@ -15,7 +17,7 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-4">
-                            <span>Horario de funcionamento: <?php echo $company->getOpeningHoursStart().' as '.$company->getOpeningHoursEnd() ?></span>
+                            <span>Horario de funcionamento: <?php echo $company->getOpeningHoursStart()->format('H:i').' as '.$company->getOpeningHoursEnd()->format('H:i') ?></span>
                             <i class='bx bx-time text-4xl'></i>
                         </div>
                     </div>

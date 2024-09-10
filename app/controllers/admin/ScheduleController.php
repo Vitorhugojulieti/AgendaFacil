@@ -21,17 +21,8 @@ class ScheduleController implements ControllerInterface{
         $db->connect();
         $schedule = new Service();
 
-        // $schedule = new Schedule();
-        // $schedule->insert($db);
-        // $scheduledTimes = new Schedule();
-        // $scheduledTimes  = $scheduledTimes->getScheduledTimes($db);
-        // var_dump(in_array("14:00:00",$scheduledTimes[0]));
-        // $intervals = $this->generateIntervals('14:00','21:00',30);
-        // $db,array $idsServices,$idCompany
-        // var_dump($this->getHours($db,[1],1));
         $days = $this->getAvailableDate($db,[1],1);
         var_dump($days[2]);
-        // var_dump($this->calculateTotalTime($db,[1]));
         die();
 
         if(isset($_SESSION['collaborator']) && $_SESSION['collaborator']->getNivel() === 'manager'){

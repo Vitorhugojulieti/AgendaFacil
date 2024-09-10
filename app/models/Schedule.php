@@ -3,12 +3,14 @@ namespace app\models;
 use app\models\database\Db;
 use app\interfaces\ModelInterface;
 use app\models\Schedule;
+use JsonSerializable;
 
-class Schedule implements ModelInterface{
+class Schedule implements ModelInterface, JsonSerializable{
     private int $id;
     private int $idClient;
     private int $idCompany;
     private int $paidOut;
+    private float $totalPaid;
     private int $idVoucherService;
     private string $cancellationReason;
     private string $observation;
@@ -23,10 +25,11 @@ class Schedule implements ModelInterface{
     private string $tableCollaborators = "Schedules_has_Collaborator";
     private string $table = "schedules";
 
-    public function __construct($idClient = 0,$idCompany = 0, $paidOut = 0, $idVoucherService = 0, $cancellationReason = "", $observation = "",$status = "",$startTime = new \DateTime(),$endTime = new \DateTime(),$dateSchedule = new \DateTime()){
+    public function __construct($idClient = 0,$idCompany = 0, $paidOut = 0,$totalPaid = 0.00, $idVoucherService = 0, $cancellationReason = "", $observation = "",$status = "",$startTime = new \DateTime(),$endTime = new \DateTime(),$dateSchedule = new \DateTime()){
         $this->idClient = $idClient;
         $this->idCompany = $idCompany;
         $this->paidOut = $paidOut;
+        $this->totalPaid = $totalPaid;
         $this->idVoucherService = (int) $idVoucherService;
         $this->cancellationReason = $cancellationReason;
         $this->observation = $observation;
@@ -34,6 +37,10 @@ class Schedule implements ModelInterface{
         $this->startTime = $startTime;
         $this->endTime = $endTime;
         $this->dateSchedule = $dateSchedule;
+    }
+
+    public function jsonSerialize() {
+        return get_object_vars($this);
     }
 
     public function getAll(Db $db){
@@ -55,7 +62,7 @@ class Schedule implements ModelInterface{
         if(!$scheduleFound){
             return false;
         }
-        $scheduleObj = new Schedule($scheduleFound[0]['Client_idClient'],$scheduleFound[0]['Company_idCompany'],$scheduleFound[0]['paidOut'],$scheduleFound[0]['voucherService'],$scheduleFound[0]['cancellationReason'],$scheduleFound[0]['observation'],$scheduleFound[0]['status'],new \DateTime($scheduleFound[0]['startTime']),new \DateTime($scheduleFound[0]['endTime']),new \DateTime($scheduleFound[0]['dateSchedule']));
+        $scheduleObj = new Schedule($scheduleFound[0]['Client_idClient'],$scheduleFound[0]['Company_idCompany'],$scheduleFound[0]['paidOut'],$scheduleFound[0]['totalPaid'],$scheduleFound[0]['voucherService'],$scheduleFound[0]['cancellationReason'],$scheduleFound[0]['observation'],$scheduleFound[0]['status'],new \DateTime($scheduleFound[0]['startTime']),new \DateTime($scheduleFound[0]['endTime']),new \DateTime($scheduleFound[0]['dateSchedule']));
         $scheduleObj->setId($scheduleFound[0]['idSchedule']);
         $scheduleObj->setCollaborators(Schedule::getCollaboratorsDb($db,$scheduleFound[0]['idSchedule']));
         $scheduleObj->setServices(Schedule::getServicesDb($db,$scheduleFound[0]['idSchedule']));
@@ -69,8 +76,21 @@ class Schedule implements ModelInterface{
         if(!$scheduleFound){
             return false;
         }
-        $scheduleObj = new Schedule($scheduleFound[0]['Client_idClient'],$scheduleFound[0]['Company_idCompany'],$scheduleFound[0]['paidOut'],$scheduleFound[0]['voucherService'],$scheduleFound[0]['cancellationReason'],$scheduleFound[0]['observation'],$scheduleFound[0]['status'],new \DateTime($scheduleFound[0]['startTime']),new \DateTime($scheduleFound[0]['endTime']),new \DateTime($scheduleFound[0]['dateSchedule']));
-        $scheduleObj->setId($scheduleFound[0]['idSchedule'],);
+        // ($idClient = 0,$idCompany = 0, $paidOut = 0,$totalPaid = 0.00, $idVoucherService = 0,
+        //  $cancellationReason = "", $observation = "
+        // ",$status = "",$startTime = new \DateTime(),$endTime = new \DateTime(),$dateSchedule = new \DateTime()){
+        $scheduleObj = new Schedule($scheduleFound[0]['Client_idClient'],
+        $scheduleFound[0]['Company_idCompany'],
+        $scheduleFound[0]['paidOut'],
+        $scheduleFound[0]['totalPaid'],
+        $scheduleFound[0]['voucherService'],
+        $scheduleFound[0]['cancellationReason'],
+        $scheduleFound[0]['observation'],
+        $scheduleFound[0]['status'],
+        new \DateTime($scheduleFound[0]['startTime']),
+        new \DateTime($scheduleFound[0]['endTime']),
+        new \DateTime($scheduleFound[0]['dateSchedule']));
+        $scheduleObj->setId($scheduleFound[0]['idSchedule']);
         return $scheduleObj;
     }
 
@@ -79,7 +99,7 @@ class Schedule implements ModelInterface{
         $schedules = $db->query("*","Company_idCompany={$idCompany}");
         $arrayObjectsSchedule =[];
         foreach ($schedules as $schedule){
-            $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']));
+            $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['totalPaid'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']));
             $scheduleObj->setId($schedule['idSchedule']);
             array_push($arrayObjectsSchedule,$scheduleObj);
         }
@@ -91,7 +111,7 @@ class Schedule implements ModelInterface{
         $schedules = $db->query("*","Client_idClient={$idClient}");
         $arrayObjectsSchedule =[];
         foreach ($schedules as $schedule){
-            $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']));
+            $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['totalPaid'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']));
             $scheduleObj->setId($schedule['idSchedule']);
             array_push($arrayObjectsSchedule,$scheduleObj);
         }
@@ -148,10 +168,73 @@ class Schedule implements ModelInterface{
         return $arrayObjectsCollaborators;
     }
 
+    public function getByCompanyForMonth(Db $db,int $idCompany,int $month){
+        $db->setTable($this->table);
+        $schedules = $db->query("*","Company_idCompany={$idCompany} AND MONTH(dateSchedule)={$month} AND status='confirmado'");
+        $arrayObjectsSchedule =[];
+        if(count($schedules) != 0){
+            foreach ($schedules as $schedule){
+                $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['totalPaid'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']));
+                $scheduleObj->setId($schedule['idSchedule']);
+                array_push($arrayObjectsSchedule,$scheduleObj);
+            }
+        }
+        return $arrayObjectsSchedule;
+    }
+
+    public function getByCompanyForMonthCancellations(Db $db,int $idCompany,int $month){
+        $db->setTable($this->table);
+        $schedules = $db->query("*","Company_idCompany={$idCompany} AND MONTH(dateSchedule)={$month} AND status='cancelado'");
+        $arrayObjectsSchedule =[];
+        if(count($schedules) != 0){
+            foreach ($schedules as $schedule){
+                $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['totalPaid'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']));
+                $scheduleObj->setId($schedule['idSchedule']);
+                array_push($arrayObjectsSchedule,$scheduleObj);
+            }
+        }
+        return $arrayObjectsSchedule;
+    }
+    
+    public function getSchedulesByService(Db $db,int $idCompany,int $idService){
+        $db->setTable($this->tableServices);
+        $schedules = $db->totalRecords("Services_Company_idCompany={$idCompany} and Services_idService={$idService}");
+        return $schedules[0]['total'];
+    }
+
+    public function getServicesScheduledsForMonth(Db $db,int $idCompany,int $month){
+        $schedules = $this->getByCompanyForMonth($db,$idCompany,$month);
+        $data = [];
+        foreach ($schedules as $schedule) {
+            $services = $this->getServicesDb($db,$schedule->getId());
+            foreach ($services as $key => $service) {
+                if(count($data)!= 0 ){
+                    if(!in_array($service->getName(),$data[$key])){
+                        array_push($data,['month'=>$month,'name'=>$service->getName(),'data'=>[$this->getSchedulesByService($db,$idCompany,$service->getId())]]);
+                    }
+                }else{
+                    array_push($data,['month'=>$month,'name'=>$service->getName(),'data'=>[$this->getSchedulesByService($db,$idCompany,$service->getId())]]);
+                }
+            }
+        }
+        return $data;
+    }
+
+    public function getSchedulesForCollaboratorByCompany(Db $db,int $idCompany,int $idCollaborator){
+        $db->setTable($this->tableCollaborators);
+        $schedules = $db->totalRecords("Collaborator_Company_idCompany={$idCompany} and Collaborator_idCollaborator={$idCollaborator}");
+        return $schedules[0]['total'];
+        return $data;
+    }
+
+ 
+
     public function insert(Db $db){
         $db->setTable($this->table);
         $data = [
             'paidOut' => $this->getPaidOut(),
+            'totalPaid' => $this->getTotalPaid(),
+            'Clientes_idCliente' => $this->getIdClient(),
             'Client_idClient' => $this->getIdClient(),
             'voucherService' => $this->getIdVoucherService(),
             'cancellationReason' => $this->getCancellationReason(),
@@ -259,6 +342,14 @@ class Schedule implements ModelInterface{
 
     public function setPaidOut(int $paidOut): void {
         $this->paidOut = $paidOut;
+    }
+
+    public function getTotalPaid(): float {
+        return $this->totalPaid;
+    }
+
+    public function setTotalPaid(int $totalPaid): void {
+        $this->totalPaid = $totalPaid;
     }
 
     public function getIdVoucherService(): int {

@@ -22,7 +22,7 @@ inputConfirmPassword.addEventListener('paste', function(event) {
 // const manageModalCep = new modals('#modalCep','#btnOpenModalCep','#btnCloseModalCep');
 // manageModalCep.init();
 
-const previewAvatar = new previewImage('#previewAvatar','#inputAvatar');
+const previewAvatar = new previewImage('#previewAvatar','#inputAvatar','#iconAvatar','#spanAvatar','#msgInputAvatar');
 previewAvatar.init();
 
 
