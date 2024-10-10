@@ -16,6 +16,8 @@ class HomeController{
     public string $master = 'master.php';
 
     public function index(array $args){
+        unset($_SESSION['collaborator']);
+
         verifySession();
         Cart::delete();
         $db = new Db();
@@ -33,7 +35,8 @@ class HomeController{
             'title'=>'Agenda facil',
             'companys'=>$companys,
             'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
-            'breadcrumb'=>Breadcrumb::get()
+            'breadcrumb'=>Breadcrumb::get(),
+            'navActive'=>'agenda'
         ];
 
         if(!isset($_SESSION['user']) || !isset($_SESSION['auth'])) {

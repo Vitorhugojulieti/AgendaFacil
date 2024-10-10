@@ -59,8 +59,10 @@ class SignupController{
             'phoneCompany'=>[REQUIRED],
             'cnpj'=>[CNPJ,REQUIRED],
             'category'=>[REQUIRED],
-            'openingHoursStart'=>[TIME,REQUIRED],
-            'openingHoursEnd'=>[TIME,REQUIRED],
+            'openingHoursMorningStart'=>[TIME,REQUIRED],
+            'openingHoursMorningEnd'=>[TIME,REQUIRED],
+            'openingHoursAfternoonStart'=>[TIME,REQUIRED],
+            'openingHoursAfternoonEnd'=>[TIME,REQUIRED],
                                                    
         ],'company');
       
@@ -147,11 +149,12 @@ class SignupController{
             $validateAdress->data['district'],
             $validateAdress->data['state'],
             $validateAdress->data['city'],
-            "free",
-            date('d/m/y'),
-            0
-            ,$validateData->data['openingHoursStart'],
-            $validateData->data['openingHoursEnd']);
+            "free",'',
+            0,
+            new \DateTime($validateData->data['openingHoursMorningStart']),
+            new \DateTime($validateData->data['openingHoursMorningEnd']),
+            new \DateTime($validateData->data['openingHoursAfternoonStart']),
+            new \DateTime($validateData->data['openingHoursAfternoonEnd']));
         $company->insert($db);
         $company = $company->getIdByCnpj($db, $validateData->data['cnpj']);
         unset($_SESSION['old']);
@@ -168,9 +171,9 @@ class SignupController{
             $validateData->data['password'],
             "manager",
             $idCompany,
-            date('d/m/y')
+            new \DateTime()
             ,0,
-            true);
+            true,floatval(0));
         unset($_SESSION['old']);
         return $collaborator->insert($db);
     }

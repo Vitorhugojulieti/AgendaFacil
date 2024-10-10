@@ -11,17 +11,16 @@ class NotificationController {
     public string $view;
     public string $master = 'masterAdmin.php';
 
-    // ok
     public function index(array $args){
         $db = new Db();
         $db->connect();
 
-        $notifications = new Notification();
-        NotificationController::store(1,2,"testando notificações","","test");
-        // usar id da empresa para adm? 
-        $notifications = $notifications->getAll($db);
-        var_dump($notifications);
-        die();
+        // $notifications = new Notification();
+        // NotificationController::store(1,2,"testando notificações","","test");
+        NotificationController::markNotified(5);
+        // $notifications = $notifications->getAll($db);
+        // var_dump($notifications);
+        // die();
 
         $this->view = 'admin/vouchers.php';
         $this->data = [
@@ -45,6 +44,15 @@ class NotificationController {
             $typeNotification,
             $actualDate);
         return $notification->insert($db);
+    }
+
+    public static function markNotified($idNotification){
+        $db = new Db();
+        $db->connect();
+        
+        $notification = new Notification();
+        $notification->setNotified(1);
+        $notification->update($db,$idNotification);
     }
 
 

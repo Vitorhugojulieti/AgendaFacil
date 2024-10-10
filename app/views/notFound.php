@@ -1,10 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/output.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Not Found</title>
+</head>
+<body>
 <main class="w-full h-screen bg-principal10   overflow-hidden  relative">
     <div class="w-full h-full  flex flex-col items-center gap-8 absolute top-1/4 z-10 ">
         <a href="#"><img src="/assets/images/logo-white.png" alt="logo agendaFacil" style="width:10rem;"></a>
         <div class="w-full flex flex-col items-center gap-8">
             <span class="font-Urbanist font-semibold italic text-5xl text-white">404</span>
             <span class="font-Poppins text-white text-xl">Desculpe, não conseguimos encontrar essa página</span>
-            <button class="w-1/4 p-2 rounded bg-white text-principal10 font-semibold text-sm hover:cursor-pointer hover:underline">IR PARA INICIO</button>
+            <a class="w-1/4 p-2 rounded bg-white text-principal10 font-semibold text-sm text-center hover:cursor-pointer hover:underline" href="/">IR PARA INICIO</a>
         </div>
     </div>
 
@@ -23,3 +34,5 @@
             </defs>
         </svg>
 </main>
+</body>
+</html>

@@ -52,7 +52,8 @@ class LoginController{
                         $contactEmail->setMessage($message);
                         $contactEmail->send();
 
-                        Flash::set('redefinePassword',"Email enviado");
+                        // TODO melhorar ui da mensagem
+                        Flash::set('redefinePassword',"Se o endereço de e-mail estiver correto um link para redefinição da senha sera enviado!"," p-4");
                         redirect("/admin/login/edit");
 
                     } catch (\Throwable $th) {
@@ -61,7 +62,6 @@ class LoginController{
                     }
                 }
 
-                Flash::set('redefinePassword',"Email não cadastrado!");
                 redirect("/admin/login/edit");
             }
         }
@@ -115,6 +115,7 @@ class LoginController{
                 Flash::set('loginCollaborator','Usuario ou senha invalidos!');
                 return redirect('/admin/login');
             }
+            //TODO trocar mensagem da senha para usuario ou senha invalidos
     
             // $passwordMatch = password_verify($password,$clientFound->getPassword());
 
@@ -131,8 +132,9 @@ class LoginController{
     
             $collaboratorFound->removeAttribute('password');
             $_SESSION['collaborator'] = $collaboratorFound;
+            $_SESSION['auth'] = true;
     
-            return redirect('/admin/home');
+            return redirect('/admin/');
         }
         return redirect('/admin/login');
 
@@ -141,7 +143,8 @@ class LoginController{
 
     public function destroy(array $args){
         unset($_SESSION['collaborator']);
-        return redirect('/');
+        unset($_SESSION['auth']);
+        return redirect('/admin/login');
     }
 }
 

@@ -1,18 +1,22 @@
-    <main class="flex">
+    <main class="lg:w-5/6 w-full flex lg:absolute" style="left:17%; top:10%;">
+    <?php echo flash('resultInsertCollaborator');  ?>
+    <?php echo flash('resultUpdateCollaborator');  ?>
+        <!-- TODO adiconar cadastro do dia de aniversario e genero -- no cad company tbm -->
+         <!-- TODO mudar cor dos inputs para branco onFocus -->
         <?php require __DIR__ . '/../includes/nav.php'; ?>
 
-        <div class="w-full min-h-screen flex flex-col justify-start items-start bg-white p-4">
-            <form action="<?php echo $action;?>" method="post" enctype="multipart/form-data" id="formCadCollaborator" class="w-5/6 md:w-full flex flex-col items-start justify-start gap-4 ">
+        <div class="w-full min-h-screen flex flex-col justify-start items-start bg-bgPrincipal p-4">
+            <form action="<?php echo $action;?>" method="post" enctype="multipart/form-data" id="formCadCollaborator" class="bg-white w-5/6 md:w-full flex flex-col items-start justify-start gap-4 shadow shadow-borderFormColor p-6 rounded-lg ">
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">
-                <legend id="legendForm" class="w-full font-Urbanist font-semibold text-black text-2xl md:text-3xl border-b-2 border-b-lightGray"><?php echo $legend; ?></legend>
+                <legend id="legendForm" class="w-full font-Urbanist font-semibold text-black text-2xl md:text-3xl "><?php echo $legend; ?></legend>
                 <input type="hidden" name="idCollaborator" id="idCollaborator" type="number" value="<?php echo isset($collaborator) ? $collaborator->getId():'';?>">
                 <!-- container data admin -->
                 <fieldset id="containerDataAdmin" class="w-full  justify-start items-start">
 
-                    <div class="upload-avatar hover:cursor-pointer flex flex-col items-center justify-center p-4 gap-4 border-2 border-grayInput border-dashed rounded-full ">
+                    <div class="upload-avatar hover:cursor-pointer flex flex-col items-center justify-center  gap-4 border-2 border-grayInput border-dashed rounded-full ">
                         <input type="file" name="avatar" id="inputAvatar" class="hidden">
                         <label for="inputAvatar" class="flex flex-col items-center justify-center gap-1 pt-4 pb-4">
-                            <img id="previewAvatar"  alt="avatar" class="redondShapeImage" src="<?php echo isset($collaborator) ? '../../../'.$collaborator->getAvatar() : ''?>">
+                            <img id="previewAvatar"  alt="avatar" class="redondShapeImage mt-4" src="<?php echo isset($collaborator) ? '../../../'.$collaborator->getAvatar() : ''?>">
                             <i class='bx bxs-user-circle text-7xl text-grayInput' id="iconAvatar"></i>
                             <span id="spanAvatar" class="text-grayInput text-center hover:underline hover:cursor-pointer w-28"><span class="font-semibold text-principal5">Insira</span> a imagem aqui</span>
                         </label>
@@ -23,13 +27,14 @@
 
                     <div class="w-full lg:grid lg:grid-rows-1 lg:grid-cols-2 gap-12 md:flex md:w-5/6 md:flex-col ">
                             <!-- column 1 -->
+                             
                             <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-4 ">
                                 <!-- campo -->
                                 <div class="field w-full focus-within:text-principal10 text-grayInput">
                                     <div>
                                         <label for="inputName" >Nome</label>
                                     </div>
-                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white">
                                         <i class='bx bx-user' style=' padding-left:1rem; padding-right:1rem;'></i>
                                         <input type="text" name="name" id="inputName" value="<?php echo old('name') ?? (isset($collaborator) ? $collaborator->getName() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu nome completo">
                                     </div>
@@ -47,7 +52,7 @@
                                 <!-- campo -->
                                 <div class="field w-full focus-within:text-principal10 text-grayInput">
                                     <label for="inputCpf" >CPF</label>
-                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white">
                                         <i class='bx bx-id-card' style='padding-left:1rem; padding-right:1rem;'></i>
                                         <input type="text" name="cpf" id="inputCpf" maxlength="14" value="<?php echo old('cpf') ?? (isset($collaborator) ? $collaborator->getCpf() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu cpf">
                                     </div>
@@ -59,7 +64,7 @@
                                     <div>
                                         <label for="inputEmail" >Email</label>
                                     </div>
-                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white">
                                         <i class='bx bx-envelope' style='padding-left:1rem; padding-right:1rem;' ></i>
                                         <input type="text" name="email" id="inputEmail" value="<?php echo old('email') ?? (isset($collaborator) ? $collaborator->getEmail() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu email">
                                     </div>
@@ -71,7 +76,7 @@
                                         <label for="inputPassword" >Senha</label>
                                         <i class='bx bxs-help-circle hover:text-white hover:cursor-pointer' id="btnOpenModalPassword"></i>
                                     </div>
-                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white">
                                         <i class='bx bx-lock-alt' style='padding-left:1rem; padding-right:1rem; ' ></i>
                                         <input type="password" name="password" id="inputPassword" value="<?php echo old('password') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite sua senha">
                                         <i class="fa-regular fa-eye pl-2 pr-2" id="btnNotViewPassword" style="display:none;"></i>
@@ -95,21 +100,48 @@
                             </div>
 
                             <!-- column 2 -->
-                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-4 ">
+                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-2 ">
+                                <!-- campo -->
+                                <div class="field w-full focus-within:text-principal10 text-grayInput ">
+                                    <div>
+                                        <label for="inputActive" >Ativo</label>
+                                    </div>
+                                    <div class="flex items-center border-2 border-grayInput   rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white" style="box-shadow:0 0 10px 5px rgb(0,0,0,0.02);">
+                                        <i class='bx bx-rename' style=' padding-left:1rem; padding-right:1rem;'></i>
+                                        <select name="active" id="inputActive"class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder ">
+                                            <option value=1  <?php if (isset($collaborator) && $collaborator->getActive() === 1) echo 'selected'; ?>>Habilitado</option>
+                                            <option value=0  <?php if (isset($collaborator) && $collaborator->getActive() === 0) echo 'selected'; ?>>Desabilitado</option>
+                                        </select>
+                                    </div>
+                                    <span class="text-errorColor " id="msgActiveError"><?php echo flash('active');  ?></span>
+                                </div>
+                                <!-- campo -->
                                 <div  class="field w-full focus-within:text-principal10 text-grayInput">
                                     <div>
                                         <label for="inputNivel" >Nivel</label>
                                     </div>
-                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10">
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white">
                                         <i class='bx bx-envelope' style='padding-left:1rem; padding-right:1rem;' ></i>
                                         <select name="nivel" id="inputNivel" value="<?php echo old('nivel') ?? (isset($collaborator) ? $collaborator->getNivel() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black">
-                                            <option value="manager">Administrador</option>
-                                            <option value="collaborator">colaborador</option>
+                                            <option value="manager" <?php if (isset($collaborator) && $collaborator->getNivel() === 'manager') echo 'selected'; ?>>Administrador</option>
+                                            <option value="collaborator" <?php if (isset($collaborator) && $collaborator->getNivel() === 'collaborator') echo 'selected'; ?>>colaborador</option>
                                         </select>
                                     </div>
                                     <span class="text-errorColor " id="msgNivelError"><?php echo flash('state');  ?></span>
                                 </div>
 
+                                <!-- campo -->
+                                <div class="field w-full focus-within:text-principal10 text-grayInput">
+                                    <div>
+                                        <label for="inputCommission" >Comissão *porcentagem</label>
+                                    </div>
+                                    <div class="flex items-center border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white">
+                                        <i class='bx  bx-dollar' style=' padding-left:1rem; padding-right:1rem;'></i>
+                                        <input type="text" name="commission" id="inputCommission" value="<?php echo old('commission') ?? (isset($collaborator) ? $collaborator->getCommission() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black" placeholder="Digite seu nome completo">
+                                    </div>
+                                    <span class="text-errorColor " id="msgCommissionError"><?php echo flash('commission');  ?></span>
+                                </div>
+                              
                                 <div  class="field w-full h-full  text-grayInput flex flex-col items-start gap-2 ">
                                     <div class="w-full mb-2 border-b-2 border-lightGray text-xl">
                                         <label  >Serviços realizados</label>
@@ -117,8 +149,8 @@
 
                                     <div class="pl-5">
                                         <?php foreach ($services as $service) { ?>
-                                            <label for="checkCorte2" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
-                                                <input type="checkbox" name="services[]" value="<?php echo $service->getId() ?>" <?php echo in_array($service->getId(), $servicesCollaborator) ? "checked" : ''; ?> class="check"><?php echo $service->getName() ?>
+                                            <label for="input<?php echo $service->getName()?>" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
+                                                <input type="checkbox" id="input<?php echo $service->getName()?>" name="services[]" value="<?php echo $service->getId() ?>" <?php echo in_array($service->getId(), $servicesCollaborator) ? "checked" : ''; ?> class="check"><?php echo $service->getName() ?>
                                             </label>
                                         <?php } ?>
                                     </div>
@@ -130,7 +162,7 @@
                 </fieldset>
 
                 <div class="buttons mt-2 w-2/5 flex items-center gap-4">
-                    <button type="submit" id="sendButton" class="w-2/4 bg-principal10 text-white font-Poppins font-semibold p-2 hover:cursor-pointer hover:underline">Cadastrar</button>
+                    <button type="submit" id="sendButton" class="w-2/4 bg-principal10 text-white font-Poppins font-semibold p-2 hover:cursor-pointer hover:underline"><?php echo $buttonText ?></button>
                     <a id="cancel" href="/admin/collaborator" class="w-2/4 bg-white text-principal10 text-center font-Poppins font-semibold p-2 border-2 border-lightGray hover:cursor-pointer hover:underline">Cancelar</a>
                 </div>
             </form>

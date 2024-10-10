@@ -9,6 +9,7 @@ use app\models\Collaborator;
 use app\models\Images;
 use app\classes\Flash;
 use app\classes\Validate;
+use app\classes\Breadcrumb;
 use app\classes\BlockNotAdmin;
 
 class ScheduleController implements ControllerInterface{
@@ -19,23 +20,80 @@ class ScheduleController implements ControllerInterface{
     public function index(array $args){
         $db = new Db();
         $db->connect();
-        $schedule = new Service();
 
-        $days = $this->getAvailableDate($db,[1],1);
-        var_dump($days[2]);
-        die();
+        $schedules = new Schedule();
+        $schedules = $schedules->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
 
-        if(isset($_SESSION['collaborator']) && $_SESSION['collaborator']->getNivel() === 'manager'){
-            $this->view = 'admin/services.php';
-        }
-        $this->view = 'admin/services.php';
-
-        // $this->view = 'client/services.php';
+        $this->view = 'admin/agenda.php';
         $this->data = [
-            'title'=>'Serviços | AgendaFacil',
-            'services'=>$services,
-            'navActive'=>'servicos',
+            'title'=>'Agenda | AgendaFacil',
+            // 'schedules'=>$schedules,
+            'breadcrumb'=>Breadcrumb::getForAdmin(),
+            'navActive'=>'agenda',
+            'schedules'=>$schedules
+        ];
+    }
 
+    public function filter(array $args){
+        
+    }
+
+    public function canceled(){
+        verifySession();
+
+        $db = new Db();
+        $db->connect();
+
+        $schedules = new Schedule();
+        $schedules = $schedules->getByCompanyByStatus($db,$_SESSION['collaborator']->getIdCompany(),'cancelado');
+
+        $this->view = 'admin/agenda.php';
+        $this->data = [
+            'title'=>'Agenda | AgendaFacil',
+            // 'schedules'=>$schedules,
+            'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+            'breadcrumb'=>Breadcrumb::getForAdmin(),
+            'navActive'=>'agenda',
+            'schedules'=>$schedules
+        ];
+    }
+
+    public function confirmado(){
+
+        $db = new Db();
+        $db->connect();
+
+        $schedules = new Schedule();
+        $schedules = $schedules->getByCompanyByStatus($db,$_SESSION['collaborator']->getIdCompany(),'confirmado');
+
+        $this->view = 'admin/agenda.php';
+        $this->data = [
+            'title'=>'Agenda | AgendaFacil',
+            // 'schedules'=>$schedules,
+            'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+            'breadcrumb'=>Breadcrumb::getForAdmin(),
+            'navActive'=>'agenda',
+            'schedules'=>$schedules
+        ];
+    }
+//TODO trocar nomes para ingles
+    public function aguardando(){
+        verifySession();
+
+        $db = new Db();
+        $db->connect();
+
+        $schedules = new Schedule();
+        $schedules = $schedules->getByCompanyByStatus($db,$_SESSION['collaborator']->getIdCompany(),'Aguardando pagamento');
+
+        $this->view = 'admin/agenda.php';
+        $this->data = [
+            'title'=>'Agenda | AgendaFacil',
+            // 'schedules'=>$schedules,
+            'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+            'breadcrumb'=>Breadcrumb::getForAdmin(),
+            'navActive'=>'agenda',
+            'schedules'=>$schedules
         ];
     }
 
@@ -66,18 +124,14 @@ class ScheduleController implements ControllerInterface{
             $db = new Db();
             $db->connect();
     
-            $service = new Service();
-            $service = $service->getById($db,intval($args[0]));
+            // $service = new Service();
+            // $service = $service->getById($db,intval($args[0]));
         }
 
-        if(isset($_SESSION['collaborator']) && $_SESSION['collaborator']->getNivel() === 'manager'){
-            $this->view = 'admin/showService.php';
-        }
-
-        $this->view = 'client/showService.php';
+        $this->view = 'admin/showSchedule.php';
         $this->data = [
-            'title'=>'Visualizar serviço | AgendaFacil',
-            'service'=>$service,
+            'title'=>'Visualizar agendamento | AgendaFacil',
+            // 'service'=>$service,
         ];
     }
 
@@ -145,20 +199,20 @@ class ScheduleController implements ControllerInterface{
         $db = new Db();
         $db->connect();
 
-        //pegar datas disponiveis
-        //pegar horarios disponiveis
-        $hours = $this->getAvailableTimes($db,$args,1);
+        $services = new Service();
+        $services = $services->getAll($db);
+        $collaborators = new Collaborator();
+        $collaborators = $collaborators->getAll($db);
 
-        //pegar colaboradores
-        // $collaborators = new Collaborator();
-        // $collaborators = $collaborators->get
-        $this->view = 'admin/storeSchedule.php';
+        // $hours = $this->getAvailableTimes($db,$args,1);
+        $this->view = 'admin/registerSchedule.php';
         $this->data = [
             'title'=>'Realizar agendamento | AgendaFacil',
             'navActive'=>'Agenda',
             'legend'=>'Agendar serviço',
             'action'=>'/admin/schedule/store',
-            'hours'=>$hours,
+            'services'=>$services,
+            'collaborators'=>$collaborators,
         ];
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){

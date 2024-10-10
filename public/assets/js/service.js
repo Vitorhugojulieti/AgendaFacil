@@ -12,10 +12,10 @@ managerModalFilters.init();
 function openModalDelete(id,name){
     let btnDelete = document.querySelector('#btnDelete');
     btnDelete.href = '/admin/service/destroy/'+id;
-    managerModalDelete.setMessage("Deseja excluir o serviço: "+name+" ?",'#messageDelete');
+    managerModalDelete.setMessage("Deseja inativar o serviço: "+name+" ?",'#messageDelete');
     managerModalDelete.openModal();
     console.log(id,name);
 }
 
-const searchElements = new search('tr','#inputSearch');
+const searchElements = new search('.row','#inputSearch');
 searchElements.init();

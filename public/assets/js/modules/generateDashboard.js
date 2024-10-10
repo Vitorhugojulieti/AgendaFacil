@@ -1,9 +1,9 @@
 export default class generateDashboard{
-    constructor(containerDonutChart,containerLineChart,containerColumnChart){
-        console.log(containerDonutChart)
+    constructor(containerDonutChart,containerLineChart,containerColumnChart,container = null){
         this.containerDonutChart = document.querySelector(containerDonutChart);
         this.containerLineChart = document.querySelector(containerLineChart);
         this.containerColumnChart = document.querySelector(containerColumnChart);
+        this.container = document.querySelector(container);
     }
 
     async getData(){
@@ -24,7 +24,7 @@ export default class generateDashboard{
         var options = {
             chart: {
                 type: 'donut',
-                width: '70%',
+                width: '100%',
                 height: 400
             },
             dataLabels: {
@@ -43,14 +43,6 @@ export default class generateDashboard{
                 }
             },
             colors: ['#00D8B6', '#008FFB', '#FEB019', '#FF4560', '#775DD0'], // Customize as needed
-            title: {
-                text: 'SERVIÇOS AGENDADOS',
-                style: {
-                    fontSize: '18px',
-                    fontFamily: 'Urbanist, sans-serif', // Definindo a fonte para os rótulos de dados
-                    fontWeight: 500, // Definindo o peso da fonte
-                }
-            },
             series: data.series,
             labels: data.labels,
             legend: {
@@ -108,7 +100,7 @@ export default class generateDashboard{
             align: 'left',
             fontSize: '18px',
             fontFamily: 'Urbanist, sans-serif', // Definindo a fonte para os rótulos de dados
-            fontWeight: 500, // Definindo o peso da fonte
+            fontWeight: 300, // Definindo o peso da fonte
           },
           grid: {
             borderColor: '#e7e7e7',
@@ -177,6 +169,9 @@ export default class generateDashboard{
           click: function(chart, w, e) {
             // console.log(chart, w, e)
           }
+        },
+        toolbar: {
+          show: false
         }
       },
       colors: colors,
@@ -206,18 +201,22 @@ export default class generateDashboard{
       var chart = new ApexCharts(container, options);
       chart.render();
     }
+
     init(){
         this.getData().then(data => {
             console.log(data);
-            // console.log(data.donutChart.schedulesNumbers);
-            // console.log(this.containerDonutChart);
+            if(data != 0){
+              this.generateDonutChart(this.containerDonutChart,data.donutChart);
+              this.generateLineChart(this.containerLineChart,data.lineChart);
+              this.generateColumnChart(this.containerColumnChart,data.columnChart);
+            }else{
+              this.container.innerHTML =` <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
+                                              <i class='bx bxs-info-circle text-4xl'></i>
+                                              <span class="font-Urbanist font-semibold text-xl">A empresa não tem dados suficientes para os graficos!</span>
+                                          </div>`;
+            }
+         
 
-            // console.log(data.donutChart.services);
-            this.generateDonutChart(this.containerDonutChart,data.donutChart);
-            this.generateLineChart(this.containerLineChart,data.lineChart);
-            this.generateColumnChart(this.containerColumnChart,data.columnChart);
-
-            
         })
         .catch(error => {
             // Ocorreu um erro durante a requisição

@@ -8,6 +8,7 @@ use app\models\Images;
 use app\classes\Flash;
 use app\classes\Validate;
 use app\classes\BlockNotAdmin;
+use app\classes\Maps;
 
 class CompanyController implements ControllerInterface{
     public array $data = [];
@@ -33,6 +34,8 @@ class CompanyController implements ControllerInterface{
             'title'=>'Serviços | AgendaFacil',
             'services'=>$services,
             'navActive'=>'servicos',
+            'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+
 
         ];
     }
@@ -61,7 +64,7 @@ class CompanyController implements ControllerInterface{
     }
 
     public function show(array $args){
-        verifySession();
+        // verifySession();
 
         if(isset($args)){
             $db = new Db();
@@ -69,12 +72,19 @@ class CompanyController implements ControllerInterface{
     
             $company = new Company();
             $company = $company->getById($db,intval($args[0]));
+
+            $map = new Maps();
+            $map->setCep($company->getCep());
+            $map->setNumber($company->getNumber());
+            $map = $map->getMap();
         }
 
         $this->view = 'client/showCompany.php';
         $this->data = [
             'title'=>'Visualizar empresa | AgendaFacil',
             'company'=>$company,
+            'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+            'map'=>$map
         ];
     }
     public function update(array $args){

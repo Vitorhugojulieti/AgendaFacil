@@ -1,66 +1,88 @@
-<main class="flex">
+<main class="lg:w-5/6 w-full flex lg:absolute" style="left:17%; top:10%;">
     <?php require __DIR__ . '/../includes/nav.php'; ?>
 
-    <div class="w-full min-h-screen flex flex-col justify-start items-start bg-white p-4">
-        <div class="w-full border border-lightGray rounded-lg">
-            <div class="flex items-center justify-between p-4 ">
-                <div class="flex flex-col items-start">
-                    <h2 class="text-black text-xl font-Urbanist font-normal flex items-center gap-2">Colaboradores <span class="text-xs font-medium text-white bg-principal5 rounded p-1"><?php echo count($collaborators);?> resultados</span></h2>
-                    <h3 class="text-sm text-borderFormColor">Gerencie os colaboradores de sua empresa.</h3>
+    <div class="w-full min-h-screen flex flex-col justify-start items-start bg-bgPrincipal p-4">
+    <?php echo $breadcrumb?>
+
+        <div class="w-full  bg-bgPrincipal ">
+            <div class="w-full flex items-center justify-between py-4 ">
+                <div class="w-full flex flex-col items-start">
+                    <h2 class="text-principal10 text-3xl font-Urbanist font-semibold">Colaboradores</h2>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="search w-2/4 text-lightGray flex border-lightGray border rounded focus-within:border-principal10 focus-within:text-principal10">
-                        <input type="text" id="inputSearch" class="w-full ml-2 outline-none" placeholder="Faça sua pesquisa">
-                        <i class='bx bx-search p-2 border-l'></i>
+                <div class="w-3/4 flex items-center gap-4">
+                    <div class=" flex  search w-full  items-center bg-white  rounded focus-within:shadow-sm focus-within:shadow-black focus-within:border-grayInput shadow shadow-borderFormColor">
+                        <input type="text" id="inputSearch" class="w-full ml-2 outline-none bg-transparent p-2 placeholder:text-placeholder" placeholder="Buscar">
+                        <i class='bx bx-search p-2  text-principal10 cursor-pointer'></i>
                     </div>
 
-                    <div class="btns flex items-center gap-4">
-                        <button type="button"  id="btnOpenModalFilters"><i class='bx bx-filter' style='color:#223249' ></i>Filtros</button>
-                        <a href="/admin/collaborator/store" class="bg-principal10 text-white text-sm rounded p-2 flex items-center"><i class='bx bx-plus'></i>Add colaborador</a>
+                    <div class="w-full btns flex items-center gap-4  justify-end">
+                        <button type="button"  id="btnOpenModalFilters" class="flex items-center gap-2 p-2 bg-white shadow shadow-borderFormColor rounded"><i class='bx bx-filter' style='color:#223249' ></i>Filtros</button>
+                        <a href="/admin/collaborator/store" class="bg-principal10 text-white text-sm rounded p-3 flex items-center"><i class='bx bx-plus'></i>Add colaborador</a>
                     </div>
                 </div>
             </div>
-            <table class="w-full ">
-                <thead class="border-b-2 border-lightGray">
+            <table class="w-full bg-white shadow shadow-borderFormColor p-2 rounded-lg">
+                <thead class="bg-white p-4  border-b-2 border-lightGray ">
                     <tr>
-                        <th class="font-Urbanist font-normal text-start p-2">Colaborador</th>
-                        <th class="font-Urbanist font-normal text-start p-2">Serviços</th>
-                        <th class="font-Urbanist font-normal text-start p-2">Data de registro</th>
-                        <th class="font-Urbanist font-normal text-start p-2">Nivel</th>
-                        <th class="font-Urbanist font-normal text-start p-2">Ação</th>
+                        <th class="font-Urbanist font-semibold text-grayInput text-start p-2">Colaborador</th>
+                        <th class="font-Urbanist font-semibold text-grayInput text-center p-2">Data de registro</th>
+                        <th class="font-Urbanist font-semibold text-grayInput text-center p-2">Ativo</th>
+                        <th class="font-Urbanist font-semibold text-grayInput text-center p-2">Nivel</th>
+                        <th class="font-Urbanist font-semibold text-grayInput text-center p-2">Ação</th>
                     </tr>
                 </thead>
                 <tbody>
                 
                     <?php foreach ($collaborators as $collaborator) { ?>
-                        <tr class="border-b-2 border-lightGray">
+                        <tr class="row even:bg-grayBg">
                             <!-- collaborator image -->
                             <td class="p-2">
                                 <div class="flex items-center gap-2">
                                     <img src="<?php echo $collaborator ? '../'.$collaborator->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator">
                                     <div class="flex flex-col ">
-                                        <h3 class="font-semibold"><?php echo $collaborator->getName();?></h3>
-                                        <h3><?php echo $collaborator->getEmail();?></h3>
+                                        <span class="font-semibold"><?php echo $collaborator->getName();?></span>
+                                        <span><?php echo $collaborator->getEmail();?></span>
                                     </div>
                                 </div>
                             </td>
-                            <!-- collaborator service -->
-                            <td class="p-2">
-                                <h3>Serviços</h3>
-                            </td>
                             <!-- collaborator date -->
-                            <td class="p-2">
-                                <h3><?php echo $collaborator->getRegistrationDate();?></h3>
+                            <td class="p-2 text-center">
+                                <span><?php echo $collaborator->getRegistrationDate()->format('d-m-Y');?></span>
                             </td>
+                              <!-- collaborator ative -->
+                            <?php if($collaborator->getActive() === 1){ ?>
+                                <td class="p-2 text-center">
+                                    <span class="w-max text-sm font-medium text-white bg-sucessColor rounded p-1">Ativo</span>
+                                </td>
+                            <?php }else{ ?>
+                                <td class="p-2 text-center">
+                                    <span class="w-max text-sm font-medium text-white bg-errorColor rounded p-1">Inativo</span>
+                                </td>
+                            <?php } ?>
                             <!-- collaborator nivel -->
-                            <td class="p-2">
-                                <h3 class="w-max text-sm font-medium text-principal10 bg-principal5 rounded p-1"><?php echo $collaborator->getNivel();?></h3>
-                            </td>
+                            <?php if($collaborator->getNivel() === 'manager'){ ?>
+                                <td class="p-2 text-center">
+                                    <span class="w-max text-sm font-medium text-white bg-principal7 rounded p-1"><?php echo $collaborator->getNivel();?></span>
+                                </td>
+                            <?php }else{ ?>
+                                <td class="p-2 text-center">
+                                    <span class="w-max text-sm font-medium text-white bg-orange rounded p-1"><?php echo $collaborator->getNivel();?></span>
+                                </td>
+                            <?php } ?>
+                            
                             <!-- collaborator actions -->
-                            <td class="p-2 ">
-                                <button type="button" onclick="openModalDelete(<?php echo $collaborator->getId() ?>,'<?php echo $collaborator->getName();?>')" ><i class='bx bx-trash text-xl m-3' ></i></button>
-                                <a  href="/admin/collaborator/edit/<?php echo $collaborator->getId();?>"><i class='bx bx-pencil text-xl m-3'></i></a>
-                            </td>
+                            <?php if($collaborator->getNivel() == 'manager'){?>
+                                <td class="flex items-center gap-4 p-2 text-center justify-center">
+                                    <a  href="/admin/collaborator/edit/<?php echo $collaborator->getId();?>"><i class='bx bx-pencil text-xl m-3'></i></a>
+                                    <a href="/admin/collaborator/show/<?php echo $collaborator->getId();?>" class="hover:underline">Detalhes</a>
+                                </td>
+                            <?php }else {?>
+                                <td class="flex items-center gap-4 p-2 text-center justify-center">
+                                    <button type="button" onclick="openModalDelete(<?php echo $collaborator->getId() ?>,'<?php echo $collaborator->getName();?>')" ><i class='bx bx-trash text-xl m-3' ></i></button>
+                                    <a  href="/admin/collaborator/edit/<?php echo $collaborator->getId();?>"><i class='bx bx-pencil text-xl m-3'></i></a>
+                                    <a href="/admin/collaborator/show/<?php echo $collaborator->getId();?>" class="hover:underline">Detalhes</a>
+                                </td>
+                            <?php }?>
                         </tr> 
                     <?php } ?>
                 </tbody>
@@ -89,7 +111,7 @@
         </div>
         <div class="w-full flex items-center gap-4">
             <button id="btnCloseModalCollaborator"  class="w-full border border-grayInput text-principal10 p-2 rounded hover:underline ">Cancelar</button>
-            <button id="btnDelete"  class="w-full bg-errorColor text-white rounded p-2 border border-red hover:underline ">Excluir</button>
+            <a id="btnDelete"  class="w-full bg-errorColor text-white text-center rounded p-2 border border-red hover:underline ">Inativar</a>
         </div>
     </dialog>
 

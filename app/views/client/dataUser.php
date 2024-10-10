@@ -1,8 +1,7 @@
 <main class="flex">
         <?php require __DIR__ . '/../includes/nav.php'; ?>
 
-        <div class="w-full min-h-screen flex flex-col justify-start  items-start bg-white p-4">
-        <?php echo $breadcrumb?>
+        <div class="lg:w-5/6 w-full flex lg:absolute p-4" style="left:17%; top:10%;">
 
             <form action="<?php echo $action;?>" method="post" enctype="multipart/form-data" id="formCadCollaborator" class="w-5/6 md:w-full flex flex-col items-start justify-start gap-4 ">
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">
@@ -12,7 +11,7 @@
 
                     <div class="w-full flex flex-col gap-4 justify-start lg:items-start items-center ">
                         <input type="file" name="avatar" id="inputAvatar" class="hidden">
-                        <label for="inputAvatar" class="hover:cursor-pointer w-4/5 flex flex-col items-center justify-center p-2">
+                        <label for="inputAvatar" class="hover:cursor-pointer w-4/5 flex flex-col lg:items-start items-center justify-center p-2">
                             <img id="previewAvatar" src="<?php echo isset($user) ? $user->getAvatar() : AVATAR_DEFAULT?>"  alt="avatar" class="redondShapeImage" style="width:10rem; height:8rem;">
                         </label>
                         <span class="text-errorColor " id="msgAvatarError"><?php echo flash('avatar');  ?></span>
@@ -101,7 +100,6 @@
 
                 <div class="buttons mt-2 lg:w-2/5 w-full flex items-center gap-4">
                     <button type="submit" id="sendButton" class="w-2/4 bg-principal10 text-white font-Poppins font-semibold p-2 hover:cursor-pointer hover:underline">Redefinir</button>
-                    <a id="cancel" href="/admin/collaborator" class="w-2/4 bg-white text-principal10 text-center font-Poppins font-semibold p-2 border-2 border-lightGray hover:cursor-pointer hover:underline">Cancelar</a>
                 </div>
             </form>
         </div>

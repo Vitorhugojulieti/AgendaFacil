@@ -4,19 +4,26 @@ use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Collaborator;
 use app\models\Service;
+use app\models\Schedule;
 use app\classes\Flash;
 use app\classes\Old;
 use app\classes\ContactEmail;
 use app\classes\ImageUpload;
 use app\classes\Validate;
 use app\classes\BlockNotAdmin;
+use app\classes\Breadcrumb;
+
 
 class CollaboratorController implements ControllerInterface{
     public array $data = [];
     public string $view;
     public string $master = 'masterAdmin.php';
 
-    // ok
+    private function sanitizeArgNumber($arg){
+        $sanitizedAgument = filter_var($arg, FILTER_SANITIZE_NUMBER_INT);
+        return filter_var($sanitizedAgument, FILTER_VALIDATE_INT) ? $sanitizedAgument : false;
+    }
+
     public function index(array $args){
         BlockNotAdmin::block($this,['index']);
 
@@ -31,22 +38,27 @@ class CollaboratorController implements ControllerInterface{
             'title'=>'Colaboradores | AgendaFacil',
             'collaborators'=>$collaborators,
             'navActive'=>'colaboradores',
+            'breadcrumb'=>Breadcrumb::getForAdmin()
         ];
     }
 
     public function edit(array $args){
         BlockNotAdmin::block($this,['edit']);
 
-        if(isset($args)){
+        $idCollaborator = $this->sanitizeArgNumber($args[0]);
+        if(isset($args) && $idCollaborator){
             $db = new Db();
             $db->connect();
-            
+                
             $collaborator = new Collaborator();
             $collaborator = $collaborator->getById($db,intval($args[0]));
             $servicesCollaborator = $collaborator->getServices($db);
 
             $services = new Service();
             $services = $services->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
+        }else{
+            Flash::set('resultUpdateCollaborator', 'Erro ao encontrar colaborador!','notification error');
+            return redirect("/admin/service");
         }
 
         $this->view = 'admin/registerAndUploadCollaborator.php';
@@ -54,44 +66,112 @@ class CollaboratorController implements ControllerInterface{
             'title'=>'Editar colaborador | AgendaFacil',
             'navActive'=>'colaboradores',
             'legend'=>'Editar colaborador',
-            'action'=>'/admin/collaborator/update',
+            'buttonText'=>'Editar',
+            'action'=>'/admin/collaborator/update/'.intval($args[0]),
             'collaborator'=>$collaborator,
             'services'=>$services,
             'servicesCollaborator'=>$servicesCollaborator,
+            'breadcrumb'=>Breadcrumb::getForAdmin()
         ];
 
     }
 
-    // ok
     public function show(array $args){
         BlockNotAdmin::block($this,['show']);
 
-        if(isset($args)){
+        $idCollaborator = $this->sanitizeArgNumber($args[0]);
+        if(isset($args) && $idCollaborator){
             $db = new Db();
             $db->connect();
-            
+                
+            $service = new Service();
             $collaborator = new Collaborator();
-            $collaborator = $collaborator->getById($db,intval($args[0]));
+            $collaborator = $collaborator->getById($db,$idCollaborator);
+            $servicesId = $collaborator->getServices($db);
+            $services = [];
+
+            foreach ($servicesId as $id) {
+                array_push($services,$service->getById($db,$id));
+            }
+        }else{
+            Flash::set('resultUpdateCollaborator', 'Erro ao encontrar colaborador!','notification error');
+            return redirect("/admin/service");
         }
+        
 
         $this->view = 'admin/showCollaborator.php';
         $this->data = [
             'title'=>'Visualizar colaborador | AgendaFacil',
+            'navActive'=>'colaboradores',
             'collaborator'=>$collaborator,
+            'services'=>$services,
+            'breadcrumb'=>Breadcrumb::getForAdmin()
         ];
     }
 
-    //ok
+    public function getDataForDashboard(){
+        $this->master = 'masterapi.php';
+        $this->view = 'api.php';
+        $this->data = [
+            'title'=>'api',
+        ];
+
+        $idCollaborator = $this->sanitizeArgNumber($_GET['idCollaborator']);
+        if(isset($_SESSION['collaborator']) && $_SESSION['auth'] && $idCollaborator){
+            $db = new Db();
+            $db->connect();
+            $collaborators = new Collaborator();
+            $schedules = new Schedule();
+            $months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+            $dataLine = ['schedules'=>[],'cancellations'=>[]];
+            $schedules = $schedules->getByCollaborator($db,$idCollaborator,$_SESSION['collaborator']->getIdCompany());
+            
+            if(count($schedules) != 0){
+                // data for line chart
+                for($i=0; $i < 12; $i++){ 
+                    $filteredSchedules = array_filter($schedules, function($schedule) use($i){
+                        return $schedule->getDateSchedule()->format('m') == $i+1;
+                    });
+                    array_push($dataLine['schedules'],[$months[$i]=>count($filteredSchedules)]);
+
+                    $filteredSchedules = array_filter($schedules, function($schedule) use($i){
+                        return ($schedule->getDateSchedule()->format('m') == $i+1) && $schedule->getStatus() === 'cancelado';
+                    });
+                    array_push($dataLine['cancellations'],[$months[$i]=>count($filteredSchedules)]);
+                }
+            }else{
+                $dataLine = 0;
+            }
+           
+        
+            header('Content-Type: application/json');
+            echo json_encode($dataLine);
+            exit();
+        }else {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Parameter "collaborator" is required']);
+        }
+    }
+
+
     public function update(array $args){
         BlockNotAdmin::block($this,['update']);
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['idCollaborator']){
+        $idCollaborator = $this->sanitizeArgNumber($args[0]);
+        if($_SERVER['REQUEST_METHOD'] === 'POST' && $idCollaborator){
                 $db = new Db();
                 $db->connect();
               
                 $validate = new Validate();
                 $collaborator = new Collaborator();
-                $collaborator = $collaborator->getById($db,intval($_POST['idCollaborator']));
+                $collaborator = $collaborator->getById($db,$idCollaborator);
+
+                if($_POST['csrf_token']){
+                    $validate->handle(['csrf_token'=>[CSRF]],'company');
+                }else{
+                    Flash::set('resultUpdateCollaborator', 'Erro ao editar colaborador!','notification error');
+                    return redirect("/admin/collaborator");
+                }
 
                 if($_FILES['avatar'] && $_FILES['avatar']['error'] == 0){
                     $validate->handle(['avatar'=>[IMAGE]],'collaborator');
@@ -128,10 +208,15 @@ class CollaboratorController implements ControllerInterface{
                     $collaborator->setNivel($validate->data['nivel']);
                 }
 
-                // $validateServices = $this->validateCollaboratorServices();
-                // if($validateServices){
-                //     $collaborator->setServices($validateServices);
-                // }
+                if($_POST['commission']){
+                    $validate->handle(['commission'=>[REQUIRED]],'collaborator');
+                    $collaborator->setCommission($validate->data['commission']);
+                }
+
+                if($_POST['active'] && $voucher->getActive() != $_POST['active']){
+                    $validate->handle(['active'=>[REQUIRED]],'servicevoucher');
+                    $voucher->setActive($_POST['active']);
+                }
 
                 if($validate->errors) {
                     return redirect('/admin/collaborator/edit');
@@ -144,12 +229,17 @@ class CollaboratorController implements ControllerInterface{
 
                 Flash::set('resultUpdateCollaborator', 'Erro ao editar colaborador!','notification error');
                 return redirect("/admin/collaborator/edit/".$collaborator->getId());
+        }else{
+            Flash::set('resultUpdateCollaborator', 'Erro ao editar colaborador!','notification error');
+            return redirect("/admin/collaborator/");
         }
         
      
     }
 
-    //ok
+    //TODO conferir se ta inserindo desabilitado 
+    //TODO conferir pq nao ta atualizando propriedade ativo
+
     public function store(array $args){
         BlockNotAdmin::block($this,['store']);
         $db = new Db();
@@ -163,6 +253,7 @@ class CollaboratorController implements ControllerInterface{
             'title'=>'Cadastrar colaborador | AgendaFacil',
             'navActive'=>'colaboradores',
             'legend'=>'Cadastrar novo colaborador',
+            'buttonText'=>'Cadastrar',
             'action'=>'/admin/collaborator/store',
             'services'=>$services,
             'servicesCollaborator'=>[],
@@ -177,6 +268,7 @@ class CollaboratorController implements ControllerInterface{
             $validateServices = $this->validateCollaboratorServices();
           
             if(!$validateData || !$validateServices){
+            Flash::set('resultInsertCollaborator', 'Dados invalidos!','notification error');
                 return redirect("/admin/collaborator/store");
             }
 
@@ -197,12 +289,15 @@ class CollaboratorController implements ControllerInterface{
     private function validateCollaboratorData(){
         $validate = new Validate();
         $validate->handle([
+            'active'=>[REQUIRED],
             'cpf'=>[CPF,REQUIRED],
             'name'=>[REQUIRED],
             'phone'=>[REQUIRED],
             'nivel'=>[REQUIRED],
+            'commission'=>[REQUIRED],
             'email'=>[EMAIL,REQUIRED],
             'password'=>[PASSWORD,REQUIRED],
+            'csrf_token'=>[CSRF]
         ],'collaborator');
         if($validate->errors) {
             return false;
@@ -243,7 +338,9 @@ class CollaboratorController implements ControllerInterface{
             $validateData->data['email'],
             $validateData->data['password'],
             $validateData->data['nivel'],
-            $idCompany,date('d/m/y'),1);
+            $idCompany,new \DateTime(),1,
+            0,$validateData->data['active'],
+            $validateData->data['commission']);
             $collaborator->insert($db);
             $collaborator = $collaborator->getByEmail($db,$validateData->data['email']);
             unset($_SESSION['old']);
@@ -265,18 +362,23 @@ class CollaboratorController implements ControllerInterface{
     public function destroy(array $args){
         BlockNotAdmin::block($this,['destroy']);
 
-        if(isset($args)){
-
+        $idCollaborator = $this->sanitizeArgNumber($args[0]);
+        if(isset($args) && $idCollaborator){
             $db = new Db();
             $db->connect();
     
             $collaborator = new Collaborator();
-            if($collaborator->delete($db,intval($args[0]),$_SESSION['collaborator']->getIdCompany())){
-                Flash::set('reultDeleteCollaborator', 'Colaborador excluido com sucesso!','notification sucess');
+            $collaborator->setActive(0);
+            $collaborator->setIdCompany($_SESSION['collaborator']->getIdCompany());
+            if($collaborator->update($db,intval($args[0]))){
+                Flash::set('reultDeleteCollaborator', 'Colaborador inativado com sucesso!','notification sucess');
                 return redirect("/admin/collaborator");
             }
 
-            Flash::set('reultDeleteCollaborator', 'Erro ao excluir colaborador!','notification error');
+            Flash::set('reultDeleteCollaborator', 'Erro ao inativar colaborador!','notification error');
+            return redirect("/admin/collaborator");
+        }else{
+            Flash::set('reultDeleteCollaborator', 'Erro ao inativar colaborador!','notification error');
             return redirect("/admin/collaborator");
         }
     }

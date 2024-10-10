@@ -15,7 +15,6 @@ class ValidateUsedFields{
         if ($emailFound && !empty($emailFound[0]['email'])) {
             return true; 
         }
-
         return false;
     }
 
@@ -24,7 +23,6 @@ class ValidateUsedFields{
         if(!$cpfFound){
             return false;
         }
-
         return true;
     }
 
@@ -33,7 +31,6 @@ class ValidateUsedFields{
         if(!$passwordFound){
             return false;
         }
-
         return true;
     }
 
@@ -42,9 +39,9 @@ class ValidateUsedFields{
         if(!$cnpjFound){
             return false;
         }
-
         return true;
     }
+
 }
 
 

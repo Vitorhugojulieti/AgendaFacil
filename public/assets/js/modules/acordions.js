@@ -1,22 +1,41 @@
-// acordions
-function toggleAcordion(element){
-    element.classList.toggle("active");
-    console.log(element);
-
-    var panel = element.nextElementSibling;
-    if (panel.style.display === "block") {
-        panel.style.display = "none";
-    } else {
-        panel.style.display = "block";
+export default class acordions{
+    constructor(acordions){
+        this.acordions = acordions;
     }
 
-    let icons = element.querySelectorAll("i");
+    initializeAcordions(){
+        let htmlAcordions = [];
+        this.acordions.forEach(acordion => {
+            htmlAcordions.push(document.querySelector(acordion));
+        });
+        this.acordions = htmlAcordions; 
+    }
 
-    if(icons[1].style.display === "none"){
-        icons[0].style.display = "none";
-        icons[1].style.display = "block";
-    }else{
-        icons[1].style.display = "none";
-        icons[0].style.display = "block";
+    setChecked(numberAcordion){
+        this.acordions[numberAcordion].classList.add('check');
+    }
+
+    setNotChecked(numberAcordion){
+        this.acordions[numberAcordion].classList.remove('check');
+    }
+
+    setActive(numberAcordion){
+        this.acordions[numberAcordion].classList.add('active');
+    }
+
+    setNotActive(numberAcordion){
+        this.acordions[numberAcordion].classList.remove('active');
+    }
+
+    init(){
+        this.initializeAcordions();
+        this.setActive(0);
+        this.setChecked(0);
+        console.log(this.acordions);
+            this.acordions.forEach(acordion => {
+            acordion.addEventListener('click',(e)=>{
+                acordion.classList.toggle('active');
+            })
+        });
     }
 }

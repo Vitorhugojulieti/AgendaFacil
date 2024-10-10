@@ -15,16 +15,31 @@ class Collaborator implements ModelInterface{
     private string $password;
     private string $nivel;
     private int $idCompany;
-    private string $registrationDate;
+    private \DateTime $registrationDate;
     private int $registrationComplete;
     private int $mainAdministrator;
+    private int $active;
+    private float $commission;
     private array $services = [];
     private string $tableServices = "services";
     private string $tableSchedules = "schedules";
     private string $table = "collaborator";
     private string $tableServiceHasCollaborators = "collaborator_has_services";
 
-    public function __construct($avatar = "", $name = "", $cpf = "", $phone = "", $email = "", $password = "", $nivel = "", $idCompany = 0, $registrationDate = "",$registrationComplete = 0,$mainAdministrator = 0){
+    public function __construct($avatar = "", 
+                                $name = "", 
+                                $cpf = "", 
+                                $phone = "", 
+                                $email = "", 
+                                $password = "", 
+                                $nivel = "", 
+                                $idCompany = 0, 
+                                $registrationDate = new \DateTime(),
+                                $registrationComplete = 0,
+                                $mainAdministrator = 0,
+                                $active = 1,
+                                $commission = 0){
+
         $this->avatar = $avatar;
         $this->name = $name;
         $this->cpf = $cpf;
@@ -36,6 +51,8 @@ class Collaborator implements ModelInterface{
         $this->registrationDate = $registrationDate;
         $this->registrationComplete = $registrationComplete;
         $this->mainAdministrator = $mainAdministrator;
+        $this->active = $active;
+        $this->commission = $commission;
     }
 
     public function totalRecords(Db $db){
@@ -50,9 +67,21 @@ class Collaborator implements ModelInterface{
         $arrayObjectsCollaborator =[];
 
         foreach ($Collaborators as $collaborator){
-            $newCollaborator = new Collaborator($collaborator['avatar'],$collaborator['name'],$collaborator['cpf'],$collaborator['phone'],$collaborator['email'],$collaborator['password'],$collaborator['nivel'],$collaborator['Company_idCompany'],$collaborator['registrationDate'],$collaborator['registrationComplete']);
+                                    $newCollaborator = new Collaborator($collaborator['avatar'],
+                                    $collaborator['name'],
+                                    $collaborator['cpf'],
+                                    $collaborator['phone'],
+                                    $collaborator['email'],
+                                    $collaborator['password'],
+                                    $collaborator['nivel'],
+                                    $collaborator['Company_idCompany'],
+                                    new \DateTime($collaborator['created_at']),
+                                    $collaborator['registrationComplete'],
+                                    $collaborator['mainAdministrator'],
+                                    $collaborator['active'],
+                                    floatval($collaborator['commission']));
+
             $newCollaborator->setId($collaborator['idCollaborator']);
-            // $newCollaborator->services = $newCollaborator->getServices();
             array_push($arrayObjectsCollaborator,$newCollaborator);
         }
         
@@ -67,7 +96,20 @@ class Collaborator implements ModelInterface{
             return false;
         }
 
-        $colllaboratorObject = new Collaborator($collaboratorFound[0]['avatar'],$collaboratorFound[0]['name'],$collaboratorFound[0]['cpf'],$collaboratorFound[0]['phone'],$collaboratorFound[0]['email'],$collaboratorFound[0]['password'],$collaboratorFound[0]['nivel'],$collaboratorFound[0]['Company_idCompany'],$collaboratorFound[0]['registrationDate'],$collaboratorFound[0]['registrationComplete']);
+        $colllaboratorObject = new Collaborator($collaboratorFound[0]['avatar'],
+                                                $collaboratorFound[0]['name'],
+                                                $collaboratorFound[0]['cpf'],
+                                                $collaboratorFound[0]['phone'],
+                                                $collaboratorFound[0]['email'],
+                                                $collaboratorFound[0]['password'],
+                                                $collaboratorFound[0]['nivel'],
+                                                $collaboratorFound[0]['Company_idCompany'],
+                                                new \DateTime($collaboratorFound[0]['created_at']),
+                                                $collaboratorFound[0]['registrationComplete'],
+                                                $collaboratorFound[0]['mainAdministrator'],
+                                                $collaboratorFound[0]['active'],
+                                                floatval($collaboratorFound[0]['commission']));
+
         $colllaboratorObject->setId($collaboratorFound[0]['idCollaborator'],);
         // $colllaboratorObject->services = $colllaboratorObject->getServices();
         return $colllaboratorObject;
@@ -81,7 +123,20 @@ class Collaborator implements ModelInterface{
             return false;
         }
 
-        $colllaboratorObject = new Collaborator($collaboratorFound[0]['avatar'],$collaboratorFound[0]['name'],$collaboratorFound[0]['cpf'],$collaboratorFound[0]['phone'],$collaboratorFound[0]['email'],$collaboratorFound[0]['password'],$collaboratorFound[0]['nivel'],$collaboratorFound[0]['Company_idCompany'],$collaboratorFound[0]['registrationDate'],$collaboratorFound[0]['registrationComplete']);
+        $colllaboratorObject = new Collaborator($collaboratorFound[0]['avatar'],
+                                                $collaboratorFound[0]['name'],
+                                                $collaboratorFound[0]['cpf'],
+                                                $collaboratorFound[0]['phone'],
+                                                $collaboratorFound[0]['email'],
+                                                $collaboratorFound[0]['password'],
+                                                $collaboratorFound[0]['nivel'],
+                                                $collaboratorFound[0]['Company_idCompany'],
+                                                new \DateTime($collaboratorFound[0]['created_at']),
+                                                $collaboratorFound[0]['registrationComplete'],
+                                                $collaboratorFound[0]['mainAdministrator'],
+                                                $collaboratorFound[0]['active'],
+                                                floatval($collaboratorFound[0]['commission']));
+                                                
         $colllaboratorObject->setId($collaboratorFound[0]['idCollaborator'],);
         // $colllaboratorObject->services = $colllaboratorObject->getServices();
         return $colllaboratorObject;
@@ -93,7 +148,20 @@ class Collaborator implements ModelInterface{
         $arrayObjectsCollaborator =[];
 
         foreach ($Collaborators as $collaborator){
-            $newCollaborator = new Collaborator($collaborator['avatar'],$collaborator['name'],$collaborator['cpf'],$collaborator['phone'],$collaborator['email'],$collaborator['password'],$collaborator['nivel'],$collaborator['Company_idCompany'],$collaborator['registrationDate'],$collaborator['registrationComplete']);
+            $newCollaborator = new Collaborator($collaborator['avatar'],
+                                                $collaborator['name'],
+                                                $collaborator['cpf'],
+                                                $collaborator['phone'],
+                                                $collaborator['email'],
+                                                $collaborator['password'],
+                                                $collaborator['nivel'],
+                                                $collaborator['Company_idCompany'],
+                                                new \DateTime($collaborator['created_at']),
+                                                $collaborator['registrationComplete'],
+                                                $collaborator['mainAdministrator'],
+                                                $collaborator['active'],
+                                                floatval($collaborator['commission']));
+
             $newCollaborator->setId($collaborator['idCollaborator']);
             // $newCollaborator->services = $newCollaborator->getServices();
             array_push($arrayObjectsCollaborator,$newCollaborator);
@@ -138,11 +206,16 @@ class Collaborator implements ModelInterface{
                 'password' => $this->getPassword(),
                 'nivel' => $this->getNivel(),
                 'Company_idCompany' => $this->getIdCompany(),
-                'registrationDate' => $this->getRegistrationDate(),
                 'registrationComplete' => $this->getRegistrationComplete(),
                 'mainAdministrator' => $this->getMainAdministrator(),
+                'active' => $this->getActive(),
+                'commission' => $this->getCommission(),
             ];
     
+            $data = array_map(function($value) {
+                return $value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value;
+            }, $data);
+            
             if($db->insert($data)){
                 return true;
             }
@@ -212,7 +285,7 @@ class Collaborator implements ModelInterface{
             $data['Company_idCompany'] = $this->getIdCompany();
         }
         if ($this->getRegistrationDate() !== '') {
-            $data['registrationDate'] = $this->getRegistrationDate();
+            $data['created_at'] = $this->getRegistrationDate();
         }
 
         if ($this->getRegistrationComplete() !== 0) {
@@ -223,8 +296,19 @@ class Collaborator implements ModelInterface{
             $data['mainAdministrator'] = $this->getMainAdministrator();
         }
 
+        if ($this->getActive() !== '') {
+            $data['active'] = $this->getActive();
+        }
+
+        if ($this->getCommission() !== '') {
+            $data['commission'] = $this->getCommission();
+        }
+        $data = array_map(function($value) {
+            return $value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value;
+        }, $data);
+
         if(!empty($data)){
-            if($db->update("idCollaborator={$id}",$data)){
+            if($db->update("idCollaborator={$id} AND Company_idCompany={$this->getIdCompany()}",$data)){
                 return true;
             }
         }
@@ -316,11 +400,11 @@ class Collaborator implements ModelInterface{
         $this->idCompany = $idCompany;
     }
 
-    public function getRegistrationDate(): string {
+    public function getRegistrationDate(): \DateTime {
         return $this->registrationDate;
     }
 
-    public function setRegistrationDate(string $registrationDate): void {
+    public function setRegistrationDate(\DateTime $registrationDate): void {
         $this->registrationDate = $registrationDate;
     }
 
@@ -338,6 +422,22 @@ class Collaborator implements ModelInterface{
 
     public function setMainAdministrator(int $mainAdministrator): void {
         $this->mainAdministrator = $mainAdministrator;
+    }
+
+    public function getActive(): int {
+        return $this->active;
+    }
+
+    public function setActive(int $active): void {
+        $this->active = $active;
+    }
+
+    public function getCommission(): float {
+        return $this->commission;
+    }
+
+    public function setCommission(float $commission): void {
+        $this->commission = $commission;
     }
 }
 

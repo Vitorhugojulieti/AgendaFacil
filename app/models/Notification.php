@@ -4,7 +4,7 @@ use app\models\database\Db;
 use app\interfaces\ModelInterface;
 use JsonSerializable;
 
-
+//TODO finalizar model notification
 class Notification implements ModelInterface, JsonSerializable{
     private int $id;
     private int $idSender;
@@ -120,9 +120,9 @@ class Notification implements ModelInterface, JsonSerializable{
         if ($this->getLink() !== 0) {
             $data['link'] = $this->getLink();
         }
-        if ($this->getDate() !== 0) {
-            $data['date'] = $this->getDate();
-        }
+        // if ($this->getDate() !== 0) {
+        //     $data['date'] = $this->getDate();
+        // }
         if ($this->getNotified() !== 0) {
             $data['notified'] = $this->getNotified();
         }

@@ -1,8 +1,6 @@
 <main class="flex overflow-x-hidden">
     <?php require __DIR__ . '/../includes/nav.php'; ?>
-
-    <div class="w-full min-h-screen flex flex-col justify-start items-start bg-white p-4 pr-6">
-        <?php echo $breadcrumb?>
+    <div class="lg:w-5/6 w-full flex lg:absolute flex-col justify-start items-start bg-white p-4 pr-6" style="left:17%; top:10%;">
 
         <h2 class="font-Urbanist font-semibold italic text-4xl text-black w-full border-b border-b-grayInput p-2">Minha agenda</h2>
         <div class="scrolls w-full border-b border-grayInput pb-4 p-4 flex flex-col gap-2">

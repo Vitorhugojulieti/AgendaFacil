@@ -7,6 +7,8 @@ use app\models\Service;
 use app\models\Schedule;
 use app\models\Notification;
 use app\classes\Old;
+use app\classes\Breadcrumb;
+
 
 class HomeController{
     public array $data = [];
@@ -16,7 +18,7 @@ class HomeController{
     public function index(){
         $db = new Db();
         $db->connect();
-   
+
         //pegar total de serviços
         $services = new Service();
         $services->setIdCompany($_SESSION['collaborator']->getIdCompany());
@@ -27,21 +29,18 @@ class HomeController{
         $collaborators = $collaborators->totalRecords($db);
         //pegar agenda
         $schedules = new Schedule();
+        //TODO criar metodo para pegar somente o total de agendametos
         $schedules = $schedules->getByCompany($db,$_SESSION['collaborator']->getId());
         //pegar total de agendamentos
         $totalSchedules = count($schedules);
         //pegar total de recebimentos
-        // $schedules = new Schedule();
-        // $schedules->setIdCompany($_SESSION['collaborator']->getIdCompany());
-        // $schedules = $schedules->totalRecords($db);
-
-        $notification = new Notification(1,'dasd','sadas',new \DateTime(),0,1,0);
-        $notification = $notification->insert($db);    
+        //TODO criar busca pelo total de recebimentos
         
         $notifications = new Notification();
         $notifications = $notifications->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
 
         $unmarkedNotifications = 0;
+        //TODO criar metodo para pegar total de nao lidas?
 
         foreach ($notifications as $notification) {
             if($notification->getNotified() === 0){
@@ -59,20 +58,20 @@ class HomeController{
             'nameCollaborator'=>$_SESSION['collaborator']->getName(),
             'notifications' =>$notifications,
             'unmarkedNotifications'=>$unmarkedNotifications,
+            'breadcrumb'=>Breadcrumb::getForAdmin()
         ];
-
-       
     }
 
     public function getDataForDashboard(){
-        //evita erros com o mvc
         $this->master = 'masterapi.php';
         $this->view = 'api.php';
         $this->data = [
             'title'=>'api',
         ];
 
-        if (isset($_SESSION['collaborator'])){
+        //TODO adicionar validacao de token 
+        //TODO adicionar cabeçalhos para verificar origem da requisicao
+        if(isset($_SESSION['collaborator']) && $_SESSION['auth']){
             $db = new Db();
             $db->connect();
             $collaborators = new Collaborator();
@@ -85,32 +84,46 @@ class HomeController{
 
             // data for line chart
             for($i=0; $i < 12; $i++){ 
-                array_push($dataLine['schedules'],[$months[$i]=>count($schedules->getByCompanyForMonth($db,$_SESSION['collaborator']->getIdCompany(),$i+1))]);
-            }
+                $amountSchedules = count($schedules->getByCompanyForMonth($db,$_SESSION['collaborator']->getIdCompany(),$i+1));
+                if($amountSchedules > 0){
+                    array_push($dataLine['schedules'],[$months[$i]=>$amountSchedules]);
+                }
 
-            for($i=0; $i < 12; $i++){ 
-                array_push($dataLine['cancellations'],[$months[$i]=>count($schedules->getByCompanyForMonthCancellations($db,$_SESSION['collaborator']->getIdCompany(),$i+1))]);
+                $amountCancellations = count($schedules->getByCompanyForMonthCancellations($db,$_SESSION['collaborator']->getIdCompany(),$i+1));
+                if($amountCancellations > 0){
+                    array_push($dataLine['cancellations'],[$months[$i]=> $amountCancellations]);
+                }
             }
 
             // data for donut Chart
             $services = $services->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
 
-            foreach ($services as $service) {
-                array_push($dataDonut['labels'],$service->getName());
-                array_push($dataDonut['series'],$schedules->getSchedulesByService($db,$_SESSION['collaborator']->getIdCompany(),$service->getId()));
+            if(count($services)>0){
+                foreach ($services as $service) {
+                    array_push($dataDonut['labels'],$service->getName());
+                    array_push($dataDonut['series'],$schedules->getSchedulesByService($db,$_SESSION['collaborator']->getIdCompany(),$service->getId()));
+                }
             }
          
             // data for column chart 
             $collaborators = $collaborators->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
-            foreach ($collaborators as $collaborator) {
-                array_push($columnChar,['x'=>$collaborator->getName(),'y'=>$schedules->getSchedulesForCollaboratorByCompany($db,$_SESSION['collaborator']->getIdCompany(),$collaborator->getId())]);
-            }
 
-            $schedulesOfServices = [
-                'lineChart'=>$dataLine,
-                'donutChart'=>$dataDonut,
-                'columnChart'=>$columnChar
-            ];
+            if(count($collaborators) > 0){
+                foreach ($collaborators as $collaborator) {
+                    array_push($columnChar,['x'=>$collaborator->getName(),'y'=>$schedules->getSchedulesForCollaboratorByCompany($db,$_SESSION['collaborator']->getIdCompany(),$collaborator->getId())]);
+                }
+            }
+           
+            if(count($collaborators) > 0 && count($services) > 0 && count($dataLine['schedules'])>0 && count($dataLine['cancellations'])>0){
+                $schedulesOfServices = [
+                    'lineChart'=>$dataLine,
+                    'donutChart'=>$dataDonut,
+                    'columnChart'=>$columnChar
+                ];
+            }else{
+                $schedulesOfServices = 0;
+            }
+          
 
             header('Content-Type: application/json');
             echo json_encode($schedulesOfServices);

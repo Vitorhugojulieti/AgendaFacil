@@ -5,11 +5,23 @@ import CepSearch from "./CepSearch.js"
 import modals from "./modules/modals.js";
 import previewImage from "./modules/previewImage.js";
 import activeLoader from "./modules/activeLoader.js";
+import validateStepFormCadCompany from "./modules/validateStepFormCadCompany.js";
 
 const ViewPassword = new viewPassword();
 ViewPassword.init();
 
-const stepsForm = new steps('#btnNext','#btnPrevious',['#containerDataCompany','#containerDataCompany2','#containerDataAdmin','#containerDataImage'],'#counterStatusForm','.bullet','#controls','#sendButton');
+const stepsForm = new steps('#btnNext',
+                            '#btnPrevious',
+                            ['#containerDataCompany',
+                            '#containerDataCompany2',
+                            '#containerDataAdmin',
+                            '#containerDataImage'],
+                            '#counterStatusForm',
+                            '.bullet',
+                            '#controls',
+                            '#sendButton',
+                            new validateStepFormCadCompany());
+
 stepsForm.init();
 
 const formatInputs = new maskInput("#inputPhone","#inputCpf");
@@ -32,8 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-const manageModalCep = new modals('#modalCep','#btnOpenModalCep','#btnCloseModalCep');
-manageModalCep.init();
+// const manageModalCep = new modals('#modalCep','#btnOpenModalCep','#btnCloseModalCep');
+// manageModalCep.init();
 
 const previewAvatar = new previewImage('#previewAvatar','#inputAvatar','#iconAvatar','#spanAvatar','#msgInputAvatar');
 previewAvatar.init();

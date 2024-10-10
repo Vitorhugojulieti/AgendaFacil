@@ -32,7 +32,7 @@ class Client implements ModelInterface{
         $clients = $db->query("*");
         $arrayObjectsClient =[];
         foreach ($clients as $client){
-            $newClient = new Client($client['avatar'],$client['name'],$client['cpf'],$client['phone'],$client['email'],$client['password'],$client['registrationDate'],$client['registrationComplete']);
+            $newClient = new Client($client['avatar'],$client['name'],$client['cpf'],$client['phone'],$client['email'],$client['password'],$client['created_at '],$client['registrationComplete']);
             $newClient->setId($client['idClient']);
             array_push($arrayObjectsClient,$newClient);
         }
@@ -47,7 +47,7 @@ class Client implements ModelInterface{
             return false;
         }
 
-        $clientObject = new Client($clientFound[0]['avatar'],$clientFound[0]['name'],$clientFound[0]['cpf'],$clientFound[0]['phone'],$clientFound[0]['email'],$clientFound[0]['password'],$clientFound[0]['registrationDate'],$clientFound[0]['registrationComplete']);
+        $clientObject = new Client($clientFound[0]['avatar'],$clientFound[0]['name'],$clientFound[0]['cpf'],$clientFound[0]['phone'],$clientFound[0]['email'],$clientFound[0]['password'],$clientFound[0]['created_at'],$clientFound[0]['registrationComplete']);
         $clientObject->setId($clientFound[0]['idClient'],);
         return $clientObject;
     }
@@ -58,7 +58,7 @@ class Client implements ModelInterface{
         if(!$clientFound){
             return false;
         }
-        $client = new Client($clientFound[0]['avatar'],$clientFound[0]['name'],$clientFound[0]['cpf'],$clientFound[0]['phone'],$clientFound[0]['email'],$clientFound[0]['password'],$clientFound[0]['registrationDate'],$clientFound[0]['registrationComplete']);
+        $client = new Client($clientFound[0]['avatar'],$clientFound[0]['name'],$clientFound[0]['cpf'],$clientFound[0]['phone'],$clientFound[0]['email'],$clientFound[0]['password'],$clientFound[0]['created_at'],$clientFound[0]['registrationComplete']);
         $client->setId($clientFound[0]['idClient']);
 
         return $client;
@@ -84,7 +84,6 @@ class Client implements ModelInterface{
                 'phone' => $this->getPhone(),
                 'email' => $this->getEmail(),
                 'password' => $this->getPassword(),
-                'registrationDate' => $this->getRegistrationDate(),
                 'registrationComplete' => $this->getRegistrationComplete(),
             ];
     

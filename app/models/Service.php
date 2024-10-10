@@ -10,24 +10,32 @@ class Service implements ModelInterface{
     private string $description;
     private string $price;
     private \DateTime $duration;
-    private bool $visible;
+    private \DateTime $registrationDate;
+    private int $visible;
     private int $idCompany;
-    //configurar relação servico - colaborador para muitos para muitos
     private array $collaborators;
     private array $images;
-    private string $tableImages;
+    private string $tableImages = "imagens";
     private string $table = "services";
     private string $tableCollaboratorsHasService = "collaborator_has_services";
+    //atributte no db
+    private int $amount =1;
 
-
-    public function __construct($name = "", $description = "", $price = "", $duration = new \DateTime(), $idCompany = 0 ,$visible = true){
+    public function __construct($name = "", 
+                                $description = "", 
+                                $price = "", 
+                                $duration = new \DateTime(), 
+                                $idCompany = 0 ,
+                                $visible = true,
+                                $registrationDate = new \DateTime())
+    {
         $this->name = $name;
         $this->description = $description;
         $this->price = $price;
         $this->duration = $duration;
         $this->idCompany = $idCompany;
         $this->visible = $visible;
-        $this->tableImages = "imagens";
+        $this->registrationDate = $registrationDate;
         $this->collaborators = [];
         $this->images = [];
     }
@@ -54,7 +62,14 @@ class Service implements ModelInterface{
         $services = $db->query("*");
         $arrayObjectsService =[];
         foreach ($services as $service){
-            $newService = new Service($service['name'],$service['description'],$service['price'],new \DateTime($service['duration']),$service['Company_idCompany'],$service['visible']);
+            $newService = new Service($service['name'],
+                                    $service['description'],
+                                    $service['price'],
+                                    new \DateTime($service['duration']),
+                                    $service['Company_idCompany'],
+                                    $service['visible'],
+                                    new \DateTime($service['created_at']));
+
             $newService->setId($service['idService']);
             array_push($arrayObjectsService,$newService);
         }
@@ -71,7 +86,14 @@ class Service implements ModelInterface{
             return false;
         }
 
-        $serviceObject = new Service($serviceFound[0]['name'],$serviceFound[0]['description'],$serviceFound[0]['price'],new \DateTime($serviceFound[0]['duration']),$serviceFound[0]['Company_idCompany'],$serviceFound[0]['visible']);
+        $serviceObject = new Service($serviceFound[0]['name'],
+                                    $serviceFound[0]['description'],
+                                    $serviceFound[0]['price'],
+                                    new \DateTime($serviceFound[0]['duration']),
+                                    $serviceFound[0]['Company_idCompany'],
+                                    $serviceFound[0]['visible'],
+                                    new \DateTime($serviceFound[0]['created_at']));
+
         $serviceObject->setId($serviceFound[0]['idService'],);
         //logica para trazer imagens
         $imagesManager = new Images();
@@ -87,23 +109,32 @@ class Service implements ModelInterface{
         $services = $db->query("*","Company_idCompany={$idCompany}");
         $arrayObjectsService =[];
         foreach ($services as $service){
-            $newService = new Service($service['name'],$service['description'],$service['price'],new \DateTime($service['duration']),$service['Company_idCompany'],$service['visible']);
+            $newService = new Service($service['name'],
+                                    $service['description'],
+                                    $service['price'],
+                                    new \DateTime($service['duration']),
+                                    $service['Company_idCompany'],
+                                    $service['visible'],
+                                    new \DateTime($service['created_at']));
+
             $newService->setId($service['idService']);
             array_push($arrayObjectsService,$newService);
         }
         return $arrayObjectsService;
     }
 
-    public function getCollaboratorByService($db,$idService,$idCompany){
-        $db->setTable($this->tableCollaboratorsHasService);
+    public function getCollaborators(){
+        $db = new Db();
+        $db->connect();
+
         $collaboratorManager = new Collaborator();
-        $idsCollaborators = $db->query("Collaborator_idCollaborator","Services_idService={$idService} AND Collaborator_Company_idCompany={$idCompany}");
-        $arrayObjectsCollaborators =[];
-        foreach ($idsCollaborators as $id){
-            $collaborator = $collaboratorManager->getById($db,$id['Collaborator_idCollaborator']);
-            array_push($arrayObjectsCollaborators,$collaborator);
+        $db->setTable($this->tableCollaboratorsHasService);
+        $idsCollaborators = $db->query("Collaborator_idCollaborator","Services_idService={$this->getId()} AND Collaborator_Company_idCompany={$this->getIdCompany()}");
+        $arrayObjCollaborators = [];
+        foreach ($idsCollaborators as $idCollaborator) {
+            array_push($arrayObjCollaborators,$collaboratorManager->getById($db,$idCollaborator["Collaborator_idCollaborator"]));
         }
-        return $arrayObjectsCollaborators;
+        return $arrayObjCollaborators;
     }
 
     public function insert(DB $db){
@@ -159,7 +190,7 @@ class Service implements ModelInterface{
 
         
         if(!empty($data)){
-            if($db->update("idService={$id}",$data)){
+            if($db->update("idService={$id} AND Company_idCompany={$this->getIdCompany()}",$data)){
                 return true;
             }
         }
@@ -219,11 +250,11 @@ class Service implements ModelInterface{
         $this->duration = $duration;
     }
 
-    public function getVisible(): bool {
+    public function getVisible(): int {
         return $this->visible;
     }
 
-    public function setVisible(bool $visible): void {
+    public function setVisible(int $visible): void {
         $this->visible = $visible;
     }
 
@@ -241,6 +272,23 @@ class Service implements ModelInterface{
 
     public function setImages(array $images): void {
         $this->images = $images;
+    }
+
+    public function getRegistrationDate(): \DateTime {
+        return $this->registrationDate;
+    }
+
+    public function setRegistrationDate(\DateTime $registrationDate): void {
+        $this->registrationDate = $registrationDate;
+    }
+
+    //atributte no db
+    public function getAmount(): int {
+        return $this->amount;
+    }
+
+    public function setAmount(int $amount): void {
+        $this->amount = $amount;
     }
 }
 

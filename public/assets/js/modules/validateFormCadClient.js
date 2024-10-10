@@ -85,6 +85,7 @@ export default class validateFormCadClient{
             formValid = false;
         }
 
+
         if(this.arrayCheckbox && this.arrayCheckbox.length > 0){
             let valid = false;
             this.arrayCheckbox.forEach(checkbox => {

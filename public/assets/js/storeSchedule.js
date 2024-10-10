@@ -1,3 +1,4 @@
+import acordions from "./modules/acordions.js";
 import calendar from "./modules/calendar.js";
 import modals from "./modules/modals.js";
 
@@ -6,6 +7,10 @@ manageModalPassword.init();
 
 const calendarSchedule = new calendar('#containerCalendar');
 calendarSchedule.init();
+
+// const collaboratorsHtml = document.querySelectorAll('.labelCollaborator');
+// collaboratorsHtml[0].querySelector('img').classList.add('collaborator-selected');
+// collaboratorsHtml[0].querySelector('input').checked = true;
 
 document.addEventListener('change', function(event) {
     if (event.target.name === 'collaborators[]') {
@@ -16,11 +21,10 @@ document.addEventListener('change', function(event) {
     }
 });
 
-// var socket = io('http://localhost:3000');
-//     socket.on('connect', function() {
-//       console.log('Conectado ao servidor WebSocket');
-//       socket.send('Olá, servidor!');
-//     });
-//     socket.on('response', function(data) {
-//       console.log('Resposta do servidor:', data);
-//     });
+// const acordionsManager = new acordions(['#sectionServices','#sectionData']);
+// acordionsManager.init();
+
+
+document.querySelector('#services').addEventListener('click',(e)=>{
+    e.stopPropagation();
+})  

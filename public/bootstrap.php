@@ -24,9 +24,14 @@ $dotenv->load();
 use app\core\AppExtract;
 use app\core\MyApp;
 
-$myApp = new MyApp(new AppExtract);
-$myApp->controller();
-$myApp->view();
+// try {
+    $myApp = new MyApp(new AppExtract);
+    $myApp->controller();
+    $myApp->view();
+// } catch (\Throwable $th) {
+    // $notFoundPage = file_get_contents('../app/views/notFound.php');
+    // echo $notFoundPage;
+// }
 
 
 ?>

@@ -1,4 +1,4 @@
 import generateDashboard from "./modules/generateDashboard.js";
 
-const generateDashboardManager = new generateDashboard('#donut-chart','#line-chart','#column-chart');
+const generateDashboardManager = new generateDashboard('#donut-chart','#line-chart','#column-chart','#containerCharts');
 generateDashboardManager.init();

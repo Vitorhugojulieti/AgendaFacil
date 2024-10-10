@@ -58,7 +58,7 @@ class LoginController implements ControllerInterface{
                         $contactEmail->setMessage($message);
                         $contactEmail->send();
 
-                        Flash::set('redefinePassword',"Email enviado");
+                        Flash::set('redefinePassword',"Se o endereço de e-mail estiver correto um link para redefinição da senha sera enviado!"," p-4");
                         redirect("/login/edit");
 
                     } catch (\Throwable $th) {
@@ -67,7 +67,6 @@ class LoginController implements ControllerInterface{
                     }
                 }
 
-                Flash::set('redefinePassword',"Email não cadastrado!");
                 redirect("/login/edit");
             }
         }
@@ -125,15 +124,8 @@ class LoginController implements ControllerInterface{
                 return redirect('/login');
             }
     
-            // $passwordMatch = password_verify($password,$clientFound->getPassword());
-    
-            // if(!$passwordMatch){
-            //     Flash::set('loginPassword','Senha invalida!');
-            //     return redirect('/login');
-            // }
-    
             if(!($password === $clientFound->getPassword())){
-                Flash::set('loginPassword','Senha invalida!');
+                Flash::set('login','Usuario ou senha invalidos!');
                 return redirect('/login');
             }
     

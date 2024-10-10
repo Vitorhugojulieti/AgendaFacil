@@ -57,5 +57,9 @@ export default class calendar{
                 timesGenerator.generateTimesElements();
             }
         });
+
+        this.container.addEventListener('click',(e)=>{
+            e.stopPropagation();
+        })
     }
 }
