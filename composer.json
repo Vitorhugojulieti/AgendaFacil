@@ -24,6 +24,7 @@
         "google/apiclient": "^2.16",
         "phpmailer/phpmailer": "^6.9",
         "vlucas/phpdotenv": "^5.6",
-        "elephantio/elephant.io": "^4.7"
+        "elephantio/elephant.io": "^4.7",
+        "fakerphp/faker": "^1.23"
     }
 }

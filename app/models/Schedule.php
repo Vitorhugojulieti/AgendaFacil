@@ -192,7 +192,7 @@ class Schedule implements ModelInterface, JsonSerializable{
             array_push($timesScheduled,new \DateTime($time['startTime']));
             array_push($timesScheduled,new \DateTime($time['endTime']));
         }
-        return $timesScheduled;
+        return $times;
     }
 
     public function getScheduledDates($db){
@@ -291,7 +291,6 @@ class Schedule implements ModelInterface, JsonSerializable{
         $data = [
             'paidOut' => $this->getPaidOut(),
             'totalPaid' => $this->getTotalPaid(),
-            'Clientes_idCliente' => $this->getIdClient(),
             'Client_idClient' => $this->getIdClient(),
             'voucherService' => $this->getIdVoucherService(),
             'cancellationReason' => $this->getCancellationReason(),

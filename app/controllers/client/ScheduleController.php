@@ -3,6 +3,7 @@ namespace app\controllers\client;
 use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Schedule;
+use app\models\ScheduleOrder;
 use app\models\Service;
 use app\models\Company;
 use app\models\Collaborator;
@@ -26,13 +27,13 @@ class ScheduleController{
     }
 
     public function removeToCart(array $args){
-        if(count(Cart::get()) > 1){
-            $idCompany = Cart::getIdCompany();
+        if(count(Cart::get()) === 0){
             Cart::delete();
-            return redirect('/company/show/'.$idCompany);
+        }else{
+            Cart::remove(intval($args[0]));
+            Flash::set('resultInsertSchedule', 'Serviço removido com sucesso!','notification sucess');
+            return redirect('/schedule/store');
         }
-        Cart::remove(intval($args[0]));
-        return redirect('/schedule/store');
     }
 
     private function addToCart(int $idService,Service $serviceManager,Db $db): void{
@@ -40,6 +41,7 @@ class ScheduleController{
             $service = $serviceManager->getById($db,$idService);
             if($service){
                 Cart::add($service);
+                Flash::set('resultInsertSchedule', 'Serviço adicionado com sucesso!','notification sucess');
             }
         }
     }
@@ -55,6 +57,7 @@ class ScheduleController{
             }
             return $availableServices;
         }
+        return [];
     }
 
     public function index(array $args){
@@ -92,11 +95,11 @@ class ScheduleController{
         $db = new Db();
         $db->connect();
         $serviceManager = new Service();
-
+      
         if(isset($args[0])){
             $this->addToCart($this->sanitizeArgNumber($args[0]),$serviceManager,$db);
         }
-        if(Cart::get() === 0){
+        if(count(Cart::get()) === 0){
             return redirect('/');
         }
 
@@ -108,6 +111,7 @@ class ScheduleController{
             'amount'=>Cart::getAmount(),
             'servicesCompany'=> $this->getAvaliableServices($db,$serviceManager),//services for modal
             'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
+            'totalDuration'=>Cart::showDuration()
 
         ];
 
@@ -117,26 +121,25 @@ class ScheduleController{
                 $db->connect();
 
                 $validateData = $this->validateScheduleData();
-                $valdateServices = $this->validateServices();
                 $validateCollaborators = $this->validateCollaborators();
+                $validateServices = $this->validateServices();
 
-                if(!$validateData){
+                if(!$validateData || !$validateCollaborators || !$validateServices){
                     Flash::set('resultInsertSchedule', 'Erro ao agendar serviço!','notification error');
-
-                    // return redirect("/schedule/store");
+                    return redirect("/schedule/store");
                 }
 
-                $schedule = $this->registerSchedule($db,$validateData,$_SESSION['user']->getId(),Cart::getIdCompany());
-                $services = $this->registerServices($db,$schedule->getId(),Cart::get());   
-                $collaborators = $this->registerCollaborators($db,$schedule->getId(),$_POST['collaborators'],Cart::getIdCompany());  
+                //TODO verificar pq nao cria sessao user com id no registro do user
+                $schedule = $this->registerSchedule($db,$validateData,$_SESSION['user']->getId(),Cart::getIdCompany(),Cart::getAmount());
+                $orders = $this->registerOrders($db,$schedule,Cart::get());   
             
              
-                if(!$schedule || !$services || !$collaborators){
+                if(!$schedule || !$orders){
                     Flash::set('resultInsertSchedule', 'Erro ao agendar serviço!','message error');
-                    // return redirect("/schedule/store");
+                    return redirect("/schedule/store");
                 }
 
-                return redirect("/schedule/paymentSchedule/card/".$schedule->getTotalPaid());
+                return redirect("/schedule");
             }
         }
     }
@@ -191,16 +194,12 @@ class ScheduleController{
         header("Access-Control-Allow-Methods: GET, POST");
 
 
-        if (isset($_GET['day'])) {
+        if (isset($_GET['day']) && count(Cart::get()) != 0) {
             $db = new Db();
             $db->connect();
 
             $day = intval($_GET['day']);
-            $cart = Cart::get();
-            $amountServicesTime = $this->calculateTotalTime($cart);
-      
-            $intervalString = "PT{$amountServicesTime->i}M";
-            $amountServicesTime = new \DateInterval($intervalString);
+            $amountServicesTime = $this->calculateTotalTime(Cart::get());
         
             $company = new Company;
             $company = $company->getById($db,Cart::getIdCompany());
@@ -214,13 +213,13 @@ class ScheduleController{
             $availableTimes = ['morning'=>[],'afternoon'=>[]];
             foreach ($intervalsMorning as $interval) {
                 if (!$this->isScheduled($interval, $scheduledTimes, $amountServicesTime)) {
-                    array_push($availableTimes['morning'],$interval);
+                    array_push($availableTimes['morning'],$interval->format('H:i'));
                 }
             }
 
             foreach ($intervalsAfternoon as $interval) {
                 if (!$this->isScheduled($interval, $scheduledTimes, $amountServicesTime)) {
-                    array_push($availableTimes['afternoon'],$interval);
+                    array_push($availableTimes['afternoon'],$interval->format('H:i'));
                 }
             }
 
@@ -235,15 +234,29 @@ class ScheduleController{
 
    
 
+    // public function isScheduled($interval, $blockedIntervals, \DateInterval $amountServicesTime) {
+    //     $intervalStart = $interval;
+    //     $intervalEnd = clone $intervalStart;
+
+    //     $intervalEnd->add($amountServicesTime);
+    //     foreach ($blockedIntervals as $blocked) {
+
+    //         $blockEnd = $blocked->format('H:i');
+
+    //         if ($intervalStart < $blockEnd && $intervalEnd > $blockStart) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+
     public function isScheduled($interval, $blockedIntervals, \DateInterval $amountServicesTime) {
         $intervalStart = $interval;
         $intervalEnd = clone $intervalStart;
-
         $intervalEnd->add($amountServicesTime);
         foreach ($blockedIntervals as $blocked) {
-
-            $blocked = $blocked->format('H:i');
-
+            $blockStart = new \DateTime($blocked['startTime']);
+            $blockEnd = new \DateTime($blocked['endTime']);
             if ($intervalStart < $blockEnd && $intervalEnd > $blockStart) {
                 return true;
             }
@@ -255,8 +268,6 @@ class ScheduleController{
         $totalTime = new \DateInterval('PT0H0M');
         $now = new \DateTime();
         $baseDateTime =new \DateTime($now->format('Y-m-d') . ' 00:00:00');
-        // var_dump($baseDateTime);
-        // die();
     
         foreach ($services as $service) {
             $duration = $service->getDuration(); // Isso é um DateTime
@@ -287,12 +298,14 @@ class ScheduleController{
         $intervals = [];
         $current = clone $start;
         while ($current < $end) {
-            $intervals[] = $current;
+            // Clona o objeto $current antes de adicionar ao array
+            $intervals[] = clone $current;
             $current->add($interval);
         }
-        if ($current->format('H:i') !== $end->format('H:i')) {
-            $intervals[] = $end;
-        }
+        // Verifica se o último intervalo coincide exatamente com o horário de fim
+        // if ($current->format('H:i') !== $end->format('H:i')) {
+        //     $intervals[] = $end;
+        // }
         return $intervals;
     }
     
@@ -314,18 +327,24 @@ class ScheduleController{
     }
 
     private function validateCollaborators(){
-        return count($_POST['collaborators']) != 0;
+        if ($_POST['collaborator']) {
+            foreach ($_POST['collaborator'] as $index => $collaboratorId) {
+                $_SESSION['cart'][$index]->setIdCollaborator($collaboratorId);
+            }
+            return true;
+        }
+        return false;
     }
     
-    private function registerSchedule($db,$validateData,$idClient,$idCompany){
+    private function registerSchedule($db,$validateData,$idClient,$idCompany,$amount){
         $durationServices = $this->calculateTotalTime(Cart::get());
         
-        $endTime =  $validateData->data['time'];
+        $endTime = clone $validateData->data['time'];
         $endTime->add($durationServices);
 
         $schedule = new Schedule($idClient,
             $idCompany,
-            0,10,0,'',
+            0,$amount,0,'',
             'obs',
             'Aguardando pagamento',
             $validateData->data['time'],
@@ -337,23 +356,33 @@ class ScheduleController{
         return $schedule ? $schedule : false;
     }
 
-    private function registerServices(Db $db,$idSchedule,$services){
-        $ok = true; 
-        foreach ($services as $service) {
-            if(!Schedule::insertScheduleHasServices($db,$idSchedule,$service->getId(),$service->getIdCompany())){
-                $ok = false;
-            }
-        }
-       return $ok;
-    }
+    private function registerOrders(Db $db,$schedule,$services){
+        $ok = true;
+        $lastEndTime;
 
-    private function registerCollaborators($db,$idSchedule,$collaborators,$idCompany){
-        $ok = true; 
-        foreach ($collaborators as $collaborator) {
-            if(!Schedule::insertScheduleHasCollaborators($db,$idSchedule,$collaborator,$idCompany)){
+        foreach ($services as $index =>$service) {
+            if ($index == 0) {
+                $start = clone $schedule->getStartTime(); 
+            } else {
+                $start = clone $lastEndTime;
+            }
+    
+            $interval = new \DateInterval('PT' . $service->getDuration()->format('H') . 'H' . $service->getDuration()->format('i') . 'M');
+            $end = clone $start;
+            $end->add($interval);
+    
+            $lastEndTime = $end;
+
+            $order = new ScheduleOrder($schedule->getId(),
+                                    $service->getIdCollaborator(),
+                                    $service->getId(),
+                                    $start,
+                                    $end); 
+            if(!$order->insert($db)){
                 $ok = false;
             }
         }
+        
        return $ok;
     }
 

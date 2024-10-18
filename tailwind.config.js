@@ -31,7 +31,8 @@ module.exports = {
       'grayNotification':'#F4F4F5',
       'graySearchInput':'#f1f1f1',
       'grayBg':'#f2f4f6',
-      'bgPrincipal':'#F8F8FF'
+      'bgPrincipal':'#F8F8FF',
+      'yellow':'#fbec5d'
     },
     fontFamily: {
       Urbanist: ['Urbanist', 'sans'], 

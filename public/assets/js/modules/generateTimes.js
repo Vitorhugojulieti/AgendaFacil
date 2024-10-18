@@ -20,8 +20,6 @@ export default class generateTimes{
         let now = new Date(); 
         console.log(this.day);
         // TODO criar validacao para nao deixar buscar horarios caso o dia seja menor q o atual --- TESTAR
-
-        console.log(parseInt(this.day) >= new Date().getDate());
         if(parseInt(this.day) >= new Date().getDate()){
             fetch(`http://localhost:8889/Schedule/getAvailableTimes/?day=${this.day}`)
             .then(response => {
@@ -35,12 +33,7 @@ export default class generateTimes{
                 console.log(data.afternoon.length);
                 this.container.innerHTML = '';
                 this.legend.innerHTML = '';
-                
-
-                let timesHtml = document.querySelectorAll('.times');
-                // timesHtml[0].classList.add('time-selected');
-                console.log(timesHtml)
-
+             
                 if((data.morning.length != 0) || (data.afternoon.length != 0)){
                     this.legend.innerHTML = 'Horarios disponiveis';
 
@@ -93,7 +86,7 @@ export default class generateTimes{
                 }else{
                     this.container.innerHTML = ` <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
                                               <i class='bx bxs-info-circle text-4xl'></i>
-                                              <span class="font-Urbanist font-semibold text-xl">A empresa não tem dados suficientes para os teste4!</span>
+                                              <span class="font-Urbanist font-semibold text-xl text-center">Horarios não disponiveis para o dia selecionado!</span>
                                           </div>`;
                 }
     
@@ -104,7 +97,7 @@ export default class generateTimes{
         }else{
             this.container.innerHTML = ` <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
                                       <i class='bx bxs-info-circle text-4xl'></i>
-                                      <span class="font-Urbanist font-semibold text-xl">A empresa não tem dados suficientes para os graficos!</span>
+                                      <span class="font-Urbanist font-semibold text-xl text-center">Horarios não disponiveis para o dia selecionado!</span>
                                   </div>`;
         }
     }
@@ -119,8 +112,6 @@ export default class generateTimes{
         });
 
         document.querySelector('#times').addEventListener('click',(e)=>{
-        console.log(times);
-
             e.stopPropagation();
         })
     }

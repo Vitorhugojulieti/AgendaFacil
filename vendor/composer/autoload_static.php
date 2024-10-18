@@ -47,6 +47,7 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+            'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
             'PhpOption\\' => 10,
             'ParagonIE\\ConstantTime\\' => 23,
@@ -69,6 +70,7 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
         'F' => 
         array (
             'Firebase\\JWT\\' => 13,
+            'Faker\\' => 6,
         ),
         'E' => 
         array (
@@ -117,6 +119,10 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
         ),
         'Psr\\Cache\\' => 
         array (
@@ -169,6 +175,10 @@ class ComposerStaticInitfed729d29dc1145fe450e9fbf8a384e1
         'Firebase\\JWT\\' => 
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
+        'Faker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/fakerphp/faker/src/Faker',
         ),
         'ElephantIO\\' => 
         array (

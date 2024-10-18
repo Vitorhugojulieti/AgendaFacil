@@ -334,15 +334,15 @@ class ServiceController implements ControllerInterface{
         $dataImages = [];
 
         if(isset($validateImages->data['image1'])){
-            array_push(['typeImage'=>'serviceImage','link'=>$validateImages->data['image1']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService]);
+            array_push($dataImages,['typeImage'=>'serviceImage','link'=>$validateImages->data['image1']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService]);
         }
 
         if(isset($validateImages->data['image2'])){
-            array_push(['typeImage'=>'serviceImage','link'=>$validateImages->data['image2']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService]);
+            array_push($dataImages,['typeImage'=>'serviceImage','link'=>$validateImages->data['image2']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService]);
         }
 
-        if(isset($validateImages->data['imag31'])){
-            array_push(['typeImage'=>'serviceImage','link'=>$validateImages->data['image2']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService]);
+        if(isset($validateImages->data['image3'])){
+            array_push($dataImages,['typeImage'=>'serviceImage','link'=>$validateImages->data['image2']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService]);
         }
 
         return $imagesRegister->insert($db,$dataImages);

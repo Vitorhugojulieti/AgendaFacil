@@ -32,7 +32,19 @@ class Images {
     public function getByCompany($db,$idCompany){
         $db->setTable($this->table);
         $imagesFound = $db->query("*","Company_idCompany='{$idCompany}'");
-        return $imagesFound;
+        $arrayImages = [];
+
+        foreach ($imagesFound as $images){
+            $newImage = new Images($images['Company_idCompany'],
+                                    $images['typeImage'],
+                                    $images['link'],
+                                    $images['idService']);
+
+            $newImage->setId($images['idImage']);
+            array_push($arrayImages,$newImage);
+        }
+
+        return $arrayImages;
     }
 
     public function insert(Db $db, $data =""){
@@ -118,6 +130,14 @@ class Images {
     }
 
     //getters and setters
+    public function getId() {
+        return $this->id;
+    }
+
+    public function setId($id) {
+        $this->id = $id;
+    }
+
     public function getIdCompany() {
         return $this->idCompany;
     }

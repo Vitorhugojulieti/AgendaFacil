@@ -16,16 +16,16 @@ class HomeController{
     public string $master = 'master.php';
 
     public function index(array $args){
-        unset($_SESSION['collaborator']);
-
-        verifySession();
         Cart::delete();
         $db = new Db();
         $db->connect();
+        $companys = new Company();
         // $companys = new Company();
         // $companys = $companys->getAll($db);
         if(isset($_SESSION['location'])){
-            $companys = $this->filterByLocation($db,$_SESSION['location']['localidade'],$_SESSION['location']['uf']);
+            $companys = $companys->filterByLocationAndCategory($db,['city'=>$_SESSION['location']['localidade'],'state'=>$_SESSION['location']['uf']],'',1,10);
+            
+          
         }else{
             $companys = [];
         }
@@ -33,7 +33,7 @@ class HomeController{
         $this->view = 'home.php';
         $this->data = [
             'title'=>'Agenda facil',
-            'companys'=>$companys,
+            'companys'=>$companys['data'],
             'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
             'breadcrumb'=>Breadcrumb::get(),
             'navActive'=>'agenda'

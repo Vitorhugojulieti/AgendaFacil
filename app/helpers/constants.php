@@ -14,7 +14,7 @@ define('CSRF', 'ValidateSessionToken');
 
 // config
 define('ROOT', dirname(__FILE__, 3));
-define('ROOT_DIR', 'C:/Users/windows/Documents/tcc/AgendaFacil');
+define('IMAGES_DIR', 'http://localhost:8889/');
 define('CONTROLLER_PATH', 'app/controllers/');
 define('CONTROLLER_DEFAULT', 'Home');
 define('CONTROLLER_FOLDER_DEFAULT', 'client');

@@ -442,14 +442,7 @@ class ScheduleController implements ControllerInterface{
     }
 
     private function registerCollaborators($db,$idService,$idCompany,$validateImages){
-        $imagesRegister = new Images();
-        $dataImages = [
-            ['typeImage'=>'serviceImage','link'=>$validateImages->data['image1']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService],
-            ['typeImage'=>'serviceImage','link'=>$validateImages->data['image2']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService],
-            ['typeImage'=>'serviceImage','link'=>$validateImages->data['image3']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService],
-        ];
-
-        return $imagesRegister->insert($db,$dataImages);
+      
     }
 
     public function destroy(array $args){

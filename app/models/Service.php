@@ -20,6 +20,7 @@ class Service implements ModelInterface{
     private string $tableCollaboratorsHasService = "collaborator_has_services";
     //atributte no db
     private int $amount =1;
+    private int $idCollaborator = 0;
 
     public function __construct($name = "", 
                                 $description = "", 
@@ -289,6 +290,26 @@ class Service implements ModelInterface{
 
     public function setAmount(int $amount): void {
         $this->amount = $amount;
+    }
+
+    public function getIdCollaborator(): int {
+        return $this->idCollaborator;
+    }
+
+    public function setIdCollaborator(int $idCollaborator): void {
+        $this->idCollaborator = $idCollaborator;
+    }
+
+    //method for view
+    public function showDuration(){
+        $hours = $this->duration->format('H');
+        $minutes = $this->duration->format('i');
+
+        if ($hours === '00') {
+            return $minutes.' min';
+        } else {
+            return $this->duration->format('H').' Hr '.$this->duration->format('i').' min';
+        }
     }
 }
 

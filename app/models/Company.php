@@ -208,6 +208,57 @@ class Company implements ModelInterface, JsonSerializable{
         return $idFound[0]['idCompany'];
     }
 
+    public function filterByLocationAndCategory($db,$location, $category, $currentPage = 1, $recordsPerPage = 10) {
+        $db->setTable($this->table);
+
+        $where = [];
+        if (!empty($location)) {
+            $where[] = "city='".$location['city']."' AND state='".$location['state']."'";
+        }
+        if (!empty($category)) {
+            $where[] = "category = '" . $category . "'";
+        }
+
+        $whereClause = !empty($where) ? implode(' AND ', $where) : null;
+        $order = 'name ASC';
+
+        $filteredCompanys = $db->paginate($currentPage, $recordsPerPage, '*', $whereClause, $order);
+
+        $arrayObjectsCompany =[];
+        foreach ($filteredCompanys['data'] as $company){
+            $companyObject = new Company($company['logo'],
+                                        $company['name'],
+                                        $company['cnpj'],
+                                        $company['phone'],
+                                        $company['category'],
+                                        $company['cep'],
+                                        $company['road'],
+                                        $company['number'],
+                                        $company['district'],
+                                        $company['state'],
+                                        $company['city'],
+                                        $company['plan'],
+                                        $company['created_at'],
+                                        $company['registrationComplete'],
+                                        new \DateTime($company['openingHoursMorningStart']),
+                                        new \DateTime($company['openingHoursMorningEnd']),
+                                        new \DateTime($company['openingHoursAfternoonStart']),
+                                        new \DateTime($company['openingHoursAfternoonEnd']));
+
+            $companyObject->setId($company['idCompany']);
+            array_push($arrayObjectsCompany,$companyObject);
+
+            $pagination = [
+                'currentPage' => $filteredCompanys['currentPage'],
+                'recordsPerPage' => $filteredCompanys['recordsPerPage'],
+                'totalRecords' => $filteredCompanys['totalRecords'],
+                'totalPages' => $filteredCompanys['totalPages']
+            ];
+
+            return ['data'=>$arrayObjectsCompany,'pagination'=>$pagination];
+    }
+}
+
     public function insert(Db $db){
         $db->setTable($this->table);
         

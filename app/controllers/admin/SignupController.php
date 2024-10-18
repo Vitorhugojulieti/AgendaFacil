@@ -172,7 +172,7 @@ class SignupController{
             "manager",
             $idCompany,
             new \DateTime()
-            ,0,
+            ,1,
             true,floatval(0));
         unset($_SESSION['old']);
         return $collaborator->insert($db);

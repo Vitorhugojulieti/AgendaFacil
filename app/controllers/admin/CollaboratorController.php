@@ -12,6 +12,8 @@ use app\classes\ImageUpload;
 use app\classes\Validate;
 use app\classes\BlockNotAdmin;
 use app\classes\Breadcrumb;
+use Faker\Factory;
+
 
 
 class CollaboratorController implements ControllerInterface{
@@ -29,6 +31,8 @@ class CollaboratorController implements ControllerInterface{
 
         $db = new Db();
         $db->connect();
+
+        $faker = Factory::create();
 
         $collaborators = new Collaborator();
         $collaborators = $collaborators->getAll($db);
@@ -154,6 +158,7 @@ class CollaboratorController implements ControllerInterface{
     }
 
 
+    //TODO atualizar servicos do colab
     public function update(array $args){
         BlockNotAdmin::block($this,['update']);
 
@@ -213,7 +218,7 @@ class CollaboratorController implements ControllerInterface{
                     $collaborator->setCommission($validate->data['commission']);
                 }
 
-                if($_POST['active'] && $voucher->getActive() != $_POST['active']){
+                if($_POST['active'] && $collaborator->getActive() != $_POST['active']){
                     $validate->handle(['active'=>[REQUIRED]],'servicevoucher');
                     $voucher->setActive($_POST['active']);
                 }

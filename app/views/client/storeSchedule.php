@@ -11,9 +11,6 @@
 
             <section class="acordion active check w-full bg-white p-4 border border-lightGray rounded-lg shadow shadow-borderFormColor flex flex-col gap-4" id="sectionData">
                     <legend class="flex items-center gap-4">
-                        <div class="circle bg-sucessColor text-white text-center w-6 h-6 rounded-full flex items-center justify-center">
-                            <i class='bx bx-check' style='color:#ffffff'  ></i>
-                        </div>
                         <span class="font-Urbanist font-semibold text-xl">Selecionar data e horario</span>
                     </legend>
 
@@ -29,9 +26,9 @@
                     </div>
                 </section>
 
-                        <?php if(count($services) !== 0){ ?>
-                            <?php foreach ($services as $service) { ?>
-                                <section class="acordion active service w-full bg-white p-4 border border-lightGray rounded-lg shadow shadow-borderFormColor " >
+                        <?php if(count($services) != 0){ ?>
+                            <?php foreach ($services as $index => $service) { ?>
+                                <section class="acordion active service w-full bg-white p-2 border border-lightGray rounded-lg shadow shadow-borderFormColor " >
                                     <div class="col1 w-full flex  justify-start">
                                         <div class="circle bg-sucessColor text-white text-center w-6 h-6 rounded-full flex items-center justify-center">
                                             <i class='bx bx-check' style='color:#ffffff'  ></i>
@@ -42,26 +39,26 @@
                                         <div class="details mr-8 pb-2 flex justify-between items-center gap-8 border-b border-b-lightGray box-border" id="services">
                                             <span class="flex items-center gap-4 font-Poppins text-lg">
                                                
-                                                <?php echo $service->getName(); ?>
+                                                <?php echo ucfirst($service->getName()); ?>
                                             </span>
-                                            <span class="font-Poppins text-lg font-semibold"><?php echo 'R$ '.$service->getPrice(); ?></span>
+                                            <span class="font-Poppins text-lg font-semibold"><?php echo 'R$ '.number_format($service->getPrice(), 2, ',', '.'); ?></span>
                                         </div>
 
-                                        <div class="collaborators">
-                                            <span class="font-Poppins text-lg pt-2">Colaboradores</span>
+                                        <div class="collaborators pt-2">
+                                            <span class="font-Poppins text-lg pt-2">Colaboradores disponiveis</span>
 
-                                            <div class="body w-full  flex gap-4 pt-4">
-                                                <div class="w-full flex ">
+                                            <div class="body w-full pt-4">
+                                                <div class="collaborators-service w-full flex gap-6">
                                                     <?php if(count($service->getCollaborators()) !== 0){ ?>
-                                                        <?php foreach ($service->getCollaborators() as $collaborator) {?>
-                                                            <div class="w-full flex gap-4 p-2">
-                                                                <label for="collaborator<?php echo $collaborator->getId()?>" class="labelCollaborator flex flex-col items-center gap-2"> 
-                                                                    <img src="<?php echo '../../'.$collaborator->getAvatar()?>" alt="" class="collaborator redondShapeImageCollaborator  " style="width:5rem; height:5rem;">
-                                                                    <input type="checkbox" name="collaborators[]" value="<?php echo $collaborator->getId()?>" id="collaborator<?php echo $collaborator->getId()?>" value="<?php echo $collaborator->getId()?>" class="hidden">
+                                                        <?php foreach ($service->getCollaborators() as $indexCollaborator => $collaborator) {?>
+                                                            <div class="collaborator-selection w-max flex gap-4 p-2" data-service-index="<?php echo $index; ?>">
+                                                                <label for="collaborator<?php echo $collaborator->getId()?>" class="labelCollaborator flex flex-col items-center gap-2 hover:cursor-pointer" onclick="selectCollaborator(<?php echo $index; ?>, <?php echo $collaborator->getId(); ?>)"> 
+                                                                    <img src="<?php echo IMAGES_DIR.$collaborator->getAvatar()?>" alt="" class="collaborator redondShapeImageCollaborator  " style="width:5rem; height:5rem;">
+                                                                    <input type="radio" name="collaborator[<?php echo $index?>]" value="<?php echo $collaborator->getId()?>" id="collaborator<?php echo $collaborator->getId()?>" class="hidden"  <?php echo $indexCollaborator == 0 ? 'checked' : ''?>>
                                                                     <span class="font-Poppins text-sm"><?php echo $collaborator->getName()?></span>
                                                                 </label>
                                                             </div>
-                                                        <?php } ?>
+                                                        <?php } ?>  
                                                     <?php } ?>
                                                 </div>
                                             </div>
@@ -69,7 +66,7 @@
                                     </div>
 
                                     <div class="col3 w-full flex justify-start">
-                                        <a href="/schedule/removeToCart/<?php echo $service->getId()?>" class="bg-white text-principal10 font-Poppins hover:underline"><i class='bx bx-trash text-2xl'></i></a>
+                                        <a href="/schedule/removeToCart/<?php echo $service->getId()?>" class="bg-white text-lightGray hover:underline"><i class='bx bx-x text-3xl'></i></a>
                                     </div>
                                 </section>
                             <?php } ?>
@@ -81,12 +78,24 @@
 
                
 
-              
+                <section class="acordion active check w-full bg-white p-4 border border-lightGray rounded-lg shadow shadow-borderFormColor flex flex-col gap-4" id="sectionData">
+                    <span  class="flex items-center gap-4 text-grayInput"><i class='bx bx-message-detail text-2xl'  ></i>Adicionar observação para empresa (opcional)</span>
+                    <textarea name="description" id="inputDescription" class="w-full h-full resize-none p-4 text-start border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10" cols="1">
+                    </textarea>
+                </section>
 
+                <section class="acordion active check w-full bg-white p-4 border border-lightGray rounded-lg shadow shadow-borderFormColor flex flex-col gap-4" id="sectionData">
+                    <legend class="flex flex-col items-start gap-1">
+                        <span class="font-Urbanist font-semibold text-xl"><?php echo 'Total '.'R$ '.number_format($amount, 2, ',', '.');?></span>
+                        <span class="font-Urbanist font-semibold text-base"><?php echo $totalDuration;?></span>
+                    </legend>
+
+                </section>
+              
                
                 <div class="buttons w-3/6 flex gap-4 mb-4">
                     <button type="submit" class=" bg-principal10 text-white font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">Confirmar</button>
-                    <a href="/" class="border border-lightGray text-principal10 font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">Voltar</a>
+                    <button type="button" id="btnOpenModalCancel" class="border border-lightGray bg-white text-principal10 font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">cancelar</button>
                 </div>
             </form>
         </main>
@@ -112,6 +121,23 @@
             <?php }?>
         </div>
     </dialog>
+
+       <!-- modal cancel -->
+       <dialog id="modalCancel" class="w-2/5 bg-white text-black rounded p-4 shadow-lg shadow-black ">
+        <div class="w-full flex justify-between items-center mb-4">
+            <div class="flex gap-4 items-center">
+                <h1 class="text-2xl font-semibold font-Urbanist">Descartar agendamento?</h1>
+            </div>
+        </div>
+        <div class="w-full flex flex-col gap-4">
+            <p>Você tem certeza de querer abortar o processo de agendamento? Mudanças não salvas serão perdidas</p>
+            <div class="buttons w-full flex flex-col gap-4">
+                <button type="button" id="btnCloseModalCancel" class="bg-principal10 text-white text-center border border-lightGray rounded p-2 hover:cursor-pointer hover:underline">Concluir agendamento</button>
+                <a href="/" class="border border-lightGray bg-white text-principal10 text-center font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">Descartar</a>
+            </div>
+        </div>
+    </dialog>
+
     <?php echo flash('resultInsertSchedule');  ?>
 
     <script type="module"  src="/assets/js/storeSchedule.js"></script>

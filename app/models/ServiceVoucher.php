@@ -5,6 +5,7 @@ use app\interfaces\ModelInterface;
 
 // TODO adicionar paginação
 // TODO adicionar filtros
+//TODO criar table client_has_serviceVoucher
 class ServiceVoucher implements ModelInterface{
     private int $id;
     private int $idCompany;
@@ -146,7 +147,7 @@ class ServiceVoucher implements ModelInterface{
                                         );
 
         $voucherObject->setId($voucherFound[0]['idServiceVoucher']);
-        $voucherObject->getServicesDb($db,$voucherFound[0]['idServiceVoucher']);
+        $voucherObject->getServicesDb($db);
         return $voucherObject;
     }
 
@@ -172,6 +173,7 @@ class ServiceVoucher implements ModelInterface{
                 $voucher['discount']
             );
             $voucherObj->setId($voucher['idServiceVoucher']);
+            $voucherObj->getServicesDb($db);
             array_push($arrayObjectsVouchers, $voucherObj);
         }
     
@@ -287,9 +289,9 @@ class ServiceVoucher implements ModelInterface{
     }
 
     //getters and setters
-    private function getServicesDb(Db $db, int $idVoucher): void{
+    private function getServicesDb(Db $db): void{
         $db->setTable($this->tableServices);
-        $services = $db->query("Services_idService , amount","serviceVoucher_idServiceVoucher={$idVoucher}");
+        $services = $db->query("Services_idService , amount","serviceVoucher_idServiceVoucher={$this->getId()}");
         $serviceManager = new Service();
         $arrayServices = [];
 

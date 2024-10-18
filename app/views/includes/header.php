@@ -95,7 +95,7 @@
 <!----------------------------- HEADER FOR USER ------------------------------------------------------->
 <?php    }else if(isset($_SESSION['user']) && isset($_SESSION['auth'])){ ?>
 
-<header  class="lg:flex  bg-white lg:w-5/6 sm:w-full md:w-full hidden flex-col items-center justify-center gap-4 p-4 border-b-2 border-lightGray absolute md:left-0 sm:left-0 " style="left:17%; height:10%;">
+<header  class="lg:flex  bg-white lg:w-5/6 sm:w-full md:w-full hidden flex-col items-center justify-center gap-4 p-4 border-b-2 border-lightGray fixed md:left-0 sm:left-0 z-10 " style="top:0; left:17%; height:10%;">
     <div class="w-full flex justify-between items-center">
         <button class="location  flex gap-1 items-center justify-start " id="btnOpenModalLocation">
             <i class='bx bxs-map text-principal10'></i>

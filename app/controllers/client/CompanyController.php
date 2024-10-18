@@ -4,6 +4,8 @@ use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Company;
 use app\models\Service;
+use app\models\Evaluation;
+use app\models\ServiceVoucher;
 use app\models\Images;
 use app\classes\Flash;
 use app\classes\Validate;
@@ -72,11 +74,27 @@ class CompanyController implements ControllerInterface{
     
             $company = new Company();
             $company = $company->getById($db,intval($args[0]));
+            if(!$company){
+                redirect('/');
+            }
 
+            //TODO criar opção para falha do mapa
             $map = new Maps();
             $map->setCep($company->getCep());
             $map->setNumber($company->getNumber());
             $map = $map->getMap();
+
+            //get vouchers
+            $vouchers = new ServiceVoucher();
+            $vouchers = $vouchers->getByCompany($db,intval($args[0]));
+
+            //get images
+            $images = new Images();
+            $images = $images->getByCompany($db,intval($args[0]));
+
+            //get evaluations 
+            $evaluations = new Evaluation();
+            $evaluations = $evaluations->getByCompany($db,intval($args[0]));
         }
 
         $this->view = 'client/showCompany.php';
@@ -84,7 +102,10 @@ class CompanyController implements ControllerInterface{
             'title'=>'Visualizar empresa | AgendaFacil',
             'company'=>$company,
             'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
-            'map'=>$map
+            'map'=>$map,
+            'vouchers'=>$vouchers['vouchers'],
+            'images'=>$images,
+            'evaluations'=>$evaluations
         ];
     }
     public function update(array $args){

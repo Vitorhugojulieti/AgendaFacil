@@ -17,8 +17,10 @@ class Cart{
 
     public static function getIdCompany(){
         if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])){
-            return $_SESSION['cart'][0]->getIdCompany();
+            $cart = array_values($_SESSION['cart']);
+            return $cart[0]->getIdCompany();
         }
+        return false;
     }
     public static function getAmount(){
         $amount = 0.00;
@@ -94,6 +96,39 @@ class Cart{
     public static function delete(){
         if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])){
             unset($_SESSION['cart']);
+        }
+    }
+
+    public static function showDuration() {
+        $totalTime = new \DateInterval('PT0H0M');
+        $now = new \DateTime();
+        $baseDateTime =new \DateTime($now->format('Y-m-d') . ' 00:00:00');
+    
+        foreach ($_SESSION['cart'] as $service) {
+            $duration = $service->getDuration(); // Isso é um DateTime
+            
+            // Calcula a diferença entre a baseDateTime e a duração
+            $interval = $baseDateTime->diff($duration);
+            
+            // Adiciona o intervalo à totalTime
+            $totalTime->h += $interval->h;
+            $totalTime->i += $interval->i;
+            $totalTime->s += $interval->s;
+    
+            // Normaliza o tempo
+            if ($totalTime->s >= 60) {
+                $totalTime->i += intdiv($totalTime->s, 60);
+                $totalTime->s %= 60;
+            }
+            if ($totalTime->i >= 60) {
+                $totalTime->h += intdiv($totalTime->i, 60);
+                $totalTime->i %= 60;
+            }
+        }
+        if ($totalTime->h === 0) {
+            return $totalTime->i.' min';
+        } else {
+            return $totalTime->h.' Hr '.$totalTime->i.' min';
         }
     }
 }
