@@ -3,6 +3,7 @@ namespace app\controllers\admin;
 use app\models\database\Db;
 use app\models\Client;
 use app\models\Collaborator;
+use app\models\Company;
 use app\models\Service;
 use app\models\Schedule;
 use app\models\Notification;
@@ -18,6 +19,12 @@ class HomeController{
     public function index(){
         $db = new Db();
         $db->connect();
+
+        $company = new Company();
+        $company = $company->getById($db,$_SESSION['collaborator']->getIdCompany());
+        $activeCompany = $company->getRegistrationComplete() == 1 ? 'Empresa ativa' : 'Empresa inativa'; 
+        // var_dump($company->isOpen());
+        // die();
 
         //pegar total de serviços
         $services = new Service();
@@ -58,7 +65,8 @@ class HomeController{
             'nameCollaborator'=>$_SESSION['collaborator']->getName(),
             'notifications' =>$notifications,
             'unmarkedNotifications'=>$unmarkedNotifications,
-            'breadcrumb'=>Breadcrumb::getForAdmin()
+            'breadcrumb'=>Breadcrumb::getForAdmin(),
+            'activeCompany'=>$activeCompany
         ];
     }
 
@@ -71,7 +79,7 @@ class HomeController{
 
         //TODO adicionar validacao de token 
         //TODO adicionar cabeçalhos para verificar origem da requisicao
-        if(isset($_SESSION['collaborator']) && $_SESSION['auth']){
+        if(isset($_SESSION['collaborator']) && $_SESSION['auth'] && $_SESSION['collaborator']->getNivel() == 'manager'){
             $db = new Db();
             $db->connect();
             $collaborators = new Collaborator();

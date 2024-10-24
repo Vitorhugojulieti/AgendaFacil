@@ -45,6 +45,13 @@
                                     </div>
                                     <span class="text-errorColor " id="msgPhoneError"><?php echo flash('phone');  ?></span>
                                 </div>
+                               
+
+                            </div>
+
+                            <!-- column 2 -->
+                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-4 ">
+                               
                                 <!-- campo -->
                                 <div class="field w-full focus-within:text-principal10 text-borderFormColor">
                                     <label for="inputCpf" >CNPJ</label>
@@ -55,8 +62,8 @@
                                     <span class="text-errorColor " id="msgCpfError"><?php echo flash('cpf');  ?></span>
                                 </div>
 
-                                    <!-- campo -->
-                                    <div class="field w-full focus-within:text-principal10 text-grayInput ">
+                                <!-- campo -->
+                                <div class="field w-full focus-within:text-principal10 text-grayInput ">
                                     <div>
                                         <label for="inputActive" >Categoria</label>
                                     </div>
@@ -71,60 +78,7 @@
                                     </div>
                                     <span class="text-errorColor " id="msgNameError"><?php echo flash('name');  ?></span>
                                 </div>
-
-                            </div>
-
-                            <!-- column 2 -->
-                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-4 ">
                                
-                                <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
-                                    <div>
-                                        <label for="inputOpeningHoursMorningStart" class="flex items-center gap-1">Horario de funcionamento manhã*inicio<span class="text-red">*</span></label>
-                                    </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
-                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="time" name="openingHoursMorningStart" id="inputOpeningHoursMorningStart" value="<?php echo old('openingHoursMorningStart') ?? (isset($company) ? $company->getOpeningHoursMorningStart()->format('H:i') : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black" >
-                                    </div>
-                                    <span class="text-errorColor " id="msgOpeningHoursMorningStartError"><?php echo flash('openingHoursMorningStart');  ?></span>
-                                </div>
-
-                                 <!-- campo -->
-                                 <div class="field w-full focus-within:text-principal10 text-borderFormColor">
-                                    <div>
-                                        <label for="inputOpeningHoursMorningEnd" class="flex items-center gap-1">Horario de funcionamento manhã*final<span class="text-red">*</span></label>
-                                    </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
-                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="time" name="openingHoursMorningEnd" id="inputOpeningHoursMorningEnd" value="<?php echo old('openingHoursMorningEnd') ?? (isset($company) ? $company->getOpeningHoursMorningEnd()->format('H:i') : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black">
-                                    </div>
-                                    <span class="text-errorColor " id="msgOpeningHoursMorningEndError"><?php echo flash('openingHoursMorningEnd');  ?></span>
-                                </div>
-
-                                <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
-                                    <div>
-                                        <label for="inputOpeningHoursStart" class="flex items-center gap-1">Horario de funcionamento tarde*inicio<span class="text-red">*</span></label>
-                                    </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
-                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="time" name="openingHoursAfternoonStart" id="inputOpeningHoursAfternoonStart" value="<?php echo old('openingHoursAfternoonStart') ?? (isset($company) ? $company->getOpeningHoursAfternoonStart()->format('H:i') : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black" >
-                                    </div>
-                                    <span class="text-errorColor " id="msgOpeningHoursStartError"><?php echo flash('openingHoursAfternoonStart');  ?></span>
-                                </div>
-                                 
-
-                                <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
-                                    <div>
-                                        <label for="inputOpeningHoursAfternoonEnd" class="flex items-center gap-1">Horario de funcionamento tarde*final<span class="text-red">*</span></label>
-                                    </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
-                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="time" name="openingHoursAfternoonEnd" id="inputOpeningHoursAfternoonEnd" value="<?php echo old('openingHoursAfternoonEnd') ?? (isset($company) ? $company->getOpeningHoursAfternoonEnd()->format('H:i') : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black">
-                                    </div>
-                                    <span class="text-errorColor " id="msgOpeningHoursAfternoonEndError"><?php echo flash('openingHoursAfternoonEnd');  ?></span>
-                                </div>
                             </div>
                         </div>
                 </fieldset>
@@ -234,6 +188,141 @@
                         </div>
                 </fieldset>
 
+                <fieldset id="openingHours" class="w-full flex flex-col gap-4" >
+                    <h2 class="w-full font-Urbanist font-semibold text-black text-xl md:text-2xl border-b-2 border-b-lightGray mb-4">Horario de funcionamento</h2>
+
+                    <div id="containerHours" class="w-full flex flex-col gap-4">
+                    <?php $groupedHours = [];
+
+                    // Agrupar os dias com os mesmos horários
+                    foreach ($company->getArrayHours() as $hour) {
+                        // Cria uma chave única com base nos horários de funcionamento
+                        $key = $hour->getOpeningHoursMorningStart()->format('H:i') . '-' . 
+                            $hour->getOpeningHoursMorningEnd()->format('H:i') . '-' . 
+                            $hour->getOpeningHoursAfternoonStart()->format('H:i') . '-' . 
+                            $hour->getOpeningHoursAfternoonEnd()->format('H:i');
+
+                        // Se a chave ainda não existe, cria um novo grupo
+                        if (!isset($groupedHours[$key])) {
+                            $groupedHours[$key] = [
+                                'days' => [],
+                                'morningStart' => $hour->getOpeningHoursMorningStart(),
+                                'morningEnd' => $hour->getOpeningHoursMorningEnd(),
+                                'afternoonStart' => $hour->getOpeningHoursAfternoonStart(),
+                                'afternoonEnd' => $hour->getOpeningHoursAfternoonEnd()
+                            ];
+                        }
+
+                        // Adiciona o dia ao grupo correspondente
+                        $groupedHours[$key]['days'][] = $hour->getDayOfWeek();
+                    }
+
+                    // Exibir os grupos
+                    $daysOfWeek = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado','Domingo'];
+
+                    foreach ($groupedHours as $index => $group) { ?>
+                        <div class="hour w-full flex items-center justify-between border border-lightGray rounded p-2">
+                            <div class="w-full flex flex-col">
+                                <div class="w-full flex items-center gap-4">
+                                    <?php
+                                    // Exibir os dias agrupados
+                                    foreach ($group['days'] as $dayOfWeek) {
+                                        echo "<span class='text-base text-grayInput font-semibold'>{$daysOfWeek[$dayOfWeek]}</span>";
+                                    }
+                                    ?>
+                                </div>
+
+                                <span class="text-base text-principal10 font-semibold">
+                                    Manhã: <?= $group['morningStart']->format('H:i') ?> às <?= $group['morningEnd']->format('H:i') ?> 
+                                    - Tarde: <?= $group['afternoonStart']->format('H:i') ?> às <?= $group['afternoonEnd']->format('H:i') ?>
+                                </span>
+                            </div>
+
+                            <button type="button" onclick="deleteHour(this)">
+                                <i class='bx bx-x text-3xl' style='color:#e22b20'></i>
+                            </button>
+
+                            <div class="hidden">
+                                <?php
+                                foreach ($group['days'] as $dayOfWeek) {
+                                    echo "<input type='checkbox' name='days[]' value='{$dayOfWeek}' checked>";
+                                }
+                                ?>
+                                <input type="time" value="<?= $group['morningStart']->format('H:i') ?>" name="inputOpeningHoursMorningStart[<?= $index ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
+                                
+                                <input type="time" value="<?= $group['morningEnd']->format('H:i') ?>" name="inputOpeningHoursMorningEnd[<?= $index ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
+                                
+                                <input type="time" value="<?= $group['afternoonStart']->format('H:i') ?>" name="inputOpeningHoursAfternoonStart[<?= $index ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
+                                
+                                <input type="time" value="<?= $group['afternoonEnd']->format('H:i') ?>" name="inputOpeningHoursAfternoonEnd[<?= $index ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
+                            </div>
+                        </div>
+                    <?php } ?>
+                        
+                    </div>
+
+                    <div class="w-full flex flex-col items-start gap-4">
+                        <div class="w-full flex flex-col justify-start border border-lightGray rounded">
+                            <div class="w-full border-b border-b-lightGray flex items-center justify-between p-2">
+                                <span class="flex items-center gap-4 text-grayInput font-semibold text-base"><i class='bx bxs-info-circle'  ></i>Selecione os dias e adicione o horario desejado.</span>
+                            </div>
+
+                            <div class="w-full border-b border-b-lightGray flex items-center justify-between p-2" id="container-checkboxs">
+                                <label for="inputDomingo" class="day flex items-center bg-principal5 text-white rounded">
+                                    <span class="w-32  font-semibold p-2  text-center cursor-pointer hover:underline">Domingo</span>
+                                    <input type="checkbox"  id="inputDomingo" class="check-day hidden" value="6">
+                                </label >
+
+                                <label for="inputSegunda" class="day flex items-center bg-principal5 text-white rounded">
+                                    <span class="w-32  font-semibold p-2  text-center cursor-pointer hover:underline">Segunda-feira</span>
+                                    <input type="checkbox"  id="inputSegunda" class="hidden" value="0">
+                                </label >
+
+                                <label for="inputTerca" class="day flex items-center bg-principal5 text-white rounded">
+                                    <span class="w-32  font-semibold p-2  text-center cursor-pointer hover:underline">Terça-feira</span>
+                                    <input type="checkbox"  id="inputTerca" class="hidden" value="1">
+                                </label >
+
+                                <label for="inputQuarta" class="day flex items-center bg-principal5 text-white rounded">
+                                    <span class="w-32  font-semibold p-2  text-center cursor-pointer hover:underline">Quarta-feira</span>
+                                    <input type="checkbox"  id="inputQuarta" class="hidden" value="2">
+                                </label >
+
+                                <label for="inputQuinta" class="day flex items-center bg-principal5 text-white rounded">
+                                    <span class="w-32  font-semibold p-2  text-center cursor-pointer hover:underline">Quinta-feira</span>
+                                    <input type="checkbox"  id="inputQuinta" class="hidden" value="3">
+                                </label >
+
+                                <label for="inputSexta" class="day flex items-center bg-principal5 text-white rounded">
+                                    <span class="w-32  font-semibold p-2  text-center cursor-pointer hover:underline">Sexta-feira</span>
+                                    <input type="checkbox"  id="inputSexta" class="hidden" value="4">
+                                </label >
+
+                                <label for="inputSabado" class="day flex items-center bg-principal5 text-white rounded">
+                                    <span class="w-32  font-semibold p-2  text-center cursor-pointer hover:underline">Sabado</span>
+                                    <input type="checkbox"  id="inputSabado" class="hidden" value="5">
+                                </label >
+
+                            </div>
+
+                            <div class="w-full border-b border-b-lightGray flex flex-col items-start gap-4 p-2">
+                                <button class="flex items-center gap-4 " id="btnAddHour">
+                                    <i class='bx bx-plus text-principal10 text-xl'></i>
+                                    <span class="hover:underline">Adicionar novo horario</span>
+                                </button>
+                            </div>
+
+                            <div class="w-full" id="containerInputs">
+
+                            </div>
+
+                            
+
+
+                        </div>
+                    </div>
+                </fieldset>
+
                 <div class="buttons mt-2 lg:w-2/5 w-full flex items-center gap-4">
                     <button type="submit" id="sendButton" class="w-2/4 bg-principal10 text-white font-Poppins font-semibold p-2 hover:cursor-pointer hover:underline">Redefinir</button>
                 </div>
@@ -260,4 +349,4 @@
         </ul>
     </dialog>
    
-    <!-- <script type="module" src="/assets/js/formCadCollaborator.js" deffer></script> -->
+    <script type="module" src="/assets/js/dataAdmin.js" deffer></script>

@@ -24,8 +24,7 @@ class Schedule implements ModelInterface, JsonSerializable{
     private array $services;
     private Client $client;
     // status -> 'confirmado' - 'aguardando pagamento' - 'cancelado'
-    private string $tableServices = "schedules_has_services";
-    private string $tableCollaborators = "Schedules_has_Collaborator";
+    private string $tableOrders = "schedule_orders";
     private string $table = "schedules";
 
     public function __construct($idClient = 0,$idCompany = 0, $paidOut = 0,$totalPaid = 0.00, $idVoucherService = 0, $cancellationReason = "", $observation = "",$status = "",$startTime = new \DateTime(),$endTime = new \DateTime(),$dateSchedule = new \DateTime(),$registrationDate = new \DateTime()){

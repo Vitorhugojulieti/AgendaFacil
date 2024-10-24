@@ -27,7 +27,7 @@ class HomeController{
             
           
         }else{
-            $companys = [];
+            $companys = ["data"=>[]];
         }
 
         $this->view = 'home.php';

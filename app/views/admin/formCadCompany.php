@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="point w-full flex flex-col items-center justify-center text-white">
-                    <div class="bullet">
+                    <div class="bullet last">
                         <span>3</span>
                         <i class='bx bx-check text-2xl' style='color:#223249'  ></i>
                     </div>
@@ -31,13 +31,13 @@
                 </div>
 
 
-                <div class="point w-full flex flex-col items-center justify-center text-white">
+                <!-- <div class="point w-full flex flex-col items-center justify-center text-white">
                     <div class="bullet last">
                         <span>4</span>
                         <i class='bx bx-check text-2xl' style='color:#223249'  ></i>
                     </div>
                     <span class="text-sm text-center">Upload imagens</span>
-                </div>
+                </div> -->
             </div>
             <!-- container data company -->
             <fieldset id="containerDataCompany" class="w-full flex justify-center items-center  <? echo flash('validDataCompany');?>">
@@ -64,32 +64,8 @@
                                     </div>
                                     <span class="text-errorColor " id="msgPhoneCompanyError"><?php echo flash('phoneCompany');  ?></span>
                                 </div>
-
-                                <!-- campo -->
-                                <div class="field w-full focus-within:text-white text-lightGrayInput">
-                                    <div>
-                                        <label for="inputOpeningHoursMorningStart" >Horario de funcionamento *inicio*manhã</label>
-                                    </div>
-                                    <div class="flex items-center border-2 border-lightGrayInput rounded focus-within:border-white focus-within:text-white">
-                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="time" name="openingHoursMorningStart" id="inputOpeningHoursMorningStart" value="<?php echo old('openingHoursMorningStart') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-lightGrayInput transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite seu nome completo">
-                                    </div>
-                                    <span class="text-errorColor " ></span>
-                                </div>
-
-                                <!-- campo -->
-                                <div class="field w-full focus-within:text-white text-lightGrayInput">
-                                    <div>
-                                        <label for="inputOpeningHoursMorningEnd" >Horario de funcionamento *final*manhã</label>
-                                    </div>
-                                    <div class="flex items-center border-2 border-lightGrayInput rounded focus-within:border-white focus-within:text-white">
-                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="time" name="openingHoursMorningEnd" id="inputOpeningHoursMorningEnd" value="<?php echo old('openingHourssMorningEnd') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-lightGrayInput transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite seu nome completo">
-                                    </div>
-                                    <span class="text-errorColor " id="msgOpeningHoursMorningError"><?php echo flash('openingHoursMorningStart');  ?><?php echo flash('openingHourssMorningEnd');  ?></span>
-                                </div>
                             </div>
-
+                              
                             <!-- column 2 -->
                             <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-1 ">
                                 <!-- campo -->
@@ -97,7 +73,7 @@
                                     <label for="inputCnpjCompany" class="flex items-center gap-1">CNPJ<span class="text-red">*</span></label>
                                     <div class="flex items-center border-2 border-lightGrayInput rounded focus-within:border-white focus-within:text-white">
                                         <i class='bx bx-id-card' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="text" name="cnpj" id="inputCnpjCompany" maxlength="14" value="<?php echo old('cnpjCompany') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-lightGrayInput transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite o CNPJ da empresa">
+                                        <input type="text" name="cnpj" id="inputCnpjCompany" maxlength="18" value="<?php echo old('cnpjCompany') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-lightGrayInput transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite o CNPJ da empresa">
                                     </div>
                                     <span class="text-errorColor " id="msgCnpjError"><?php echo flash('cnpjCompany');  ?></span>
                                 </div>
@@ -109,37 +85,17 @@
                                     </div>
                                     <div class="flex items-center border-2 border-lightGrayInput rounded focus-within:border-white focus-within:text-white">
                                         <select name="category" id="inputCategory" value="<?php echo old('category') ?>" class="w-full p-2 outline-none bg-transparent  transition-all duration-300 focus:bg-white focus:border-white focus:text-black">
-                                            <option value="barbbarber-shope">Barbearia</option>
-                                            <option value="barbbarber-shope">Barbearia</option>
-                                            <option value="barbbarber-shope">Barbearia</option>
-                                            <option value="barbbarber-shope">Barbearia</option>
+                                            <option value="Barbearia">Barbearia</option>
+                                            <option value="Salão de beleza">Salão de beleza</option>
+                                            <option value="Spa">Spa</option>
+                                            <option value="Clínica de estética">Clínica de estética</option>
+                                            <option value="Estudio de tatuagem">Estudio de tatuagem</option>
+                                            <option value="Pet-shop">Pet-shop</option>
+                                            <option value="Manutenção e Reformas">Manutenção e Reformas</option>
+                                            <option value="Outros serviços">Outros serviços</option>
                                         </select>    
                                     </div>
-                                    <span class="text-errorColor " id="msgCategoryCompanyError"><?php echo flash('category');  ?></span>
-                                </div>
-
-                                 <!-- campo -->
-                                 <div class="field w-full focus-within:text-white text-lightGrayInput">
-                                    <div>
-                                        <label for="inputOpeningHoursAfternoonStart" >Horario de funcionamento *inicio*tarde</label>
-                                    </div>
-                                    <div class="flex items-center border-2 border-lightGrayInput rounded focus-within:border-white focus-within:text-white">
-                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="time" name="openingHoursAfternoonStart" id="inputOpeningHoursAfternoonStart" value="<?php echo old('openingHoursAfternoonStart') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-lightGrayInput transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite seu nome completo">
-                                    </div>
-                                    <span class="text-errorColor " ></span>
-                                </div>
-
-                                <!-- campo -->
-                                <div class="field w-full focus-within:text-white text-lightGrayInput">
-                                    <div>
-                                        <label for="inputOpeningHoursAfternoonEnd" >Horario de funcionamento *final*tarde</label>
-                                    </div>
-                                    <div class="flex items-center border-2 border-lightGrayInput rounded focus-within:border-white focus-within:text-white">
-                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="time" name="openingHoursAfternoonEnd" id="inputOpeningHoursAfternoonEnd" value="<?php echo old('openingHoursAfternoonEnd') ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-lightGrayInput transition-all duration-300 focus:bg-white focus:border-white focus:text-black" placeholder="Digite seu nome completo">
-                                    </div>
-                                    <span class="text-errorColor " id="msgOpeningHoursAfternoonError"><?php echo flash('openingHoursAfternoonStart');  ?><?php echo flash('openingHoursAfternoonEnd');  ?></span>
+                                    <span class="text-transparent " id="msgCategoryCompanyError"></span>
                                 </div>
 
                         </div>
@@ -337,43 +293,11 @@
             </fieldset>
 
             <!-- container data images -->
-            <fieldset id="containerDataImage" class="hidden w-full <? echo flash('validImages');?>">
-                <div class="w-full flex  items-center justify-center gap-4 p-4">
-                    <div class="w-1/4 hover:cursor-pointer flex flex-col items-center justify-center p-4 gap-4 border-2 border-grayInput border-dashed rounded ">
-                        <input type="file" name="avatar" id="inputLogo" class="hidden">
-                        <label for="inputLogo" class="flex flex-col items-center gap-2 pt-4 pb-4">
-                            <img id="previewLogo"  alt="logo" >
-                            <i class='bx bx-image text-4xl text-grayInput' id="iconLogo"></i>
-                            <span class="text-grayInput hover:underline hover:cursor-pointer" id="spanLogo"><span class="font-semibold text-principal5">Insira</span> a logo da empresa aqui</span>
-                        </label>
-                        <span class="text-errorColor " id="msgInputLogo"><?php echo flash('image1');  ?></span>
-                    </div>
-
-                    <div class="w-1/4 hover:cursor-pointer flex flex-col items-center justify-center p-4 gap-4 border-2 border-grayInput border-dashed rounded ">
-                        <input type="file" name="logo" id="inputAvatar" class="hidden">
-                        <label for="inputAvatar" class="flex flex-col items-center gap-2 pt-4 pb-4">
-                            <img id="previewAvatar"  alt="logo" >
-                            <i class='bx bx-image text-4xl text-grayInput' id="iconAvatar"></i>
-                            <span class="text-grayInput hover:underline hover:cursor-pointer" id="spanAvatar"><span class="font-semibold text-principal5">Insira</span> a imagem do administrador</span>
-                        </label>
-                        <span class="text-errorColor " id="msgInputAvatar"><?php echo flash('image1');  ?></span>
-                    </div>
-
-                    <div class="w-1/4 hover:cursor-pointer flex flex-col items-center justify-center p-4 gap-4 border-2 border-grayInput border-dashed rounded ">
-                        <input type="file" name="image" id="inputImage" class="hidden">
-                        <label for="inputImage" class="flex flex-col items-center gap-2 pt-4 pb-4">
-                            <img id="previewImage"  alt="image" >
-                            <i class='bx bx-image text-4xl text-grayInput'  id="iconImage"></i>
-                            <span class="text-grayInput hover:underline hover:cursor-pointer" id="spanImage"><span class="font-semibold text-principal5">Insira</span> a imagem da empresa aqui</span>
-                        </label>
-                        <span class="text-errorColor " id="msgInputImage"><?php echo flash('image1');  ?></span>
-                    </div>
-                </div>
-            </fieldset>
+            
 
             <div id="controls" class="flex items-center gap-4">
                 <button type="button" id="btnPrevious" class="circle-btn hover:cursor-pointer"><i class='bx bxs-chevron-left text-2xl'></i></button>
-                <p id="counterStatusForm" class="text-white">1/4</p>
+                <p id="counterStatusForm" class="text-white">1/3</p>
                 <button type="button" id="btnNext" class="circle-btn hover:cursor-pointer"><i class='bx bxs-chevron-right text-2xl'></i></button>
             </div>
 

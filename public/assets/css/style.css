@@ -89,7 +89,7 @@
   bottom: 11px;
   left: 20px;
   height: 3px;
-  width: 5rem;
+  width: 6rem;
   background-color: #fff;
 }
 .bullet.complete{
@@ -105,7 +105,7 @@
 
 @media (min-width: 768px) {
   .bullet::before{
-    width: 12rem !important;
+    width: 16rem !important;
   }
 }
 /* steps for details schedule */
@@ -297,15 +297,18 @@ fieldset > div > div > div > span,fieldset > div > div > span,fieldset > div > s
 }
 
 .day-selected{
-  background-color: #223249;
-  color: #fff;
+  background-color: #223249 ;
+  font-weight: 600;
+  color: #ffff !important;
 }
 .time-selected{
   background-color: red !important;
   color: #fff;
 }
-.collaborator-selected{
+.collaborator-selected > img{
   border:2px solid #000;
+}
+.collaborator-selected > span{
   font-weight: 600 !important;
 }
 
@@ -416,6 +419,10 @@ section.acordion.check legend>.circle > i{
   background-repeat: repeat-x;
   background-size: 25px 20px, 25px 20px;
   background-position: center;
+}
+/* day check */
+.day-check{
+  background-color: #223249 !important;
 }
 /* bg-chart for login adm */
 .bg-chart{

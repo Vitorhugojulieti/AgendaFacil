@@ -3,10 +3,11 @@
 <header class="lg:flex  bg-white lg:w-5/6 sm:w-full md:w-full hidden flex-col items-center justify-center gap-4 p-4 border-b-2 border-lightGray absolute md:left-0 sm:left-0 " style="left:17%; height:10%;">
     <div class="w-full flex justify-between items-center">
 
-        <div class="lg:flex hidden search w-2/4  items-center bg-graySearchInput  rounded focus-within:shadow-sm focus-within:shadow-black focus-within:border-grayInput">
-            <input type="text" class="w-full ml-2 outline-none bg-transparent p-2 placeholder:text-placeholder" placeholder="Buscar">
-            <i class='bx bx-search p-2  text-principal10 cursor-pointer'></i>
-        </div>
+        <?php if($activeCompany == 'Empresa inativa'){ ?>
+            <span class="bg-errorColor text-white text-sm text-center w-32 rounded p-1 flex gap-2 items-center"><i class='bx bxs-circle '></i><?php echo $activeCompany ?></span>
+        <?php }else{ ?>
+            <span class="bg-sucessColor text-white text-sm text-center w-32 rounded p-1 flex gap-2 items-center"><i class='bx bxs-circle '></i><?php echo $activeCompany ?></span>
+        <?php } ?>
 
         <div class="lg:flex hidden buttons items-center gap-8">
             <div class="flex items-center gap-2 relative">
@@ -46,7 +47,7 @@
 
             <div class="avatar-user relative">
                 <!-- <img src="" alt=""> -->
-                <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['collaborator']) ? '../'.$_SESSION['collaborator']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator">
+                <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['collaborator']) ? IMAGES_DIR.$_SESSION['collaborator']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator">
 
                 <div id="popUpAvatar" class="hidden flex-col items-start bg-white  rounded-xl pop-menu-avatar shadow-sm shadow-black ">
                     <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray rounded-t-xl hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
@@ -67,7 +68,7 @@
     <div id="menuMobile" class="hidden bg-principal10 text-white w-3/4 min-h-full p-4  flex-col items-start gap-8 fixed top-0 left-0 z-10">
         <div id="btnCloseMenuMobile" class="w-full flex justify-end"><i class='bx bx-x text-2xl text-white'></i></div>
         <div class="avatar-user w-full flex flex-col items-start gap-4 p-4 border-b border-lightGrayInput">
-            <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['collaborator']) ? $_SESSION['collaborator']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator " >
+            <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['collaborator']) ? IMAGES_DIR.$_SESSION['collaborator']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator " >
             <span class="w0full text-xl font-Urbanist font-semibold"><?php echo isset($_SESSION['collaborator']) ? $_SESSION['collaborator']->getName() : 'usuario';?></span>
         </div>
 
@@ -145,7 +146,7 @@
 
             <div class=" avatar-user relative">
                 <!-- <img src="" alt=""> -->
-                <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['user']) ? $_SESSION['user']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator">
+                <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['user']) ? IMAGES_DIR.$_SESSION['user']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator">
 
                 <div id="popUpAvatar" class="hidden flex-col items-start bg-white  rounded-xl pop-menu-avatar shadow-sm shadow-black ">
                     <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
@@ -191,7 +192,7 @@
     <div id="menuMobile" class="hidden bg-principal10 text-white w-3/4 h-screen p-4  flex-col items-start gap-8 fixed top-0 left-0 z-10">
         <div id="btnCloseMenuMobile" class="w-full flex justify-end"><i class='bx bx-x text-2xl text-white'></i></div>
         <div class="avatar-user w-full flex gap-4 p-4 border-b border-lightGrayInput">
-            <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['user']) ? $_SESSION['user']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator " >
+            <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['user']) ? IMAGES_DIR.$_SESSION['user']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator " >
             <div class="flex flex-col items-start">
                 <span class="w0full text-xl font-Urbanist font-semibold"><?php echo isset($_SESSION['user']) ? $_SESSION['user']->getName() : 'usuario';?></span>
                 <button class="location w-full flex gap-1 items-center justify-start " id="btnOpenModalLocation">

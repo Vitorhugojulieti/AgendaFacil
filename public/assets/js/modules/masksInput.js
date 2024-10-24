@@ -1,8 +1,9 @@
 export default class maskInput{
-    constructor(inputPhone = null, inputCpf = null, inputCep = null){
+    constructor(inputPhone = null, inputCpf = null, inputCep = null,inputCnpj = null){
         this.inputPhone = document.querySelector(inputPhone);
         this.inputCpf = document.querySelector(inputCpf);
         this.inputCep = document.querySelector(inputCep);
+        this.inputCnpj = document.querySelector(inputCnpj);
     }
 
     formatCpf(){
@@ -19,6 +20,23 @@ export default class maskInput{
 
          // Atualiza o valor do campo de entrada
          this.inputCpf.value = cpf;
+    }
+
+    formatCnpj() {
+        // Remove tudo o que não é dígito
+        let cnpj = this.inputCnpj.value.replace(/\D/g, '');
+        
+        // Verifica se o CNPJ tem no máximo 14 dígitos
+        if (cnpj.length <= 14) {
+            // Aplica a máscara de CNPJ
+            cnpj = cnpj.replace(/^(\d{2})(\d)/, "$1.$2");
+            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+            cnpj = cnpj.replace(/\.(\d{3})(\d)/, ".$1/$2");
+            cnpj = cnpj.replace(/(\d{4})(\d)/, "$1-$2");
+        }
+    
+        // Atualiza o valor do campo de entrada
+        this.inputCnpj.value = cnpj;
     }
 
     formatPhone(){
@@ -64,6 +82,12 @@ export default class maskInput{
         if(this.inputCep != null){
             this.inputCep.addEventListener('input',(e)=>{
                 this.formatCep();
+            })
+        }
+
+        if(this.inputCnpj != null){
+            this.inputCnpj.addEventListener('input',(e)=>{
+                this.formatCnpj();
             })
         }
     }

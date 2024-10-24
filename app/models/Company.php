@@ -1,6 +1,7 @@
 <?php
 namespace app\models;
 use app\models\database\Db;
+use app\models\CompanyHours;
 use app\interfaces\ModelInterface;
 use JsonSerializable;
 
@@ -20,14 +21,10 @@ class Company implements ModelInterface, JsonSerializable{
     private string $category;
     private string $registrationDate;
     private int $registrationComplete;
-    private \DateTime $openingHoursMorningStart;
-    private \DateTime $openingHoursMorningEnd;
-    private \DateTime $openingHoursAfternoonStart;
-    private \DateTime $openingHoursAfternoonEnd;
+    private array $hours = [];
     private array $images = [];
     private array $services = [];
     private string $table = "company";
-    private string $tableServices = "services";
 
     public function __construct($logo = "",
                                 $name = "",
@@ -43,10 +40,7 @@ class Company implements ModelInterface, JsonSerializable{
                                 $plan = "", 
                                 $registrationDate = "",
                                 $registrationComplete = 0,
-                                $openingHoursMorningStart = new \DateTime(),
-                                $openingHoursMorningEnd = new \DateTime(),
-                                $openingHoursAfternoonStart = new \DateTime(),
-                                $openingHoursAfternoonEnd = new \DateTime()){
+                              ){
 
         $this->logo = $logo;
         $this->name = $name;
@@ -62,10 +56,6 @@ class Company implements ModelInterface, JsonSerializable{
         $this->category = $category;
         $this->registrationDate = $registrationDate;
         $this->registrationComplete = $registrationComplete;
-        $this->openingHoursMorningStart = $openingHoursMorningStart;
-        $this->openingHoursMorningEnd = $openingHoursMorningEnd;
-        $this->openingHoursAfternoonStart = $openingHoursAfternoonStart;
-        $this->openingHoursAfternoonEnd = $openingHoursAfternoonEnd;
     }
 
     public function jsonSerialize() {
@@ -91,10 +81,7 @@ class Company implements ModelInterface, JsonSerializable{
                                 $company['plan'],
                                 $company['created_at'],
                                 $company['registrationComplete'],
-                                new \DateTime($company['openingHoursMorningStart']),
-                                new \DateTime($company['openingHoursMorningEnd']),
-                                new \DateTime($company['openingHoursAfternoonStart']),
-                                new \DateTime($company['openingHoursAfternoonEnd']));
+                               );
 
             $companyObject->setId($company['idCompany']);
             array_push($arrayObjectsCompany,$companyObject);
@@ -121,10 +108,7 @@ class Company implements ModelInterface, JsonSerializable{
                                         $company['plan'],
                                         $company['created_at'],
                                         $company['registrationComplete'],
-                                        new \DateTime($company['openingHoursMorningStart']),
-                                        new \DateTime($company['openingHoursMorningEnd']),
-                                        new \DateTime($company['openingHoursAfternoonStart']),
-                                        new \DateTime($company['openingHoursAfternoonEnd']));
+                                        );
 
             $companyObject->setId($company['idCompany']);
             array_push($arrayObjectsCompany,$companyObject);
@@ -153,20 +137,14 @@ class Company implements ModelInterface, JsonSerializable{
                                     $companyFound[0]['plan'],
                                     $companyFound[0]['created_at'],
                                     $companyFound[0]['registrationComplete'],
-                                    new \DateTime($companyFound[0]['openingHoursMorningStart']),
-                                    new \DateTime($companyFound[0]['openingHoursMorningEnd']),
-                                    new \DateTime($companyFound[0]['openingHoursAfternoonStart']),
-                                    new \DateTime($companyFound[0]['openingHoursAfternoonEnd']));
+                                    );
 
         $companyObject->setId($companyFound[0]['idCompany']);
-        
-        // get images for company
-        $imagesManager = new Images();
-        $companyObject->setImages($imagesManager->getByCompany($db,$companyFound[0]['idCompany']));
-        //get services for company
-        $serviceManager = new Service();
-        $companyObject->setServices($serviceManager->getByCompany($db,$companyFound[0]['idCompany']));
+        $companyObject->getOpeninghours($db,$id);
+        $companyObject->getServicesDb($db,$id);
+        $companyObject->getImagesDb($db,$id);
         return $companyObject;
+       
     }
 
     public function getByCnpj(Db $db, string $cnpj){
@@ -189,10 +167,7 @@ class Company implements ModelInterface, JsonSerializable{
                                     $companyFound[0]['plan'],
                                     $companyFound[0]['created_at'],
                                     $companyFound[0]['registrationComplete'],
-                                    new \DateTime($companyFound[0]['openingHoursMorningStart']),
-                                    new \DateTime($companyFound[0]['openingHoursMorningEnd']),
-                                    new \DateTime($companyFound[0]['openingHoursAfternoonStart']),
-                                    new \DateTime($companyFound[0]['openingHoursAfternoonEnd']));
+                                    );
 
         $companyObject->setId($companyFound[0]['idCompany'],);
         return $companyObject;
@@ -240,10 +215,7 @@ class Company implements ModelInterface, JsonSerializable{
                                         $company['plan'],
                                         $company['created_at'],
                                         $company['registrationComplete'],
-                                        new \DateTime($company['openingHoursMorningStart']),
-                                        new \DateTime($company['openingHoursMorningEnd']),
-                                        new \DateTime($company['openingHoursAfternoonStart']),
-                                        new \DateTime($company['openingHoursAfternoonEnd']));
+                                        );
 
             $companyObject->setId($company['idCompany']);
             array_push($arrayObjectsCompany,$companyObject);
@@ -275,10 +247,6 @@ class Company implements ModelInterface, JsonSerializable{
                 'state' => $this->getState(),
                 'category' => $this->getCategory(),
                 'registrationComplete' => $this->getRegistrationComplete(),
-                'openingHoursMorningStart' => $this->getOpeningHoursMorningStart(),
-                'openingHoursMorningEnd' => $this->getOpeningHoursMorningEnd(),
-                'openingHoursAfternoonStart' => $this->getOpeningHoursAfternoonStart(),
-                'openingHoursAfternoonEnd' => $this->getOpeningHoursAfternoonEnd(),
             ];
     
             $data = array_map(function($value) {
@@ -341,22 +309,6 @@ class Company implements ModelInterface, JsonSerializable{
             $data['registrationComplete'] = $this->getRegistrationComplete();
         }
 
-        if ($this->getOpeningHoursMorningStart() != '') {
-            $data['openingHoursMorningStart'] = $this->getOpeningHoursMorningStart();
-        }
-
-        if ($this->getOpeningHoursMorningEnd() != '') {
-            $data['openingHoursMorningEnd'] = $this->getOpeningHoursMorningEnd();
-        }
-
-        if ($this->getOpeningHoursAfternoonStart() != '') {
-            $data['openingHoursAfternoonStart'] = $this->getOpeningHoursAfternoonStart();
-        }
-
-        if ($this->getOpeningHoursAfternoonEnd() != '') {
-            $data['openingHoursAfternoonEnd'] = $this->getOpeningHoursAfternoonEnd();
-        }
-
         $data = array_map(function($value) {
             return $value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value;
         }, $data);
@@ -379,6 +331,23 @@ class Company implements ModelInterface, JsonSerializable{
         if (property_exists($this, $attribute)) {
             unset($this->$attribute);
         }
+    }
+
+    //TODO testar metodo
+    public function isOpen(){
+        //(1 = segunda-feira, 7 = domingo)
+        $now = new \DateTime('2024-10-21 15:30:00');
+        $now = $now->format('N');
+        $open = false;
+
+        foreach ($this->hours as $hour) {
+            if($hour->getDayOfWeek() == $now){
+                if(($now >= $hour->setOpeningHoursMorningStart()  && $now <= $hour->setOpeningHoursMorningEnd()) || ($now >= $hour->setOpeningHoursAfternoonStart()  && $now <= $hour->setOpeningHoursAfternoonEnd())){
+                    $open = true;
+                }
+            }
+        }
+        return $open;
     }
 
     //getters and setters
@@ -503,40 +472,22 @@ class Company implements ModelInterface, JsonSerializable{
         $this->registrationComplete = $registrationComplete;
     }
 
-    public function setOpeningHoursMorningStart(\DateTime $openingHoursMorningStart): void {
-        $this->openingHoursMorningStart = $openingHoursMorningStart;
+    public function getOpeninghours(Db $db, int $id){
+        $hoursObject = new CompanyHours();
+        $this->hours = $hoursObject->getByIdCompany($db,$id);
     }
 
-    public function getOpeningHoursMorningStart(): \DateTime {
-        return $this->openingHoursMorningStart;
-    }
-
-    public function setOpeningHoursMorningEnd(\DateTime $openingHoursMorningEnd): void {
-        $this->openingHoursMorningEnd = $openingHoursMorningEnd;
-    }
-
-    public function getOpeningHoursMorningEnd(): \DateTime {
-        return $this->openingHoursMorningEnd;
-    }
-    
-    public function getOpeningHoursAfternoonStart(): \DateTime {
-        return $this->openingHoursAfternoonStart;
-    }
-
-    public function setOpeningHoursAfternoonStart(\DateTime $openingHoursAfternoonStart): void {
-        $this->openingHoursAfternoonStart = $openingHoursAfternoonStart;
-    }
-
-    public function getOpeningHoursAfternoonEnd(): \DateTime {
-        return $this->openingHoursAfternoonEnd;
-    }
-
-    public function setOpeningHoursAfternoonEnd(\DateTime $openingHoursAfternoonEnd): void {
-        $this->openingHoursAfternoonEnd = $openingHoursAfternoonEnd;
+    public function getArrayHours(): array{
+        return $this->hours;
     }
 
     public function getImages(): array {
         return $this->images;
+    }
+
+    private function getImagesDb($db,$id){
+        $imagesManager = new Images();
+        $this->images = $imagesManager->getByCompany($db,$id);
     }
 
     public function setImages(array $images): void {
@@ -547,6 +498,10 @@ class Company implements ModelInterface, JsonSerializable{
     }
     public function getServices(): array {
         return $this->services;
+    }
+    private function getServicesDb($db,$id): array {
+        $serviceManager = new Service();
+        return $this->services = $serviceManager->getByCompany($db,$id);
     }
 }
 

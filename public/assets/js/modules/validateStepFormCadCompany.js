@@ -9,18 +9,18 @@ export default class validateStepFormCadCompany{
         this.phoneCompany = document.querySelector('#inputPhoneCompany');
         this.category = document.querySelector('#inputCategory');
         //times
-        this.openingHoursMorningStart = document.querySelector('#inputOpeningHoursMorningStart');
-        this.openingHoursMorningEnd = document.querySelector('#inputOpeningHoursMorningEnd');
-        this.openingHoursAfternoonStart = document.querySelector('#inputOpeningHoursAfternoonStart');
-        this.openingHoursAfternoonEnd = document.querySelector('#inputOpeningHoursAfternoonEnd');
+        // this.openingHoursMorningStart = document.querySelector('#inputOpeningHoursMorningStart');
+        // this.openingHoursMorningEnd = document.querySelector('#inputOpeningHoursMorningEnd');
+        // this.openingHoursAfternoonStart = document.querySelector('#inputOpeningHoursAfternoonStart');
+        // this.openingHoursAfternoonEnd = document.querySelector('#inputOpeningHoursAfternoonEnd');
 
         this.spanNameCompany = document.querySelector('#msgNameCompanyError');
         this.spanPhoneCompany = document.querySelector('#msgPhoneCompanyError');
         this.spanCategoryCompany = document.querySelector('#msgCategoryCompanyError');
         this.spanCnpjCompany = document.querySelector('#msgCnpjError');
         //times
-        this.spanOpeningHoursMorning = document.querySelector('#msgOpeningHoursMorningError');
-        this.spanOpeningHoursAfternoon = document.querySelector('#msgOpeningHoursAfternoonError');
+        // this.spanOpeningHoursMorning = document.querySelector('#msgOpeningHoursMorningError');
+        // this.spanOpeningHoursAfternoon = document.querySelector('#msgOpeningHoursAfternoonError');
         //setp2
         this.cep = document.querySelector('#inputCep');
         this.number = document.querySelector('#inputNumber');
@@ -64,11 +64,13 @@ export default class validateStepFormCadCompany{
 
         if(this.formValidate.isEmpty(this.phoneCompany.value)){
             this.spanPhoneCompany.innerHTML = this.iconError+'Campo telefone está vazio!';
+            this.spanCategoryCompany.innerHTML = 'Campo categoria está vazio!';
             valid = false;
         }
 
         if(!this.formValidate.isPhoneValid(this.phoneCompany.value)){
             this.spanPhoneCompany.innerHTML = this.iconError+'Campo telefone está invalido!';
+            this.spanCategoryCompany.innerHTML = 'Campo categoria está vazio!';
             valid = false;
         }
 
@@ -86,26 +88,26 @@ export default class validateStepFormCadCompany{
             this.spanCategoryCompany.innerHTML = this.iconError+'Campo categoria está vazio!';
             valid = false;
         }
-        //times
-        if(this.formValidate.isEmpty(this.openingHoursMorningStart.value)){
-            this.spanOpeningHoursMorning.innerHTML = this.iconError+'Campo horario inicial está vazio!';
-            valid = false;
-        }
+        // //times
+        // if(this.formValidate.isEmpty(this.openingHoursMorningStart.value)){
+        //     this.spanOpeningHoursMorning.innerHTML = this.iconError+'Campo horario inicial está vazio!';
+        //     valid = false;
+        // }
 
-        if(this.formValidate.isEmpty(this.openingHoursMorningEnd.value)){
-            this.spanOpeningHoursMorning.innerHTML = this.iconError+'Campo horario final está vazio!';
-            valid = false;
-        }
+        // if(this.formValidate.isEmpty(this.openingHoursMorningEnd.value)){
+        //     this.spanOpeningHoursMorning.innerHTML = this.iconError+'Campo horario final está vazio!';
+        //     valid = false;
+        // }
 
-        if(this.formValidate.isEmpty(this.openingHoursAfternoonStart.value)){
-            this.spanOpeningHoursAfternoon.innerHTML = this.iconError+'Campo horario inicial está vazio!';
-            valid = false;
-        }
+        // if(this.formValidate.isEmpty(this.openingHoursAfternoonStart.value)){
+        //     this.spanOpeningHoursAfternoon.innerHTML = this.iconError+'Campo horario inicial está vazio!';
+        //     valid = false;
+        // }
 
-        if(this.formValidate.isEmpty(this.openingHoursAfternoonEnd.value)){
-            this.spanOpeningHoursAfternoon.innerHTML = this.iconError+'Campo horario final está vazio!';
-            valid = false;
-        }
+        // if(this.formValidate.isEmpty(this.openingHoursAfternoonEnd.value)){
+        //     this.spanOpeningHoursAfternoon.innerHTML = this.iconError+'Campo horario final está vazio!';
+        //     valid = false;
+        // }
 
         return valid;
     }
@@ -187,6 +189,7 @@ export default class validateStepFormCadCompany{
 
         if(this.formValidate.isEmpty(this.phone.value)){
             this.spanErrorPhone.innerHTML = this.iconError+"Campo telefone está vazio!";
+            this.spanCategoryCompany.innerHTML = this.iconError+"Campo telefone está vazio!";
             valid = false;
         }
 

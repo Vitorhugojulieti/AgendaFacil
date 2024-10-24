@@ -79,13 +79,16 @@ class ScheduleController{
         $db->connect();
         $schedule = new Schedule();
         $schedule = $schedule->getById($db,intval($args[0]));
+        $orders = new ScheduleOrder();
+        $orders = $orders->getBySchedule($db,intval($args[0]));
 
         $this->view = 'client/showSchedule.php';
         $this->data = [
             'title'=>'Detalhes agendamento | AgendaFacil',
             'schedule'=>$schedule,
             'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
-            'breadcrumb'=>Breadcrumb::get()
+            'breadcrumb'=>Breadcrumb::get(),
+            'orders'=>$orders
         ];
     }
 
@@ -167,8 +170,8 @@ class ScheduleController{
             $db->connect();
 
             $schedules = new Schedule();
-            $schedules = $schedules->getByClient($db,1);
-            // $schedules = $schedules->getByClient($db,$_SESSION['user']->getId());
+            // $schedules = $schedules->getByClient($db,1);
+            $schedules = $schedules->getByClient($db,$_SESSION['user']->getId());
             
             $schedules = array_filter($schedules, fn($schedule) => $schedule->getDateSchedule() == $date);
 
@@ -316,6 +319,12 @@ class ScheduleController{
             'time'=>[REQUIRED,TIME],
         ],'schedule');
       
+        if($_POST['message']){
+            $validate->handle([
+                'message'=>[REQUIRED]
+            ],'schedule');
+        }
+
         if($validate->errors) {
             return false;
         }
@@ -373,6 +382,7 @@ class ScheduleController{
     
             $lastEndTime = $end;
 
+            // TODO pensar se deixo id ou objeto no construtor da ordem 
             $order = new ScheduleOrder($schedule->getId(),
                                     $service->getIdCollaborator(),
                                     $service->getId(),

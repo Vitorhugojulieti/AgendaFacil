@@ -684,10 +684,6 @@ video {
   margin-left: 1.5rem;
 }
 
-.ml-8{
-  margin-left: 2rem;
-}
-
 .mr-8{
   margin-right: 2rem;
 }
@@ -813,6 +809,10 @@ video {
   width: 50%;
 }
 
+.w-32{
+  width: 8rem;
+}
+
 .w-4\/5{
   width: 80%;
 }
@@ -898,6 +898,10 @@ video {
 
 .items-start{
   align-items: flex-start;
+}
+
+.items-end{
+  align-items: flex-end;
 }
 
 .items-center{
@@ -1087,10 +1091,6 @@ video {
   border-style: dashed;
 }
 
-.border-dotted{
-  border-style: dotted;
-}
-
 .border-none{
   border-style: none;
 }
@@ -1241,11 +1241,6 @@ video {
 .bg-principal10{
   --tw-bg-opacity: 1;
   background-color: rgb(34 50 73 / var(--tw-bg-opacity));
-}
-
-.bg-principal3{
-  --tw-bg-opacity: 1;
-  background-color: rgb(203 227 242 / var(--tw-bg-opacity));
 }
 
 .bg-principal5{
@@ -1547,6 +1542,10 @@ video {
   color: rgb(113 113 122 / var(--tw-text-opacity));
 }
 
+.text-transparent{
+  color: transparent;
+}
+
 .text-white{
   color: #ffff;
 }
@@ -1726,7 +1725,7 @@ input[type=number] {
   bottom: 11px;
   left: 20px;
   height: 3px;
-  width: 5rem;
+  width: 6rem;
   background-color: #fff;
 }
 
@@ -1744,7 +1743,7 @@ input[type=number] {
 
 @media (min-width: 768px) {
   .bullet::before{
-    width: 12rem !important;
+    width: 16rem !important;
   }
 }
 
@@ -1969,8 +1968,9 @@ fieldset > div > div > div > span,fieldset > div > div > span,fieldset > div > s
 }
 
 .day-selected{
-  background-color: #223249;
-  color: #fff;
+  background-color: #223249 ;
+  font-weight: 600;
+  color: #ffff !important;
 }
 
 .time-selected{
@@ -1978,8 +1978,11 @@ fieldset > div > div > div > span,fieldset > div > div > span,fieldset > div > s
   color: #fff;
 }
 
-.collaborator-selected{
+.collaborator-selected > img{
   border:2px solid #000;
+}
+
+.collaborator-selected > span{
   font-weight: 600 !important;
 }
 
@@ -2112,6 +2115,12 @@ section.acordion.check legend>.circle > i{
   background-repeat: repeat-x;
   background-size: 25px 20px, 25px 20px;
   background-position: center;
+}
+
+/* day check */
+
+.day-check{
+  background-color: #223249 !important;
 }
 
 /* bg-chart for login adm */

@@ -16,7 +16,14 @@ class Notification implements ModelInterface, JsonSerializable{
     private int $idUserRecipient;
     private string $table = "Notifications";
 
-    public function __construct($idSender = 0, $message = "", $link = "",$date = new \DateTime(),$notified = 0,$idCompanyRecipient = 0, $idUserRecipient = 0){
+    public function __construct($idSender = 0, 
+                                $message = "", 
+                                $link = "",
+                                $date = new \DateTime(),
+                                $notified = 0,
+                                $idCompanyRecipient = 0, 
+                                $idUserRecipient = 0){
+
         $this->idSender = $idSender;
         $this->message = $message;
         $this->link = $link;
@@ -72,7 +79,7 @@ class Notification implements ModelInterface, JsonSerializable{
         $notifications = $db->query("*","idCompanyRecipient={$idCompany}");
         $arrayObjectsNotifications =[];
         foreach ($notifications as $notification){
-            $notificationObj = new Notification($notification['idSender'],$notification['message'],$notification['link'],new \DateTime($notification['date']),$notification['notified'],$notification['idCompanyRecipient'],$notification['idUserRecipient']);
+            $notificationObj = new Notification($notification['idSender'],$notification['message'],$notification['link'],new \DateTime($notification['created_at']),$notification['notified'],$notification['idCompanyRecipient'],$notification['idUserRecipient']);
             $notificationObj->setId($notification['idNotification']);
             array_push($arrayObjectsNotifications,$notificationObj);
         }
@@ -87,7 +94,6 @@ class Notification implements ModelInterface, JsonSerializable{
             'idSender' => $this->getIdSender(),
             'message' => $this->getMessage(),
             'link' => $this->getLink(),
-            'date'=>$this->getDate(),
             'notified'=>$this->getNotified(),
         ];
 

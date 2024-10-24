@@ -15,7 +15,7 @@ const stepsForm = new steps('#btnNext',
                             ['#containerDataCompany',
                             '#containerDataCompany2',
                             '#containerDataAdmin',
-                            '#containerDataImage'],
+                            ],
                             '#counterStatusForm',
                             '.bullet',
                             '#controls',
@@ -27,7 +27,7 @@ stepsForm.init();
 const formatInputs = new maskInput("#inputPhone","#inputCpf");
 formatInputs.init();
 
-const formatInputs2 = new maskInput("#inputPhoneCompany",null,"#inputCep");
+const formatInputs2 = new maskInput("#inputPhoneCompany",null,"#inputCep","#inputCnpjCompany");
 formatInputs2.init();
 
 const inputConfirmPassword = document.querySelector("#inputConfirmPassword");
@@ -47,14 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // const manageModalCep = new modals('#modalCep','#btnOpenModalCep','#btnCloseModalCep');
 // manageModalCep.init();
 
-const previewAvatar = new previewImage('#previewAvatar','#inputAvatar','#iconAvatar','#spanAvatar','#msgInputAvatar');
-previewAvatar.init();
+// const previewAvatar = new previewImage('#previewAvatar','#inputAvatar','#iconAvatar','#spanAvatar','#msgInputAvatar');
+// previewAvatar.init();
 
-const previewLogo = new previewImage('#previewLogo','#inputLogo','#iconLogo','#spanLogo','#msgInputLogo');
-previewLogo.init();
+// const previewLogo = new previewImage('#previewLogo','#inputLogo','#iconLogo','#spanLogo','#msgInputLogo');
+// previewLogo.init();
 
-const previewImageCompany = new previewImage('#previewImage','#inputImage','#iconImage','#spanImage','#msgInputImage');
-previewImageCompany.init();
+// const previewImageCompany = new previewImage('#previewImage','#inputImage','#iconImage','#spanImage','#msgInputImage');
+// previewImageCompany.init();
 
 const form = document.querySelector('#formCadCompany');
 const loader = new activeLoader();

@@ -1,11 +1,12 @@
 export default class PreviewImage {
-    constructor(preview, input, icon, span, spanError) {
+    constructor(preview, input, icon, span, spanError,validateNotEmptyBool = false) {
         this.preview = document.querySelector(preview);
         this.input = document.querySelector(input);
         this.icon = document.querySelector(icon);
         this.span = document.querySelector(span);
         this.spanError = document.querySelector(spanError);
         this.iconError = "<i class='bx bxs-info-circle' style='color:#fd837c'  ></i>";
+        this.validateNotEmptyBool = validateNotEmptyBool;
     }
 
     checkType(file){
@@ -29,6 +30,14 @@ export default class PreviewImage {
             this.span.classList.add('hidden');
         }else{
             this.preview.classList.add('hidden');
+        }
+    }
+
+    validateNotEmpty(){
+        if(this.validateNotEmptyBool){
+            if (this.input.files.length === 0) {
+                return false;
+            }
         }
     }
 

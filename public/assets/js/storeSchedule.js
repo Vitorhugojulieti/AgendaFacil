@@ -13,7 +13,7 @@ calendarSchedule.init();
 
 
 function selectCollaborator(serviceIndex, collaboratorId){
-    const serviceDiv = document.querySelector(`.collaborator-selection[data-service-index='${serviceIndex}']`);
+    let serviceDiv = document.querySelector(`.collaborator-selection[data-service-index='${serviceIndex}']`);
     console.log(collaboratorId);
     console.log(serviceIndex);
     console.log(serviceDiv);
@@ -22,7 +22,8 @@ function selectCollaborator(serviceIndex, collaboratorId){
         label.classList.remove('collaborator-selected'); 
     });
     
-    const selectedLabel = document.querySelector(`label[for='collaborator${collaboratorId}']`);
+    const selectedLabel = serviceDiv.querySelector(`label[for='collaborator${collaboratorId}']`);
+    console.log(selectedLabel);
     selectedLabel.classList.add('collaborator-selected');
     
     selectedLabel.querySelector('input').checked = true;

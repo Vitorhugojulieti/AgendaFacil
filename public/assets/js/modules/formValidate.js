@@ -40,31 +40,26 @@ export default class formValidate{
     }
 
     isCnpjValid(cnpj) {
-        // Regex to validate CNPJ format (99.999.999/9999-99 or 99999999999999)
-        const regex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$|^\d{14}$/;
+        // Regex to validate CNPJ format (99.999.999/9999-99)
+        const regex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
         
+        // First, validate the format with punctuation
         if (!regex.test(cnpj)) {
             return false;
         }
     
-        // Remove non-numeric characters
+        // Remove non-numeric characters for further validation
         cnpj = cnpj.replace(/[^\d]+/g,'');
     
         if (cnpj.length != 14)
             return false;
     
         // Eliminate known invalid CNPJs
-        if (cnpj == "00000000000000" || 
-            cnpj == "11111111111111" || 
-            cnpj == "22222222222222" || 
-            cnpj == "33333333333333" || 
-            cnpj == "44444444444444" || 
-            cnpj == "55555555555555" || 
-            cnpj == "66666666666666" || 
-            cnpj == "77777777777777" || 
-            cnpj == "88888888888888" || 
-            cnpj == "99999999999999")
+        if (["00000000000000", "11111111111111", "22222222222222", "33333333333333", 
+             "44444444444444", "55555555555555", "66666666666666", "77777777777777", 
+             "88888888888888", "99999999999999"].includes(cnpj)) {
             return false;
+        }
     
         // Validate check digits
         var size = cnpj.length - 2;
