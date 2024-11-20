@@ -14,6 +14,7 @@ class Schedule implements ModelInterface, JsonSerializable{
     private float $totalPaid;
     private int $idVoucherService;
     private string $cancellationReason;
+    private string $cancellationDescription;
     private string $observation;
     private string $status;
     private \DateTime $startTime;
@@ -27,7 +28,20 @@ class Schedule implements ModelInterface, JsonSerializable{
     private string $tableOrders = "schedule_orders";
     private string $table = "schedules";
 
-    public function __construct($idClient = 0,$idCompany = 0, $paidOut = 0,$totalPaid = 0.00, $idVoucherService = 0, $cancellationReason = "", $observation = "",$status = "",$startTime = new \DateTime(),$endTime = new \DateTime(),$dateSchedule = new \DateTime(),$registrationDate = new \DateTime()){
+    public function __construct($idClient = 0,
+                                $idCompany = 0,
+                                $paidOut = 0,
+                                $totalPaid = 0.00,
+                                $idVoucherService = 0,
+                                $cancellationReason = "",
+                                $observation = "",
+                                $status = "",
+                                $startTime = new \DateTime(),
+                                $endTime = new \DateTime(),
+                                $dateSchedule = new \DateTime(),
+                                $registrationDate = new \DateTime(),
+                                $cancellationDescription = ""){
+
         $this->idClient = $idClient;
         $this->idCompany = $idCompany;
         $this->paidOut = $paidOut;
@@ -40,6 +54,7 @@ class Schedule implements ModelInterface, JsonSerializable{
         $this->endTime = $endTime;
         $this->dateSchedule = $dateSchedule;
         $this->registrationDate = $registrationDate;
+        $this->cancellationDescription = $cancellationDescription;
     }
 
     public function jsonSerialize() {
@@ -47,15 +62,7 @@ class Schedule implements ModelInterface, JsonSerializable{
     }
 
     public function getAll(Db $db){
-        $db->setTable($this->table);
-        $notifications = $db->query("*");
-        $arrayObjectsNotifications =[];
-        foreach ($notifications as $notification){
-            $notificationObj = new Notification($notification['idRecipient'],$notification['idSender'],$notification['message'],$notification['link'],$notification['typeNotification'],$notification['date']);
-            $notificationObj->setId($notification['idNotification']);
-            array_push($arrayObjectsNotifications,$notificationObj);
-        }
-        return $arrayObjectsNotifications;
+   
     }
 
     public function getById(Db $db, int $id){
@@ -76,7 +83,8 @@ class Schedule implements ModelInterface, JsonSerializable{
                                                 new \DateTime($scheduleFound[0]['startTime']),
                                                 new \DateTime($scheduleFound[0]['endTime']),
                                                 new \DateTime($scheduleFound[0]['dateSchedule']),
-                                                new \DateTime($scheduleFound[0]['created_at']));
+                                                new \DateTime($scheduleFound[0]['created_at']),
+                                                $scheduleFound[0]['cancellationDescripton'] == null ? '' : $scheduleFound[0]['cancellationDescripton']);
 
         $scheduleObj->setId($scheduleFound[0]['idSchedule']);
         $scheduleObj->setCollaborators(Schedule::getCollaboratorsDb($db,$scheduleFound[0]['idSchedule']));
@@ -86,14 +94,12 @@ class Schedule implements ModelInterface, JsonSerializable{
 
     public function getByDataTime(Db $db,$date,$startTime,$idCompany){
         $db->setTable($this->table);
-        $scheduleFound = $db->query("*","dateSchedule='{$date->format('Y-m-d H:i:s')}' AND startTime='{$startTime->format('H:i:s')}' AND Company_idCompany = {$idCompany}");
+        $scheduleFound = $db->query("*","dateSchedule='{$date->format('Y-m-d')}' AND startTime='{$startTime->format('H:i:s')}' AND Company_idCompany = {$idCompany}");
 
         if(!$scheduleFound){
             return false;
         }
-        // ($idClient = 0,$idCompany = 0, $paidOut = 0,$totalPaid = 0.00, $idVoucherService = 0,
-        //  $cancellationReason = "", $observation = "
-        // ",$status = "",$startTime = new \DateTime(),$endTime = new \DateTime(),$dateSchedule = new \DateTime()){
+       
         $scheduleObj = new Schedule($scheduleFound[0]['Client_idClient'],
                                     $scheduleFound[0]['Company_idCompany'],
                                     $scheduleFound[0]['paidOut'],
@@ -105,7 +111,8 @@ class Schedule implements ModelInterface, JsonSerializable{
                                     new \DateTime($scheduleFound[0]['startTime']),
                                     new \DateTime($scheduleFound[0]['endTime']),
                                     new \DateTime($scheduleFound[0]['dateSchedule']),
-                                    new \DateTime($scheduleFound[0]['created_at']));
+                                    new \DateTime($scheduleFound[0]['created_at']),
+                                    $scheduleFound[0]['cancellationDescripton']);
 
         $scheduleObj->setId($scheduleFound[0]['idSchedule']);
         return $scheduleObj;
@@ -116,7 +123,48 @@ class Schedule implements ModelInterface, JsonSerializable{
         $schedules = $db->query("*","Company_idCompany={$idCompany}");
         $arrayObjectsSchedule =[];
         foreach ($schedules as $schedule){
-            $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['totalPaid'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']),new \DateTime($schedule['created_at']));
+            $scheduleObj = new Schedule($schedule['Client_idClient'],
+                                        $schedule['Company_idCompany'],
+                                        $schedule['paidOut'],
+                                        $schedule['totalPaid'],
+                                        $schedule['voucherService'],
+                                        $schedule['cancellationReason'],
+                                        $schedule['observation'],
+                                        $schedule['status'],
+                                        new \DateTime($schedule['startTime']),
+                                        new \DateTime($schedule['endTime']),
+                                        new \DateTime($schedule['dateSchedule']),
+                                        new \DateTime($schedule['created_at']),
+                                        $schedule['cancellationDescripton'] == null ? '' : $schedule['cancellationDescripton']);
+
+            $scheduleObj->setId($schedule['idSchedule']);
+            $client = new Client(); 
+            $client = $client->getById($db,$schedule['Client_idClient']);
+            $scheduleObj->setClient($client);
+            array_push($arrayObjectsSchedule,$scheduleObj);
+        }
+        return $arrayObjectsSchedule;
+    }
+
+    public function getByCompanyForDate(Db $db,$idCompany,$startDate,$endDate){
+        $db->setTable($this->table);
+        $schedules = $db->query("*","Company_idCompany={$idCompany} AND dateSchedule>='{$startDate->format('Y-m-d H:i:s')}' AND dateSchedule<='{$endDate->format('Y-m-d H:i:s')}'");
+        $arrayObjectsSchedule =[];
+        foreach ($schedules as $schedule){
+            $scheduleObj = new Schedule($schedule['Client_idClient'],
+                                        $schedule['Company_idCompany'],
+                                        $schedule['paidOut'],
+                                        $schedule['totalPaid'],
+                                        $schedule['voucherService'],
+                                        $schedule['cancellationReason'],
+                                        $schedule['observation'],
+                                        $schedule['status'],
+                                        new \DateTime($schedule['startTime']),
+                                        new \DateTime($schedule['endTime']),
+                                        new \DateTime($schedule['dateSchedule']),
+                                        new \DateTime($schedule['created_at']),
+                                        $schedule['cancellationDescripton'] == null ? '' : $schedule['cancellationDescripton']);
+
             $scheduleObj->setId($schedule['idSchedule']);
             $client = new Client(); 
             $client = $client->getById($db,$schedule['Client_idClient']);
@@ -146,7 +194,20 @@ class Schedule implements ModelInterface, JsonSerializable{
         $schedules = $db->query("*","Client_idClient={$idClient}");
         $arrayObjectsSchedule =[];
         foreach ($schedules as $schedule){
-            $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['totalPaid'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']),new \DateTime($schedule['created_at']));
+            $scheduleObj = new Schedule($schedule['Client_idClient'],
+                                        $schedule['Company_idCompany'],
+                                        $schedule['paidOut'],
+                                        $schedule['totalPaid'],
+                                        $schedule['voucherService'],
+                                        $schedule['cancellationReason'],
+                                        $schedule['observation'],
+                                        $schedule['status'],
+                                        new \DateTime($schedule['startTime']),
+                                        new \DateTime($schedule['endTime']),
+                                        new \DateTime($schedule['dateSchedule']),
+                                        new \DateTime($schedule['created_at']),
+                                        $schedule['cancellationDescripton'] == null ? '' : $schedule['cancellationDescripton']);
+
             $scheduleObj->setId($schedule['idSchedule']);
             array_push($arrayObjectsSchedule,$scheduleObj);
         }
@@ -167,25 +228,26 @@ class Schedule implements ModelInterface, JsonSerializable{
         return $arrayObjectsSchedule;
     }
 
-    public function getByCollaborator(Db $db,$idCollaborator,$idCompany){
-        $db->setTable("Schedules_has_Collaborator");
-        $idsSchedules = $db->query("Schedules_idSchedule","Collaborator_idCollaborator={$idCollaborator} AND Collaborator_Company_idCompany={$idCompany}");
-        $arrayObjectsSchedule =[];
-        $db->setTable($this->table);
-        $scheduleObj = new Schedule();
-        foreach ($idsSchedules as $id) {
-            $scheduleObj = $scheduleObj->getById($db,$id['Schedules_idSchedule']);
-          
-            array_push($arrayObjectsSchedule,$scheduleObj);
+    public function getByCollaborator(Db $db, int $idCompany, int $idCollaborator) {
+        $db->setTable($this->tableOrders); 
+        $tasks = $db->query("schedules_idSchedule", "collaborator_idCollaborator={$idCollaborator} ");
+    
+        $schedules = [];
+        if (count($tasks) > 0) {
+            foreach ($tasks as $task) {
+                $scheduleObj = new Schedule();
+                $scheduleObj = $scheduleObj->getById($task['schedules_idSchedule']);
+                array_push($schedules, $scheduleObj);
+            }
         }
-        return $arrayObjectsSchedule;
+        return $schedules;
     }
+    
 
-
-    public function getScheduledTimes($db,$day,$idCompany){
+    public function getScheduledTimes($db,$date,$idCompany){
         $db->setTable($this->table);
         $timesScheduled = [];
-        $times = $db->query("startTime,endTime"," DAY(dateSchedule)={$day} AND Company_idCompany={$idCompany}");
+        $times = $db->query("startTime,endTime"," dateSchedule={$date} AND Company_idCompany={$idCompany}");
 
         foreach ($times as $time) {
             array_push($timesScheduled,new \DateTime($time['startTime']));
@@ -230,8 +292,8 @@ class Schedule implements ModelInterface, JsonSerializable{
         $arrayObjectsSchedule =[];
         if(count($schedules) != 0){
             foreach ($schedules as $schedule){
-                $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['totalPaid'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']),new \DateTime($schedule['created_at']));
-                $scheduleObj->setId($schedule['idSchedule']);
+                $scheduleObj = new Schedule();
+                $scheduleObj = $scheduleObj->getById($db,$schedule['idSchedule']);
                 array_push($arrayObjectsSchedule,$scheduleObj);
             }
         }
@@ -244,7 +306,7 @@ class Schedule implements ModelInterface, JsonSerializable{
         $arrayObjectsSchedule =[];
         if(count($schedules) != 0){
             foreach ($schedules as $schedule){
-                $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['totalPaid'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']),new \DateTime($schedule['created_at']));
+                $scheduleObj = new Schedule($schedule['Client_idClient'],$schedule['Company_idCompany'],$schedule['paidOut'],$schedule['totalPaid'],$schedule['voucherService'],$schedule['cancellationReason'],$schedule['observation'],$schedule['status'],new \DateTime($schedule['startTime']),new \DateTime($schedule['endTime']),new \DateTime($schedule['dateSchedule']),new \DateTime($schedule['created_at']),$schedule['cancellationDescripton'] == null ? '' : $schedule['cancellationDescripton']);
                 $scheduleObj->setId($schedule['idSchedule']);
                 array_push($arrayObjectsSchedule,$scheduleObj);
             }
@@ -253,9 +315,8 @@ class Schedule implements ModelInterface, JsonSerializable{
     }
     
     public function getSchedulesByService(Db $db,int $idCompany,int $idService){
-        $db->setTable($this->tableServices);
-        $schedules = $db->totalRecords("Services_Company_idCompany={$idCompany} and Services_idService={$idService}");
-        return $schedules[0]['total'];
+        $scheduleOrders = new ScheduleOrder();
+        return count($scheduleOrders->getSchedulesByService($db,$idService));
     }
 
     public function getServicesScheduledsForMonth(Db $db,int $idCompany,int $month){
@@ -277,10 +338,8 @@ class Schedule implements ModelInterface, JsonSerializable{
     }
 
     public function getSchedulesForCollaboratorByCompany(Db $db,int $idCompany,int $idCollaborator){
-        $db->setTable($this->tableCollaborators);
-        $schedules = $db->totalRecords("Collaborator_Company_idCompany={$idCompany} and Collaborator_idCollaborator={$idCollaborator}");
-        return $schedules[0]['total'];
-        return $data;
+        $scheduleOrders = new ScheduleOrder();
+        return count($scheduleOrders->getSchedulesByCollaborator($db,$idCollaborator));
     }
 
  
@@ -293,6 +352,7 @@ class Schedule implements ModelInterface, JsonSerializable{
             'Client_idClient' => $this->getIdClient(),
             'voucherService' => $this->getIdVoucherService(),
             'cancellationReason' => $this->getCancellationReason(),
+            'cancellationDescripton' => $this->getCancellationDescription(),
             'observation'=>$this->getObservation(),
             'status'=>$this->getStatus(),
             'startTime'=>$this->getStartTime(),
@@ -341,27 +401,53 @@ class Schedule implements ModelInterface, JsonSerializable{
         $db->setTable($this->table);
         $data = [];
         
-        if ($this->getIdRecipient() !== 0) {
-            $data['idRecipient'] = $this->getIdRecipient();
+        if ($this->getPaidOut() !== 0) {
+            $data['paidOut'] = $this->getPaidOut();
         }
-        if ($this->getIdSender() !== 0) {
-            $data['idSender'] = $this->getIdSender();
+        if ($this->getIdVoucherService() !== 0) {
+            $data['voucherService'] = $this->getIdVoucherService();
         }
-        if ($this->getMessage() !== '') {
-            $data['message'] = $this->getMessage();
+        if ($this->getCancellationReason() !== '') {
+            $data['cancellationReason'] = $this->getCancellationReason();
         }
-        if ($this->getLink() !== 0) {
-            $data['link'] = $this->getLink();
+        if ($this->getObservation() !== '') {
+            $data['observation'] = $this->getObservation();
         }
-        if ($this->getTypeNotification() !== 0) {
-            $data['typeNotification'] = $this->getTypeNotification();
+        if ($this->getStatus() !== '') {
+            $data['status'] = $this->getStatus();
         }
-        if ($this->getDate() !== 0) {
-            $data['date'] = $this->getDate();
+        if ($this->getStartTime() != '') {
+            $data['startTime'] = $this->getStartTime();
+        }
+        if ($this->getEndTime() != '') {
+            $data['endTime'] = $this->getEndTime();
+        }
+        if ($this->getIdCompany() !== 0) {
+            $data['Company_idCompany'] = $this->getIdCompany();
+        }
+        if ($this->getIdClient() !== 0) {
+            $data['Client_idClient'] = $this->getIdClient();
+        }
+        if ($this->getDateSchedule() !== '') {
+            $data['dateSchedule'] = $this->getDateSchedule();
+        }
+        if ($this->getTotalPaid() !== 0) {
+            $data['totalPaid'] = $this->getTotalPaid();
+        }
+        // if ($this->getPaymentMethod() !== '') {
+        //     $data['paymentMethod'] = $this->getPaymentMethod();
+        // }
+
+        if ($this->getCancellationDescription() !== '') {
+            $data['cancellationDescripton'] = $this->getCancellationDescription();
         }
        
+        $data = array_map(function($value) {
+            return $value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value;
+        }, $data);
+
         if(!empty($data)){
-            if($db->update("idNotification={$id}",$data)){
+            if($db->update("idSchedule={$id}",$data)){
                 return true;
             }
         }
@@ -421,6 +507,22 @@ class Schedule implements ModelInterface, JsonSerializable{
 
     public function setCancellationReason(string $cancellationReason): void {
         $this->cancellationReason = $cancellationReason;
+    }
+
+    public function getCancellationDescription(): string {
+        return $this->cancellationDescription;
+    }
+
+    public function setCancellationDescription(string $cancellationDescription): void {
+        $this->cancellationDescription = $cancellationDescription;
+    }
+
+    public function getPaymentMethod(): string {
+        return $this->paymentMethod;
+    }
+
+    public function setPaymentMethod(string $paymentMethod): void {
+        $this->paymentMethod = $paymentMethod;
     }
 
     public function getObservation(): string {
@@ -491,6 +593,10 @@ class Schedule implements ModelInterface, JsonSerializable{
     }
     public function getClient(): Client {
         return $this->client;
+    }
+
+    public function getRegistrationDate(): \DateTime {
+        return $this->registrationDate;
     }
 }
 

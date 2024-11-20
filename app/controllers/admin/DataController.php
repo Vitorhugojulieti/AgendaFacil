@@ -40,6 +40,9 @@ class DataController{
         $db = new Db();
         $db->connect();
 
+        $company = new Company();
+        $company = $company->getById($db,$_SESSION['collaborator']->getIdCompany());
+        $activeCompany = $company->getRegistrationComplete() == 1 ? 'Empresa ativa' : 'Empresa inativa'; 
        
         $this->view = 'admin/dataAdmin.php';
         $this->data = [
@@ -48,61 +51,65 @@ class DataController{
             'breadcrumb'=>Breadcrumb::getForAdmin(),
             'navActive'=>'dataAdm',
             'actionCollaborator'=>'/admin/data/updateAdmin',
+            'activeCompany'=>$company->getRegistrationComplete() == 1 ? 'Empresa ativa' : 'Empresa inativa'
+
         ];
     }
 
-    private function updateHours(){
+    // private function updateHours(){
 
-        // else{
-        //     Flash::set('resultUpdateCompany', 'Erro ao dados da empresa colaborador!','notification error');
-        //     return redirect("/admin/data");
-        // }
-    }
-
-    private function receiveAndOrganizeHours() {
-        // Garantir que $days seja um array
-        $days = isset($_POST['days']) && is_array($_POST['days']) ? $_POST['days'] : []; 
-        $startHourMorning = isset($_POST['inputOpeningHoursMorningStart']) && is_array($_POST['inputOpeningHoursMorningStart']) ? $_POST['inputOpeningHoursMorningStart'] : []; 
-        $endHourMorning = isset($_POST['inputOpeningHoursMorningEnd']) && is_array($_POST['inputOpeningHoursMorningEnd']) ? $_POST['inputOpeningHoursMorningEnd'] : []; 
-        $startHourAfternoon = isset($_POST['inputOpeningHoursAfternoonStart']) && is_array($_POST['inputOpeningHoursAfternoonStart']) ? $_POST['inputOpeningHoursAfternoonStart'] : []; 
-        $endHourAfternoon = isset($_POST['inputOpeningHoursAfternoonEnd']) && is_array($_POST['inputOpeningHoursAfternoonEnd']) ? $_POST['inputOpeningHoursAfternoonEnd'] : []; 
+    //     // else{
+    //     //     Flash::set('resultUpdateCompany', 'Erro ao dados da empresa colaborador!','notification error');
+    //     //     return redirect("/admin/data");
+    //     // }
+    // // }
+    // // private function receiveAndOrganizeHours() {
+    // //     // Garantir que $days seja um array
+    // //     $days = isset($_POST['days']) && is_array($_POST['days']) ? $_POST['days'] : []; 
+    // //     $startHourMorning = isset($_POST['inputOpeningHoursMorningStart']) && is_array($_POST['inputOpeningHoursMorningStart']) ? $_POST['inputOpeningHoursMorningStart'] : []; 
+    // //     $endHourMorning = isset($_POST['inputOpeningHoursMorningEnd']) && is_array($_POST['inputOpeningHoursMorningEnd']) ? $_POST['inputOpeningHoursMorningEnd'] : []; 
+    // //     $startHourAfternoon = isset($_POST['inputOpeningHoursAfternoonStart']) && is_array($_POST['inputOpeningHoursAfternoonStart']) ? $_POST['inputOpeningHoursAfternoonStart'] : []; 
+    // //     $endHourAfternoon = isset($_POST['inputOpeningHoursAfternoonEnd']) && is_array($_POST['inputOpeningHoursAfternoonEnd']) ? $_POST['inputOpeningHoursAfternoonEnd'] : []; 
     
-        // Array para agrupar horários comuns
-        $groupedHours = [];
+    // //     // Array para agrupar horários comuns
+    // //     $groupedHours = [];
     
-        foreach ($days as $index => $dayArray) {
-            if (!is_array($dayArray)) {
-                continue; // Ignorar se $dayArray não é um array
-            }
+    // //     // Passa por cada dia e seus respectivos horários
+    // //     foreach ($days as $index => $day) {
+    // //         // Obter os horários de manhã e tarde para o índice atual
+    // //         $morningStart = isset($startHourMorning[$index]) ? $startHourMorning[$index] : null;
+    // //         $morningEnd = isset($endHourMorning[$index]) ? $endHourMorning[$index] : null;
+    // //         $afternoonStart = isset($startHourAfternoon[$index]) ? $startHourAfternoon[$index] : null;
+    // //         $afternoonEnd = isset($endHourAfternoon[$index]) ? $endHourAfternoon[$index] : null;
     
-            // Definir os horários de manhã e tarde para o índice atual
-            $morningStart = isset($startHourMorning[$index]) ? $startHourMorning[$index] : null;
-            $morningEnd = isset($endHourMorning[$index]) ? $endHourMorning[$index] : null;
-            $afternoonStart = isset($startHourAfternoon[$index]) ? $startHourAfternoon[$index] : null;
-            $afternoonEnd = isset($endHourAfternoon[$index]) ? $endHourAfternoon[$index] : null;
+    // //         // Criar a chave única baseada nos horários
+    // //         $scheduleKey = implode('-', array_filter([$morningStart, $morningEnd, $afternoonStart, $afternoonEnd]));
     
-            // Criar uma chave única concatenando os horários (evitar objetos como chave)
-            $scheduleKey = implode('-', array_filter([$morningStart, $morningEnd, $afternoonStart, $afternoonEnd]));
+    // //         // Agrupar os dias com os mesmos horários
+    // //         if (!isset($groupedHours[$scheduleKey])) {
+    // //             // Inicializa o grupo de horários se ainda não existir
+    // //             $groupedHours[$scheduleKey] = [
+    // //                 'days' => [],
+    // //                 'morningStart' => $morningStart,
+    // //                 'morningEnd' => $morningEnd,
+    // //                 'afternoonStart' => $afternoonStart,
+    // //                 'afternoonEnd' => $afternoonEnd,
+    // //             ];
+    // //         }
     
-            // Agrupar os dias com os mesmos horários
-            if (!isset($groupedHours[$scheduleKey])) {
-                $groupedHours[$scheduleKey] = [
-                    'days' => [],
-                    'morningStart' => $morningStart,
-                    'morningEnd' => $morningEnd,
-                    'afternoonStart' => $afternoonStart,
-                    'afternoonEnd' => $afternoonEnd,
-                ];
-            }
+    // //         // Verifica se os horários deste dia coincidem com o do grupo de horários atual
+    // //         if ($groupedHours[$scheduleKey]['morningStart'] == $morningStart &&
+    // //             $groupedHours[$scheduleKey]['morningEnd'] == $morningEnd &&
+    // //             $groupedHours[$scheduleKey]['afternoonStart'] == $afternoonStart &&
+    // //             $groupedHours[$scheduleKey]['afternoonEnd'] == $afternoonEnd) {
+                
+    // //             // Se coincidir, adiciona o dia ao grupo de horários
+    // //             $groupedHours[$scheduleKey]['days'][] = $day;
+    // //         }
+    // //     }
     
-            // Adicionar os dias ao grupo de horários comuns
-            foreach ($dayArray as $day) {
-                $groupedHours[$scheduleKey]['days'][] = $day;
-            }
-        }
-    
-        return $groupedHours;
-    }
+    // //     return $groupedHours;
+    // // }
 
     //TODO verificar horario final q nao atualiza
     //TODO mudar para atualizar com base no id da empresa logada somente e nao url
@@ -113,13 +120,70 @@ class DataController{
             $db->connect();
             $update = false;
 
-            $hours = $this->receiveAndOrganizeHours();
-            var_dump($hours);
-            die();
-            $hoursUpdate = $this->updateHours($hours);
+            $companyHours = new CompanyHours();
+            $companyHours->deleteAllCompany($db,$_SESSION['collaborator']->getIdCompany());
 
-            if($hoursUpdate){
-                $update = true;
+            // $hours = $this->receiveAndOrganizeHours();
+            // var_dump($hours);
+            // die();
+            // $hoursUpdate = $this->updateHours($hours);
+
+            // if($hoursUpdate){
+            //     $update = true;
+            // }
+
+            $days = isset($_POST['days']) ? $_POST['days'] : ''; 
+            $startHourMorning = isset($_POST['inputOpeningHoursMorningStart']) ? $_POST['inputOpeningHoursMorningStart'] : ''; 
+            $endHourMorning = isset($_POST['inputOpeningHoursMorningEnd']) ? $_POST['inputOpeningHoursMorningEnd'] : ''; 
+
+            $startHourAfternoon = isset($_POST['inputOpeningHoursAfternoonStart']) ? $_POST['inputOpeningHoursAfternoonStart'] : ''; 
+            $endHourAfternoon = isset($_POST['inputOpeningHoursAfternoonEnd']) ? $_POST['inputOpeningHoursAfternoonEnd'] : ''; // Horários de término
+
+            if($days == "" || $startHourMorning == "" ||  $endHourAfternoon == ""){
+                Flash::set('completeRegistration','Erro ao concluir cadastro!');
+                redirect('/admin/signup/confirmEmail');
+            }
+
+            foreach ($days as $index => $dayArray) {
+                if($endHourMorning != "" && $startHourAfternoon != ""){
+                    $startHourMorning = $startHourMorning[$index]; 
+                    $endHourMorning = $endHourMorning[$index]; 
+    
+                    $startHourAfternoon = $startHourAfternoon[$index]; 
+                    $endHourAfternoon = $endHourAfternoon[$index]; 
+            
+                    //validar se é um array com count()
+                    foreach ($dayArray as $day) {
+                        var_dump($startHourMorning);
+                        $companyHours = new CompanyHours($_SESSION['collaborator']->getIdCompany(),
+                                                        $day,
+                                                        new \DateTime($startHourMorning),
+                                                        new \DateTime($endHourMorning),
+                                                        new \DateTime($startHourAfternoon),
+                                                        new \DateTime($endHourAfternoon));
+                        if(!$companyHours->insert($db)){
+                            $update = true;
+                        }
+                        unset($companyHours);
+                    }
+                }else{
+                    $startHourMorning = $startHourMorning[$index]; // Horário de início para esse índice
+                    $endHourAfternoon = $endHourAfternoon[$index]; // Horário de término para esse índice
+            
+                    foreach ($dayArray as $day) {
+                        $companyHours = new CompanyHours($_SESSION['collaborator']->getIdCompany(),
+                                                        $day,
+                                                        new \DateTime($startHourMorning),
+                                                        new \DateTime('00:00:00'),
+                                                        new \DateTime('00:00:00'),
+                                                        new \DateTime($endHourAfternoon));
+                        if(!$companyHours->insert($db)){
+                            $update = true;
+                        }
+                        unset($companyHours);
+                    }
+                }
+                
             }
 
             $validate = new Validate();

@@ -2,6 +2,7 @@
 namespace app\controllers\admin;
 use app\models\database\Db;
 use app\models\Collaborator;
+use app\models\Company;
 use app\classes\GoogleClient;
 use app\classes\Authenticate;
 use app\classes\Flash;
@@ -134,7 +135,16 @@ class LoginController{
             $_SESSION['collaborator'] = $collaboratorFound;
             $_SESSION['auth'] = true;
     
-            return redirect('/admin/');
+            if($collaboratorFound->getNivel() == 'manager'){
+                $db = new Db();
+                $db->connect();
+                $company = new Company();
+                $company = $company->getById($db,$collaboratorFound->getIdCompany());
+                setCompanyActive($company->getRegistrationComplete());
+                return redirect('/admin/');
+            }else if($collaboratorFound->getNivel() == 'collaborator'){
+                return redirect('/collaborator/');
+            }
         }
         return redirect('/admin/login');
 

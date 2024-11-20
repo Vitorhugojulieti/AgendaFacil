@@ -1,8 +1,9 @@
 export default class generateSchedules {
-    constructor(container) {
+    constructor(container,requestUser = 'client') {
         this.month;
         this.day;
         this.container = document.querySelector(container);
+        this.requestUser = requestUser;
     }
 
     generateTimes() {
@@ -30,7 +31,8 @@ export default class generateSchedules {
 
     async getSchedules() {
         try {
-            const response = await fetch(`http://localhost:8889/Schedule/getSchedules/?day=${this.day}&month=${this.month}`);
+            console.log(`http://localhost:8889/${this.requestUser}/Schedule/getSchedules/?day=${this.day}&month=${this.month}`);
+            const response = await fetch(`http://localhost:8889/${this.requestUser}/Schedule/getSchedules/?day=${this.day}&month=${this.month}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

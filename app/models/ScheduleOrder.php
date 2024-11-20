@@ -11,18 +11,19 @@ class ScheduleOrder implements ModelInterface{
     private \DateTime $startTime;
     private \DateTime $endTime;
     private int $idSchedule;
-    private Collaborator $collaborator;
-    private Service $service;
+    private int $idCollaborator;
+    private int $idService;
     private string $table = "schedule_orders";
 
     public function __construct($idSchedule = 0,
-                            $collaborator = new Collaborator,
-                            $service = new Service,
+                            $idCollaborator = 0,
+                            $idService = 0,
                             $startTime = new \DateTime(),
                             $endTime = new \DateTime()){
 
-        $this->service = $service;
-        $this->collaborator = $collaborator;
+        $this->idSchedule = $idSchedule;
+        $this->idService = $idService;
+        $this->idCollaborator = $idCollaborator;
         $this->startTime = $startTime;
         $this->endTime = $endTime;
     }
@@ -73,14 +74,42 @@ class ScheduleOrder implements ModelInterface{
         $arrayObjectsOrders =[];
         foreach ($orders as $order){
             $scheduleObj = new ScheduleOrder($order['schedules_idSchedule'],
-                                                $collaboratorManager->getById($db,$order['collaborator_idCollaborator']),
-                                                $serviceManager->getById($db,$order['services_idService']),
+                                                $order['collaborator_idCollaborator'],
+                                                $order['services_idService'],
                                                 new \DateTime($order['startTime']),
                                                 new \DateTime($order['endTime']));
             $scheduleObj->setId($order['idschedule_order']);
             array_push($arrayObjectsOrders,$scheduleObj);
         }
         return $arrayObjectsOrders;
+    }
+
+    public function getSchedulesByCollaborator(Db $db,$idCollaborator){
+        $db->setTable($this->table);
+        $collaboratorManager = new Collaborator();
+        $serviceManager = new Service();
+        $orders = $db->query("schedules_idSchedule","collaborator_idCollaborator={$idCollaborator}");
+        $arrayObjectsSchedules =[];
+        foreach ($orders as $order){
+            $scheduleObj = new Schedule();
+            $scheduleObj= $scheduleObj->getById($db,$order['schedules_idSchedule']);
+            array_push($arrayObjectsSchedules,$scheduleObj);
+        }
+        return $arrayObjectsSchedules;
+    }
+
+    public function getSchedulesByService(Db $db,$idService){
+        $db->setTable($this->table);
+        $collaboratorManager = new Collaborator();
+        $serviceManager = new Service();
+        $orders = $db->query("schedules_idSchedule","services_idService={$idService}");
+        $arrayObjectsSchedules =[];
+        foreach ($orders as $order){
+            $scheduleObj = new Schedule();
+            $scheduleObj= $scheduleObj->getById($db,$order['schedules_idSchedule']);
+            array_push($arrayObjectsSchedules,$scheduleObj);
+        }
+        return $arrayObjectsSchedules;
     }
 
     public function insert(Db $db){
@@ -190,11 +219,19 @@ class ScheduleOrder implements ModelInterface{
     }
 
     public function getService(): Service {
-        return $this->service;
+        $db = new Db();
+        $db->connect();
+        $service = new Service();
+        $service = $service->getById($db,$this->getIdService());
+        return $service;
     }
 
     public function getCollaborator(): Collaborator {
-        return $this->collaborator;
+        $db = new Db();
+        $db->connect();
+        $collaborator = new Collaborator();
+        $collaborator = $collaborator->getById($db,$this->getIdCollaborator());
+        return $collaborator;
     }
 
 }

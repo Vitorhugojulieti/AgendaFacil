@@ -88,6 +88,54 @@ class Collaborator implements ModelInterface{
         return $arrayObjectsCollaborator;
     }
 
+
+    public function getCollaboratorsByFilters(Db $db, int $idCompany, string $status = "", string $nivel = "",int $currentPage = 1, int $recordsPerPage = 10) {
+        $db->setTable($this->table);
+        $where = "Company_idCompany = {$idCompany}";
+    
+        if ($status != "") {
+            $where .= " AND active = {$status}";
+        }
+
+        if ($nivel != "") {
+            $where .= " AND nivel = '{$nivel}'";
+        }
+    
+        // Realiza a paginação com os filtros
+        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
+        $Collaborators = $paginationResult['data'];
+        $arrayObjectsCollaborator = [];
+    
+        foreach ($Collaborators as $collaborator){
+            $newCollaborator = new Collaborator($collaborator['avatar'],
+                                                $collaborator['name'],
+                                                $collaborator['cpf'],
+                                                $collaborator['phone'],
+                                                $collaborator['email'],
+                                                $collaborator['password'],
+                                                $collaborator['nivel'],
+                                                $collaborator['Company_idCompany'],
+                                                new \DateTime($collaborator['created_at']),
+                                                $collaborator['registrationComplete'],
+                                                $collaborator['mainAdministrator'],
+                                                $collaborator['active'],
+                                                floatval($collaborator['commission']));
+
+            $newCollaborator->setId($collaborator['idCollaborator']);
+            array_push($arrayObjectsCollaborator,$newCollaborator);
+        }
+        
+        return [
+            'collaborators' => $arrayObjectsCollaborator,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
+    }
+
     public function getById(Db $db, int $id){
         $db->setTable($this->table);
         $collaboratorFound = $db->query("*","idCollaborator={$id}");
@@ -142,9 +190,11 @@ class Collaborator implements ModelInterface{
         return $colllaboratorObject;
     }
 
-    public function getByCompany(Db $db,$idCompany){
+    public function getByCompany(Db $db,$idCompany, int $currentPage = 1, int $recordsPerPage = 10){
         $db->setTable($this->table);
-        $Collaborators = $db->query("*","Company_idCompany={$idCompany}");
+        $where = "Company_idCompany = {$idCompany}";
+        $paginationResult= $db->paginate($currentPage, $recordsPerPage, "*", $where);
+        $Collaborators = $paginationResult['data'];
         $arrayObjectsCollaborator =[];
 
         foreach ($Collaborators as $collaborator){
@@ -167,7 +217,15 @@ class Collaborator implements ModelInterface{
             array_push($arrayObjectsCollaborator,$newCollaborator);
         }
         
-        return $arrayObjectsCollaborator;
+        return [
+            'collaborators' => $arrayObjectsCollaborator,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
     }
 
     public function setServices(array $services){
@@ -318,7 +376,7 @@ class Collaborator implements ModelInterface{
 
     public function delete(Db $db,int $id){
         $db->setTable($this->table);
-        return $db->delete("idCollaborator={$id} AND Company_idCompany={$idCompany}");
+        return $db->delete("idCollaborator={$id} AND Company_idCompany={$this->getIdCompany()}");
     }
 
     public function removeAttribute($attribute) {
@@ -438,6 +496,22 @@ class Collaborator implements ModelInterface{
 
     public function setCommission(float $commission): void {
         $this->commission = $commission;
+    }
+
+
+    public function collaboratorIsUsed(){
+        $db = new Db();
+        $db->connect();
+        $db->setTable('collaborator_has_services');
+        $usedInServices = $db->query("Collaborator_idCollaborator","Collaborator_idCollaborator={$this->getId()}");
+        $db->setTable('schedule_orders');
+        $usedInSchedules = $db->query("collaborator_idCollaborator","collaborator_idCollaborator={$this->getId()}");
+
+        if(count($usedInSchedules) > 0 || count($usedInServices) > 0 ){
+            return true;
+        }else{
+            return 0;
+        }
     }
 }
 

@@ -19,11 +19,24 @@
 
                             <h3><span class="font-semibold">Endereço:</span> <?php echo $company->getRoad(). ' - Numero: '.$company->getNumber() .' - '. $company->getCity().'-'. $company->getState()?></h3>
                             <div class="flex items-center gap-4">
-                                <span class="flex gap-2">
-                                    <span><span class="font-semibold">Manhã</span><?php echo ' '.$company->getOpeningHoursMorningStart()->format('H:i').' as '.$company->getOpeningHoursMorningEnd()->format('H:i') ?></span>
-                                    <span><span class="font-semibold">Tarde</span><?php echo ' '.$company->getOpeningHoursAfternoonStart()->format('H:i').' as '.$company->getOpeningHoursAfternoonEnd()->format('H:i') ?></span>
-                                </span>
+                               
                             </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <?php $daysOfWeek = ['Domingo','Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];?>
+                            <?php foreach ($daysOfWeek as $key => $dayName) { ?>
+                                <?php $hour = $company->getHourByDay($key); // Método que retorna as horas de acordo com o índice do dia ?>
+                                
+                                <?php if ($hour) { ?>
+                                    <div>
+                                        <span><?php echo $dayName; ?></span>
+                                        <span><?php echo 'Manhã ' . $hour->getOpeningHoursMorningStart()->format('H:i') . ' as ' . $hour->getOpeningHoursMorningEnd()->format('H:i'); ?></span>
+                                        <span><?php echo 'Tarde ' . $hour->getOpeningHoursAfternoonStart()->format('H:i') . ' as ' . $hour->getOpeningHoursAfternoonEnd()->format('H:i'); ?></span>
+                                    </div>
+                                <?php } else { ?>
+                                    <div><?php echo $dayName . ' Fechado'; ?></div>
+                                <?php } ?>
+                            <?php } ?>
                         </div>
                         <button id="btnShare" class="outline-none border-none bg-transparent"><i class='bx bxs-share-alt text-3xl' style='color:#223249'  ></i></button>
                     </div>

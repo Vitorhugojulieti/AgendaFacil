@@ -16,7 +16,7 @@
                     <div class="upload-avatar hover:cursor-pointer flex flex-col items-center justify-center  gap-4 border-2 border-grayInput border-dashed rounded-full ">
                         <input type="file" name="avatar" id="inputAvatar" class="hidden">
                         <label for="inputAvatar" class="flex flex-col items-center justify-center gap-1 pt-4 pb-4">
-                            <img id="previewAvatar"  alt="avatar" class="redondShapeImage mt-4" src="<?php echo isset($collaborator) ? '../../../'.$collaborator->getAvatar() : ''?>">
+                            <img id="previewAvatar"  alt="avatar" class="redondShapeImage mt-4" src="">
                             <i class='bx bxs-user-circle text-7xl text-grayInput' id="iconAvatar"></i>
                             <span id="spanAvatar" class="text-grayInput text-center hover:underline hover:cursor-pointer w-28"><span class="font-semibold text-principal5">Insira</span> a imagem aqui</span>
                         </label>
@@ -148,10 +148,12 @@
                                     </div>
 
                                     <div class="pl-5">
-                                        <?php foreach ($services as $service) { ?>
-                                            <label for="input<?php echo $service->getName()?>" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
-                                                <input type="checkbox" id="input<?php echo $service->getName()?>" name="services[]" value="<?php echo $service->getId() ?>" <?php echo in_array($service->getId(), $servicesCollaborator) ? "checked" : ''; ?> class="check"><?php echo $service->getName() ?>
-                                            </label>
+                                        <?php if(isset($service)){ ?>
+                                            <?php foreach ($services as $service) { ?>
+                                                <label for="input<?php echo $service->getName()?>" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
+                                                    <input type="checkbox" id="input<?php echo $service->getName()?>" name="services[]" value="<?php echo $service->getId() ?>" <?php echo in_array($service->getId(), $servicesCollaborator) ? "checked" : ''; ?> class="check"><?php echo $service->getName() ?>
+                                                </label>
+                                            <?php } ?>
                                         <?php } ?>
                                     </div>
                                     <span class="text-errorColor " id="msgServicesError"></span>

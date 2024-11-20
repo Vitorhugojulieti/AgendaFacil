@@ -1,9 +1,10 @@
 import generateSchedules from "./generateSchedules.js";
 
 export default class generateScrollMonthsAndDays {
-    constructor(containerMonths, containerDays) {
+    constructor(containerMonths, containerDays,requestUser) {
         this.containerMonths = document.querySelector(containerMonths);
         this.containerDays = document.querySelector(containerDays);
+        this.requestUser = requestUser;
         this.months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         this.weekdays = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']; // Nomes dos dias da semana
     }
@@ -53,7 +54,7 @@ export default class generateScrollMonthsAndDays {
         // Get schedules today
         console.log(new Date().getMonth());
         console.log(new Date().getDate());
-        const scheduleManager = new generateSchedules('#listSchedules');
+        const scheduleManager = new generateSchedules('#listSchedules',this.requestUser);
         scheduleManager.setMonth(new Date().getMonth() + 1);
         scheduleManager.setDay(new Date().getDate());
         scheduleManager.generate();

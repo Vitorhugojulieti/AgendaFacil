@@ -1,15 +1,6 @@
-    <?php
+<?php
 use app\classes\Flash;
 
-function welcome($index){
-    if (isset($_SESSION[$index])) {
-        $user = $_SESSION[$index];
-
-        return $user->firstName.' '.$user->lastName . '| <a href="/login/destroy">Logout</a>';
-    }
-
-    return 'Visitante';
-}
 
 function verifySession(){
     // Verifica se a sessão está inativa
@@ -28,5 +19,18 @@ function verifySession(){
     $_SESSION['lastAcess'] = time();
 }
 
+function setCompanyActive($active){
+    $_SESSION['activeCompany'] = $active;
+}
+
+function getCompanyActive(){
+    if(isset($_SESSION['activeCompany'])){
+        if($_SESSION['activeCompany']  == 1){
+            return '<span class="bg-sucessColor text-white text-sm text-center w-32 rounded p-1 flex gap-2 items-center"><i class="bx bxs-circle"></i>Empresa ativa</span>';
+        }else{
+            return '<span class="bg-errorColor text-white text-sm text-center w-32 rounded p-1 flex gap-2 items-center"><i class="bx bxs-circle" ></i>Empresa inativa</span>';
+        }
+    }
+}
 
 ?>

@@ -3,7 +3,6 @@
         <?php require __DIR__ . '/../includes/nav.php'; ?>
 
         <div class=" w-full min-h-screen flex flex-col justify-start  items-start bg-bgPrincipal p-4 gap-4 ">
-        <?php echo $breadcrumb?>
             <!-- data main collaborator -->
             <form action="<?php echo $actionCollaborator;?>" method="POST" enctype="multipart/form-data" id="formUpdateCollaborator" class="bg-white w-5/6 md:w-full flex flex-col items-start justify-start gap-4 shadow shadow-borderFormColor p-2 rounded-lg">
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">

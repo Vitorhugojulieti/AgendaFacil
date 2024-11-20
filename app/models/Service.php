@@ -105,9 +105,11 @@ class Service implements ModelInterface{
     }
 
 
-    public function getByCompany(Db $db,int $idCompany){
+    public function getByCompany(Db $db,int $idCompany, int $currentPage = 1, int $recordsPerPage = 10){
         $db->setTable($this->table);
-        $services = $db->query("*","Company_idCompany={$idCompany}");
+        $where = "Company_idCompany = {$idCompany}";
+        $paginationResult= $db->paginate($currentPage, $recordsPerPage, "*", $where);
+        $services = $paginationResult['data'];
         $arrayObjectsService =[];
         foreach ($services as $service){
             $newService = new Service($service['name'],
@@ -121,8 +123,75 @@ class Service implements ModelInterface{
             $newService->setId($service['idService']);
             array_push($arrayObjectsService,$newService);
         }
-        return $arrayObjectsService;
+           
+        return [
+            'services' => $arrayObjectsService,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
     }
+
+    public function getServicesByFilters(Db $db, int $idCompany, int $maxPrice = 0, int $maxDuration = 0, string $status = "", int $currentPage = 1, int $recordsPerPage = 10) {
+        $db->setTable($this->table);
+        $where = "Company_idCompany = {$idCompany}";
+    
+        // Filtro por preço
+        if ($maxPrice != 0) {
+            $where .= " AND price <= {$maxPrice}";
+        }
+    
+        // Filtro por duração
+        if ($maxDuration != 0) {
+            $hours = (($maxDuration - 60) / 10) == 0 ? 1 : (($maxDuration - 60) / 10) + 1;
+            if ($hours > 0 && $hours < 4) {
+                $where .= " AND duration <= '0{$hours}:00:00'";
+            } else {
+                $where .= " AND duration <= '00:{$maxDuration}:00'";
+            }
+        }
+    
+        // Filtro por status
+        if ($status != "") {
+            $where .= " AND visible = {$status}";
+        }
+    
+        // Realiza a paginação com os filtros
+        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
+        $services = $paginationResult['data'];
+        $arrayObjectsService = [];
+    
+        // Cria objetos Service a partir dos resultados
+        foreach ($services as $service) {
+            $newService = new Service(
+                $service['name'],
+                $service['description'],
+                $service['price'],
+                new \DateTime($service['duration']),
+                $service['Company_idCompany'],
+                $service['visible'],
+                new \DateTime($service['created_at'])
+            );
+    
+            $newService->setId($service['idService']);
+            $arrayObjectsService[] = $newService;
+        }
+    
+        // Retorna o array de objetos Service e os dados de paginação
+        return [
+            'services' => $arrayObjectsService,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
+    }
+    
 
     public function getCollaborators(){
         $db = new Db();
@@ -201,7 +270,7 @@ class Service implements ModelInterface{
 
     public function delete(Db $db,int $id){
         $db->setTable($this->table);
-        return $db->delete("idService={$id}");
+        return $db->delete("idService={$id} AND Company_idCompany={$this->getIdCompany()}");
     }
 
     public function removeAttribute($attribute) {
@@ -298,6 +367,21 @@ class Service implements ModelInterface{
 
     public function setIdCollaborator(int $idCollaborator): void {
         $this->idCollaborator = $idCollaborator;
+    }
+
+    public function serviceIsUsed(){
+        $db = new Db();
+        $db->connect();
+        $db->setTable('collaborator_has_services');
+        $usedInCollaborators = $db->query("Services_idService","Services_idService={$this->getId()}");
+        $db->setTable('schedule_orders');
+        $usedInSchedules = $db->query("services_idService","services_idService={$this->getId()}");
+
+        if(count($usedInSchedules) > 0 || count($usedInCollaborators) > 0 ){
+            return true;
+        }else{
+            return 0;
+        }
     }
 
     //method for view

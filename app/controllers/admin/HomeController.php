@@ -22,9 +22,6 @@ class HomeController{
 
         $company = new Company();
         $company = $company->getById($db,$_SESSION['collaborator']->getIdCompany());
-        $activeCompany = $company->getRegistrationComplete() == 1 ? 'Empresa ativa' : 'Empresa inativa'; 
-        // var_dump($company->isOpen());
-        // die();
 
         //pegar total de serviços
         $services = new Service();
@@ -42,6 +39,12 @@ class HomeController{
         $totalSchedules = count($schedules);
         //pegar total de recebimentos
         //TODO criar busca pelo total de recebimentos
+        $receipts = 0;
+        foreach ($schedules as $schedule) {
+            if($schedule->getStatus() == 'concluido'){
+                $receipts = $receipts + $schedule->getTotalPaid();
+            }
+        }
         
         $notifications = new Notification();
         $notifications = $notifications->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
@@ -55,6 +58,8 @@ class HomeController{
             }
         }
 
+        $schedules = array_slice($schedules, 0, 5);
+
         $this->view = 'admin/homeAdmin.php';
         $this->data = [
             'title'=>'Agenda facil',
@@ -66,7 +71,8 @@ class HomeController{
             'notifications' =>$notifications,
             'unmarkedNotifications'=>$unmarkedNotifications,
             'breadcrumb'=>Breadcrumb::getForAdmin(),
-            'activeCompany'=>$activeCompany
+            'receipts'=>$receipts,
+            'schedules'=>$schedules
         ];
     }
 
@@ -104,7 +110,8 @@ class HomeController{
             }
 
             // data for donut Chart
-            $services = $services->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
+            $services = $services->getByCompany($db,$_SESSION['collaborator']->getIdCompany(),1,200);
+            $services = $services['services'];
 
             if(count($services)>0){
                 foreach ($services as $service) {
@@ -114,7 +121,8 @@ class HomeController{
             }
          
             // data for column chart 
-            $collaborators = $collaborators->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
+            $collaborators = $collaborators->getByCompany($db,$_SESSION['collaborator']->getIdCompany(),1,200);
+            $collaborators = $collaborators['collaborators'];
 
             if(count($collaborators) > 0){
                 foreach ($collaborators as $collaborator) {

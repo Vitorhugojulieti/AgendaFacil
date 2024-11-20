@@ -3,6 +3,7 @@ namespace app\controllers\admin;
 use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Service;
+use app\models\Company;
 use app\models\ServiceVoucher;
 use app\classes\Flash;
 use app\classes\Old;
@@ -29,26 +30,36 @@ class VoucherController implements ControllerInterface{
         $db = new Db();
         $db->connect();
         $vouchers = new ServiceVoucher();
+        $currentPage = 1;
+        $recordsPerPage = 10;
 
-        // get filter by url
-        if(isset($args[0]) && isset($args[1])){
-            $attribute = filter_var($args[0], FILTER_SANITIZE_STRING);
-            $value = filter_var($args[1], FILTER_SANITIZE_STRING);
-            if(!$attribute === false && (!$value === false || $value === '0')){
-                $vouchers = $vouchers->getByAttribute($db,$_SESSION['collaborator']->getIdCompany(),$attribute,$value);
-            }
-        }else if(isset($args[0])){
-            $page = filter_var($args[0], FILTER_SANITIZE_NUMBER_INT);
-            if(filter_var($page, FILTER_VALIDATE_INT)){
-                $vouchers = $vouchers->getByCompany($db,$_SESSION['collaborator']->getIdCompany(),$page,10);
-                $pagination = $vouchers['pagination'];
-                $vouchers = $vouchers['vouchers'];
-            }
-        }else{
-            $vouchers = $vouchers->getByCompany($db,$_SESSION['collaborator']->getIdCompany(),1,10);
-            $pagination = $vouchers['pagination'];
-            $vouchers = $vouchers['vouchers'];
+        if(isset($args[0])){
+            $currentPage = intval($args[0]);
         }
+    
+        $status = isset($_GET['status']) ? $_GET['status'] : "";
+        $price = isset($_GET['price']) ? intval($_GET['price']) : 0;
+
+        if (!isset($_GET['price']) && !isset($_GET['status'])) {
+            $result = $vouchers->getByCompany($db,$_SESSION['collaborator']->getIdCompany(), $currentPage, $recordsPerPage);
+        } else {
+            $result = $vouchers->getVouchersByFilters(
+                $db,
+                $_SESSION['collaborator']->getIdCompany(),
+                $price,
+                $status,
+                $currentPage,
+                $recordsPerPage
+            );
+        }
+
+        $pagination = $result['pagination'];
+        $vouchers = $result['vouchers'];
+
+        usort($vouchers, function($a, $b) {
+            return $b->getActive() - $a->getActive();
+        });
+
 
         $this->view = 'admin/vouchers.php';
         $this->data = [
@@ -56,8 +67,7 @@ class VoucherController implements ControllerInterface{
             'vouchers'=>$vouchers,
             'navActive'=>'cupons',
             'breadcrumb'=>Breadcrumb::getForAdmin(),
-            'pagination'=>$pagination
-
+            'pagination'=>$pagination,
         ];
     }
     

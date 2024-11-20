@@ -3,7 +3,6 @@
         <?php require __DIR__ . '/../includes/nav.php'; ?>
 
         <div class=" w-full min-h-screen flex flex-col justify-start  items-start bg-bgPrincipal p-4 gap-4 ">
-        <?php echo $breadcrumb?>
 
             <form action="<?php echo $actionCompany;?>" method="POST" enctype="multipart/form-data" id="formUpdateCompany" class="bg-white w-5/6 md:w-full flex flex-col items-start justify-start gap-4 shadow shadow-borderFormColor p-2 rounded-lg">
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">
@@ -69,12 +68,16 @@
                                     </div>
                                     <div class="flex items-center border-2 border-grayInput   rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white" style="box-shadow:0 0 10px 5px rgb(0,0,0,0.02);">
                                         <i class='bx bx-rename' style=' padding-left:1rem; padding-right:1rem;'></i>
-                                        <select name="category" id="inputActive"class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder ">
-                                            <option value="barbbarber-shope">Barbearia</option>
-                                            <option value="barbbarber-shope">Barbearia</option>
-                                            <option value="barbbarber-shope">Barbearia</option>
-                                            <option value="barbbarber-shope">Barbearia</option>
-                                        </select>
+                                        <select name="category" id="inputCategory" class="w-full p-2 outline-none bg-transparent  transition-all duration-300 focus:bg-white focus:border-white focus:text-black">
+                                            <option value="Barbearia" <?php if (isset($company) && $company->getCategory() === 'Barbearia') echo 'selected'; ?>>Barbearia</option>
+                                            <option value="Salão de beleza" <?php if (isset($company) && $company->getCategory() === 'Salão de beleza') echo 'selected'; ?>>Salão de beleza</option>
+                                            <option value="Spa" <?php if (isset($company) && $company->getCategory() === 'Spa') echo 'selected'; ?>>Spa</option>
+                                            <option value="Clínica de estética" <?php if (isset($company) && $company->getCategory() === 'Clínica de estética') echo 'selected'; ?>>Clínica de estética</option>
+                                            <option value="Estudio de tatuagem" <?php if (isset($company) && $company->getCategory() === 'Estudio de tatuagem') echo 'selected'; ?>>Estudio de tatuagem</option>
+                                            <option value="Pet-shop" <?php if (isset($company) && $company->getCategory() === 'Pet-shop') echo 'selected'; ?>>Pet-shop</option>
+                                            <option value="Manutenção e Reformas" <?php if (isset($company) && $company->getCategory() === 'Manutenção e Reformas') echo 'selected'; ?>>Manutenção e Reformas</option>
+                                            <option value="Outros serviços" <?php if (isset($company) && $company->getCategory() === 'Outros serviços') echo 'selected'; ?>>Outros serviços</option>
+                                        </select>    
                                     </div>
                                     <span class="text-errorColor " id="msgNameError"><?php echo flash('name');  ?></span>
                                 </div>
@@ -218,8 +221,8 @@
                     }
 
                     // Exibir os grupos
-                    $daysOfWeek = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado','Domingo'];
-
+                    $daysOfWeek = ['Domingo','Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+                    $indexHours = 0;
                     foreach ($groupedHours as $index => $group) { ?>
                         <div class="hour w-full flex items-center justify-between border border-lightGray rounded p-2">
                             <div class="w-full flex flex-col">
@@ -248,15 +251,17 @@
                                     echo "<input type='checkbox' name='days[]' value='{$dayOfWeek}' checked>";
                                 }
                                 ?>
-                                <input type="time" value="<?= $group['morningStart']->format('H:i') ?>" name="inputOpeningHoursMorningStart[<?= $index ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
+                                <input type="time" value="<?= $group['morningStart']->format('H:i') ?>" name="inputOpeningHoursMorningStart[<?= $indexHours ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
                                 
-                                <input type="time" value="<?= $group['morningEnd']->format('H:i') ?>" name="inputOpeningHoursMorningEnd[<?= $index ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
+                                <input type="time" value="<?= $group['morningEnd']->format('H:i') ?>" name="inputOpeningHoursMorningEnd[<?= $indexHours ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
                                 
-                                <input type="time" value="<?= $group['afternoonStart']->format('H:i') ?>" name="inputOpeningHoursAfternoonStart[<?= $index ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
+                                <input type="time" value="<?= $group['afternoonStart']->format('H:i') ?>" name="inputOpeningHoursAfternoonStart[<?= $indexHours ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
                                 
-                                <input type="time" value="<?= $group['afternoonEnd']->format('H:i') ?>" name="inputOpeningHoursAfternoonEnd[<?= $index ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
+                                <input type="time" value="<?= $group['afternoonEnd']->format('H:i') ?>" name="inputOpeningHoursAfternoonEnd[<?= $indexHours ?>]" class="w-full p-2 outline-none bg-transparent transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder" />
                             </div>
                         </div>
+                    
+                    <?php  $indexHours = $indexHours +1; ?>
                     <?php } ?>
                         
                     </div>

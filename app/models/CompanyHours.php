@@ -6,7 +6,7 @@ use app\models\database\Db;
 class CompanyHours{
     private int $id;
     private int $idCompany;
-    private int $dayOfWeek;         //(0 = segunda-feira, 6 = domingo)
+    private int $dayOfWeek;         //(0 = domingo, 6 = sabado)
     private \DateTime $openingHoursMorningStart;
     private \DateTime $openingHoursMorningEnd;
     private \DateTime $openingHoursAfternoonStart;
@@ -35,7 +35,7 @@ class CompanyHours{
         $arrayHours = []; 
 
         if(!$hours){
-            return false;
+            return [];
         }
         
         foreach ($hours as $hour) {
@@ -112,6 +112,11 @@ class CompanyHours{
         }
 
         return false;
+    }
+
+    public function deleteAllCompany(Db $db, int $idCompany){
+        $db->setTable($this->table);
+        return $db->delete("company_id={$idCompany}");
     }
 
     public function delete(Db $db, int $id){

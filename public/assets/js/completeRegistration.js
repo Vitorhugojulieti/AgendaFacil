@@ -97,7 +97,7 @@ function cancel(){
 
 function create(){
     const index = document.querySelectorAll('.hour').length;
-    const weekDays = ['Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sabado','Domingo']
+    const weekDays = ['Domingo','Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
     const openingMorningStart = document.querySelector('#inputOpeningHoursMorningStart');
     const openingMorningEnd = document.querySelector('#inputOpeningHoursMorningEnd');

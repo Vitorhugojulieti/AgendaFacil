@@ -20,6 +20,13 @@ export default class modals{
         this.modal.close();
     }
 
+    setTextButtonDelete(message){
+        if(message != null){
+            let button = document.querySelector('#btnDelete');
+            button.innerHTML = message;
+        }
+    }
+
     init(){
        if(this.btnOpen){
             this.btnOpen.addEventListener('click',(e)=>{

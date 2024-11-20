@@ -1,10 +1,21 @@
 export default class generateTimes{
-    constructor(){
+    constructor(userRequest){
         this.legend = document.querySelector('#legendTimes');
         this.container = document.querySelector('#containerTimes');
+        this.link = userRequest  ? 'http://localhost:8889/admin/Schedule/getAvailableTimes/' : 'http://localhost:8889/Schedule/getAvailableTimes/';
+        console.log(this.link)
     }
     setDay(day){
         this.day = day;
+    }
+
+    setDate(date){
+        this.stringDate = date;
+        let inputDateStr = date;
+        let [year, month, day] = inputDateStr.split('-').map(Number);
+        let dateNotTime = new Date(year, month - 1, day);
+        this.date = dateNotTime;
+        
     }
 
     filterTimes(times) {
@@ -18,10 +29,12 @@ export default class generateTimes{
 
     generateTimesElements(){
         let now = new Date(); 
-        console.log(this.day);
+        let noTimeDateNow = new Date();
+        noTimeDateNow.setHours(0,0,0,0);
         // TODO criar validacao para nao deixar buscar horarios caso o dia seja menor q o atual --- TESTAR
-        if(parseInt(this.day) >= new Date().getDate()){
-            fetch(`http://localhost:8889/Schedule/getAvailableTimes/?day=${this.day}`)
+        if(this.date >= noTimeDateNow){
+
+            fetch(this.link + `?date=${this.stringDate}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -34,13 +47,15 @@ export default class generateTimes{
                 this.container.innerHTML = '';
                 this.legend.innerHTML = '';
              
+                if(this.date.getDate() == now.getDate()){
+                    data.morning = this.filterTimes(data.morning);
+                    data.afternoon = this.filterTimes(data.afternoon);
+                }
+                
                 if((data.morning.length != 0) || (data.afternoon.length != 0)){
                     this.legend.innerHTML = 'Horarios disponiveis';
 
-                    if(this.day == now.getDate()){
-                        data.morning = this.filterTimes(data.morning);
-                        data.afternoon = this.filterTimes(data.afternoon);
-                    }
+              
         
                     let containerMorning = `<div class='w-full flex flex-col gap-2'>`;
                     let containerAfternoon = `<div class='w-full flex flex-col gap-2'>`;
@@ -111,9 +126,9 @@ export default class generateTimes{
             }
         });
 
-        document.querySelector('#times').addEventListener('click',(e)=>{
-            e.stopPropagation();
-        })
+        // document.querySelector('#times').addEventListener('click',(e)=>{
+        //     e.stopPropagation();
+        // })
     }
 
     

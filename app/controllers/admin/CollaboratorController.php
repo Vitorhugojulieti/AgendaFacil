@@ -3,6 +3,7 @@ namespace app\controllers\admin;
 use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Collaborator;
+use app\models\Company;
 use app\models\Service;
 use app\models\Schedule;
 use app\classes\Flash;
@@ -31,18 +32,43 @@ class CollaboratorController implements ControllerInterface{
 
         $db = new Db();
         $db->connect();
-
-        $faker = Factory::create();
-
         $collaborators = new Collaborator();
-        $collaborators = $collaborators->getAll($db);
+        $currentPage = 1;
+        $recordsPerPage = 10;
+
+        if(isset($args[0])){
+            $currentPage = intval($args[0]);
+        }
+    
+        $status = isset($_GET['status']) ? $_GET['status'] : "";
+        $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : "";
+
+        if (!isset($_GET['nivel']) && !isset($_GET['status'])) {
+            $result = $collaborators->getByCompany($db,$_SESSION['collaborator']->getIdCompany(), $currentPage, $recordsPerPage);
+        } else {
+            $result = $collaborators->getCollaboratorsByFilters(
+                $db,
+                $_SESSION['collaborator']->getIdCompany(),
+                $status,
+                $nivel,
+                $currentPage,
+                $recordsPerPage
+            );
+        }
+
+        $pagination = $result['pagination'];
+        $collaborators = $result['collaborators'];
+
+        usort($collaborators, function($a, $b) {
+            return $b->getActive() - $a->getActive();
+        });
 
         $this->view = 'admin/collaborators.php';
         $this->data = [
             'title'=>'Colaboradores | AgendaFacil',
             'collaborators'=>$collaborators,
             'navActive'=>'colaboradores',
-            'breadcrumb'=>Breadcrumb::getForAdmin()
+            'pagination'=>$pagination,
         ];
     }
 
@@ -363,28 +389,42 @@ class CollaboratorController implements ControllerInterface{
         return $insertResult;
     }
 
-    //ok
+
     public function destroy(array $args){
         BlockNotAdmin::block($this,['destroy']);
 
-        $idCollaborator = $this->sanitizeArgNumber($args[0]);
-        if(isset($args) && $idCollaborator){
-            $db = new Db();
-            $db->connect();
-    
-            $collaborator = new Collaborator();
-            $collaborator->setActive(0);
-            $collaborator->setIdCompany($_SESSION['collaborator']->getIdCompany());
-            if($collaborator->update($db,intval($args[0]))){
-                Flash::set('reultDeleteCollaborator', 'Colaborador inativado com sucesso!','notification sucess');
-                return redirect("/admin/collaborator");
-            }
+        if(isset($args[0]) && isset($args[1])){
+            $idCollaborator = filter_var($args[0], FILTER_SANITIZE_NUMBER_INT);
+            $used = $args[1];
+            if(filter_var($idCollaborator, FILTER_VALIDATE_INT)){
+                $db = new Db();
+                $db->connect();
+                $collaborator = new Collaborator();
 
-            Flash::set('reultDeleteCollaborator', 'Erro ao inativar colaborador!','notification error');
-            return redirect("/admin/collaborator");
+                if($used){
+                    $collaborator->setActive(0);
+                    $collaborator->setIdCompany($_SESSION['collaborator']->getIdCompany());
+                    if($collaborator->update($db,$idCollaborator)){
+                        Flash::set('reultDeleteCollaborator', 'Colaborador inativado com sucesso!','notification sucess');
+                        return redirect("/admin/collaborator");
+                    }
+
+                    Flash::set('reultDeleteCollaborator', 'Erro ao inativar colaborador!','notification error');
+                    return redirect("/admin/collaborator");
+                }else{
+                    $collaborator->setIdCompany($_SESSION['collaborator']->getIdCompany());
+                    if($collaborator->delete($db,$idCollaborator)){
+                        Flash::set('reultDeleteCollaborator', 'Serviço excluido com sucesso!','notification sucess');
+                        return redirect("/admin/collaborator");
+                    }
+                    Flash::set('reultDeleteCollaborator', 'Erro ao excluir colaborador!','notification error');
+                    return redirect("/admin/collaborator");
+                }
+
+            }
         }else{
-            Flash::set('reultDeleteCollaborator', 'Erro ao inativar colaborador!','notification error');
-            return redirect("/admin/collaborator");
+            Flash::set('reultDeleteService', 'Erro ao inativar serviço!','notification error');
+            return redirect("/admin/service");
         }
     }
 

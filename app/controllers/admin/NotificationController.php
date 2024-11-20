@@ -14,53 +14,63 @@ class NotificationController {
     public function index(array $args){
         $db = new Db();
         $db->connect();
+        $notifications = new Notification();
+        $notifications = $notifications->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
 
-        // $notifications = new Notification();
-        // NotificationController::store(1,2,"testando notificações","","test");
-        NotificationController::markNotified(5);
-        // $notifications = $notifications->getAll($db);
-        // var_dump($notifications);
-        // die();
-
-        $this->view = 'admin/vouchers.php';
+        $this->view = 'admin/notifications.php';
         $this->data = [
             'title'=>'Notificações | AgendaFacil',
-            'navActive'=>'Cupons',
+            'notifications'=>$notifications
         ];
     }
 
-    public static function store($idRecipient,$idSender,$message,$link,$typeNotification){
+    public static function store($idSender,$message,$link,$actualDate,$idCompanyRecipient,$idUserRecipient){
         $db = new Db();
         $db->connect();
 
-        $format = 'Y-m-d H:i:s';
-        $actualDate = date($format);
+        // $format = 'Y-m-d H:i:s';
+        // $actualDate = date($format);
 
         $notification = new Notification(
-            $idRecipient,
             $idSender,
             $message,
             $link,
-            $typeNotification,
-            $actualDate);
+            $actualDate,
+            0,
+            $idCompanyRecipient,
+            $idUserRecipient,
+            );
         return $notification->insert($db);
     }
 
-    public static function markNotified($idNotification){
+    public function markNotified($idNotification){
         $db = new Db();
         $db->connect();
         
         $notification = new Notification();
         $notification->setNotified(1);
-        $notification->update($db,$idNotification);
+        if($notification->update($db,$idNotification)){
+            return redirect('/admin/');
+        }
+    }
+
+    public function markAllNotified($idCompany){
+        $db = new Db();
+        $db->connect();
+
+        if($db->update("idCompanyRecipient={$idCompany}","notified=1")){
+            return redirect('/admin/');
+        }
     }
 
 
-    public static function destroy(int $id){
+    public  function destroy(int $id){
         $db = new Db();
         $db->connect();
         $notification = new Notification();
-        return $notification->delete($db,$id);
+        if($notification->delete($db,$id)){
+            return redirect('/admin/');
+        }
     }
 }
 ?>

@@ -5,6 +5,7 @@ use app\models\database\Db;
 use app\models\Schedule;
 use app\models\ScheduleOrder;
 use app\models\Service;
+use app\models\Receipt;
 use app\models\Company;
 use app\models\Collaborator;
 use app\classes\Validate;
@@ -12,9 +13,7 @@ use app\classes\BlockNotAdmin;
 use app\classes\Flash;
 use app\classes\Cart;
 use app\classes\Breadcrumb;
-use app\classes\MercadoPagoIntegration;
-use Ramsey\Uuid\Uuid;
-
+use app\controllers\admin\NotificationController;
 
 class ScheduleController{
     public array $data = [];
@@ -49,6 +48,7 @@ class ScheduleController{
     private function getAvaliableServices(Db $db,Service $serviceManager): array{
         if(count(Cart::get()) != 0){
             $servicesCompany = $serviceManager->getByCompany($db,Cart::getIdCompany());
+            $servicesCompany = $servicesCompany['services'];
             $availableServices = [];
             foreach ($servicesCompany as $service) {
                 if(!Cart::inToCart($service)){
@@ -81,6 +81,13 @@ class ScheduleController{
         $schedule = $schedule->getById($db,intval($args[0]));
         $orders = new ScheduleOrder();
         $orders = $orders->getBySchedule($db,intval($args[0]));
+        $arrayReason = [['label'=>'Mudança de data/hora solicitada','value'=>'mudança de data/hora solicitada'],
+                        ['label'=>'Imprevisto do cliente','value'=>'imprevisto do cliente'],
+                        ['label'=>'Imprevisto do prestador de serviço','value'=>'imprevisto do prestador de serviço'],
+                        ['label'=>'Outro','value'=>'outro']];
+        $action = '/schedule/cancel';
+        $linkBack = '/schedule';
+        
 
         $this->view = 'client/showSchedule.php';
         $this->data = [
@@ -88,7 +95,11 @@ class ScheduleController{
             'schedule'=>$schedule,
             'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
             'breadcrumb'=>Breadcrumb::get(),
-            'orders'=>$orders
+            'orders'=>$orders,
+            'reasons'=>$arrayReason,
+            'action'=>$action,
+            'linkBack'=>$linkBack
+
         ];
     }
 
@@ -142,12 +153,12 @@ class ScheduleController{
                     return redirect("/schedule/store");
                 }
 
+                Cart::delete();
                 return redirect("/schedule");
             }
         }
     }
 
-    
     public function getSchedules(){
         //evita erros com o mvc
         $this->master = 'masterapi.php';
@@ -156,33 +167,77 @@ class ScheduleController{
             'title'=>'api',
         ];
 
-        if (isset($_GET['day']) && isset($_GET['month']) ) {
-            // if (isset($_GET['day']) && isset($_GET['month']) && isset($_SESSION['user']) && isset($_SESSION['auth'])) {
-            // returnin ['schedules'=> $schedulesDayForMonth];
-            $day = intval($_GET['day']);
-            $month = intval($_GET['month']);
-
-            $date = new \DateTime();
-            $date->setDate(date('Y'), $month, $day);
-            $date->setTime(0, 0, 0);
+        if (isset($_GET['start']) && isset($_GET['end']) ) {
+            $startDate = new \DateTime($_GET['start']);
+            $endDate = new \DateTime($_GET['end']);
 
             $db = new Db();
             $db->connect();
 
+            $company = new Company();
             $schedules = new Schedule();
-            // $schedules = $schedules->getByClient($db,1);
             $schedules = $schedules->getByClient($db,$_SESSION['user']->getId());
+            // $schedules = new Schedule();
+            // $schedules = $schedules->getByCompanyForDate($db,Cart,$startDate,$endDate);
             
-            $schedules = array_filter($schedules, fn($schedule) => $schedule->getDateSchedule() == $date);
+            $arrayFormatedSchedules = [];
+
+            foreach ($schedules as $schedule) {
+                if($schedule->getStatus() != 'cancelado'){
+                    array_push($arrayFormatedSchedules, [
+                        'id' => $schedule->getId(),
+                        'title' => ' - '.$company->getById($db,$schedule->getIdCompany())->getName(),
+                        'start' => (new \DateTime($schedule->getDateSchedule()->format('Y-m-d') . ' ' . $schedule->getStartTime()->format('H:i:s')))->format('Y-m-d H:i:s'),
+                        'end' => (new \DateTime($schedule->getDateSchedule()->format('Y-m-d') . ' ' . $schedule->getEndTime()->format('H:i:s')))->format('Y-m-d H:i:s')
+                    ]);
+                }
+            }
+
+           
 
             header('Content-Type: application/json');
-            echo json_encode($schedules);
+            echo json_encode($arrayFormatedSchedules);
             exit();
         }else {
             header('HTTP/1.1 400 Bad Request');
-            echo json_encode(['error' => 'Parameter "day" and "month" is required']);
+            echo json_encode(['error' => 'Parameter "start" and "end" is required']);
         }
     }
+  
+    // public function getSchedules(){
+    //     //evita erros com o mvc
+    //     $this->master = 'masterapi.php';
+    //     $this->view = 'api.php';
+    //     $this->data = [
+    //         'title'=>'api',
+    //     ];
+
+    //     if (isset($_GET['day']) && isset($_GET['month']) ) {
+
+    //         $day = intval($_GET['day']);
+    //         $month = intval($_GET['month']);
+
+    //         $date = new \DateTime();
+    //         $date->setDate(date('Y'), $month, $day);
+    //         $date->setTime(0, 0, 0);
+
+    //         $db = new Db();
+    //         $db->connect();
+
+    //         $schedules = new Schedule();
+    //         // $schedules = $schedules->getByClient($db,1);
+    //         $schedules = $schedules->getByClient($db,$_SESSION['user']->getId());
+            
+    //         $schedules = array_filter($schedules, fn($schedule) => $schedule->getDateSchedule() == $date);
+
+    //         header('Content-Type: application/json');
+    //         echo json_encode($schedules);
+    //         exit();
+    //     }else {
+    //         header('HTTP/1.1 400 Bad Request');
+    //         echo json_encode(['error' => 'Parameter "day" and "month" is required']);
+    //     }
+    // }
 
 
     public function getAvailableTimes(){
@@ -197,61 +252,54 @@ class ScheduleController{
         header("Access-Control-Allow-Methods: GET, POST");
 
 
-        if (isset($_GET['day']) && count(Cart::get()) != 0) {
+        if (isset($_GET['date']) && count(Cart::get()) != 0) {
             $db = new Db();
             $db->connect();
 
-            $day = intval($_GET['day']);
-            $amountServicesTime = $this->calculateTotalTime(Cart::get());
-        
             $company = new Company;
             $company = $company->getById($db,Cart::getIdCompany());
-  
-            $intervalsMorning = $this->generateIntervals($company->getOpeningHoursMorningStart(), $company->getOpeningHoursMorningEnd(), $amountServicesTime);
-            $intervalsAfternoon = $this->generateIntervals($company->getOpeningHoursAfternoonStart(), $company->getOpeningHoursAfternoonEnd(), $amountServicesTime);
-         
-            $scheduledTimes = new Schedule();
-            $scheduledTimes = $scheduledTimes->getScheduledTimes($db, $day,Cart::getIdCompany());
-        
-            $availableTimes = ['morning'=>[],'afternoon'=>[]];
-            foreach ($intervalsMorning as $interval) {
-                if (!$this->isScheduled($interval, $scheduledTimes, $amountServicesTime)) {
-                    array_push($availableTimes['morning'],$interval->format('H:i'));
-                }
-            }
 
-            foreach ($intervalsAfternoon as $interval) {
-                if (!$this->isScheduled($interval, $scheduledTimes, $amountServicesTime)) {
-                    array_push($availableTimes['afternoon'],$interval->format('H:i'));
-                }
-            }
+            $date =  new \DateTime($_GET['date']);
+            $amountServicesTime = $this->calculateTotalTime(Cart::get());
 
-            header('Content-Type: application/json');
-            echo json_encode($availableTimes);
-            exit();
+            $dayOfWeek = $date->format('w');
+          
+            $hoursOfDay = $company->getHourByDay($dayOfWeek);
+           
+            if($hoursOfDay){
+                $intervalsMorning = $this->generateIntervals($hoursOfDay->getOpeningHoursMorningStart(), $hoursOfDay->getOpeningHoursMorningEnd(), $amountServicesTime);
+                $intervalsAfternoon = $this->generateIntervals($hoursOfDay->getOpeningHoursAfternoonStart(), $hoursOfDay->getOpeningHoursAfternoonEnd(), $amountServicesTime);
+             
+                $scheduledTimes = new Schedule();
+                $scheduledTimes = $scheduledTimes->getScheduledTimes($db, $date->format('Y-m-d'),Cart::getIdCompany());
+            
+                $availableTimes = ['morning'=>[],'afternoon'=>[]];
+                foreach ($intervalsMorning as $interval) {
+                    if (!$this->isScheduled($interval, $scheduledTimes, $amountServicesTime)) {
+                        array_push($availableTimes['morning'],$interval->format('H:i'));
+                    }
+                }
+    
+                foreach ($intervalsAfternoon as $interval) {
+                    if (!$this->isScheduled($interval, $scheduledTimes, $amountServicesTime)) {
+                        array_push($availableTimes['afternoon'],$interval->format('H:i'));
+                    }
+                }
+    
+                header('Content-Type: application/json');
+                echo json_encode($availableTimes);
+                exit();
+            }else {
+                header('Content-Type: application/json');
+                echo json_encode(['morning'=>[],'afternoon'=>[]]);
+                exit();
+            }
+            
         }else {
             header('HTTP/1.1 400 Bad Request');
             echo json_encode(['error' => 'Parameter "day" is required']);
         }
     }
-
-   
-
-    // public function isScheduled($interval, $blockedIntervals, \DateInterval $amountServicesTime) {
-    //     $intervalStart = $interval;
-    //     $intervalEnd = clone $intervalStart;
-
-    //     $intervalEnd->add($amountServicesTime);
-    //     foreach ($blockedIntervals as $blocked) {
-
-    //         $blockEnd = $blocked->format('H:i');
-
-    //         if ($intervalStart < $blockEnd && $intervalEnd > $blockStart) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
 
     public function isScheduled($interval, $blockedIntervals, \DateInterval $amountServicesTime) {
         $intervalStart = $interval;
@@ -301,21 +349,16 @@ class ScheduleController{
         $intervals = [];
         $current = clone $start;
         while ($current < $end) {
-            // Clona o objeto $current antes de adicionar ao array
             $intervals[] = clone $current;
             $current->add($interval);
         }
-        // Verifica se o último intervalo coincide exatamente com o horário de fim
-        // if ($current->format('H:i') !== $end->format('H:i')) {
-        //     $intervals[] = $end;
-        // }
         return $intervals;
     }
     
     private function validateScheduleData(){
         $validate = new Validate();
         $validate->handle([
-            'day'=>[REQUIRED,DATE],
+            'inputDate'=>[REQUIRED,DATE],
             'time'=>[REQUIRED,TIME],
         ],'schedule');
       
@@ -352,17 +395,26 @@ class ScheduleController{
         $endTime->add($durationServices);
 
         $schedule = new Schedule($idClient,
-            $idCompany,
-            0,$amount,0,'',
-            'obs',
-            'Aguardando pagamento',
-            $validateData->data['time'],
-            $endTime,
-            $validateData->data['day']);
+                                $idCompany,
+                                0,
+                                $amount,
+                                0,
+                                '',
+                                isset($validateData->data['message']) ? $validateData->data['message'] : '',
+                                'Confirmado',
+                                $validateData->data['time'],
+                                $endTime,
+                                $validateData->data['inputDate'],
+                                new \DateTime(),
+                                '');
            
-        $schedule->insert($db);
-        $schedule = $schedule->getByDataTime($db,$validateData->data['day'],$validateData->data['time'],$idCompany);
-        return $schedule ? $schedule : false;
+        if($schedule->insert($db)){
+            $schedule = $schedule->getByDataTime($db,$validateData->data['inputDate'],$validateData->data['time'],$idCompany);
+            NotificationController::store(0,"Novo agendamento recebido!","/admin/schedule/show/".$schedule->getId(),new \DateTime(),Cart::getIdCompany(),0);//notification compay
+            return $schedule ? $schedule : false;
+        }
+        return false;
+        
     }
 
     private function registerOrders(Db $db,$schedule,$services){
@@ -382,38 +434,93 @@ class ScheduleController{
     
             $lastEndTime = $end;
 
-            // TODO pensar se deixo id ou objeto no construtor da ordem 
             $order = new ScheduleOrder($schedule->getId(),
                                     $service->getIdCollaborator(),
                                     $service->getId(),
                                     $start,
                                     $end); 
-            if(!$order->insert($db)){
+                
+            $paymentCollaborators = $this->registerPaymentsCollaborators($db,$service->getIdCollaborator(),$service->getId(),$schedule->getIdCompany());
+            $receiptCompany = $this->registerReceipt($db,floatval($schedule->getTotalPaid()),$schedule->getIdCompany());
+          
+            if(!$order->insert($db) || !$paymentCollaborators || !$receiptCompany){
                 $ok = false;
             }
         }
-        
+
+        NotificationController::store(0,"Novo agendamento recebido!","/admin/schedule/show/".$schedule->getId(),new \DateTime(),0,$service->getIdCollaborator());//notification compay
        return $ok;
+    }
+
+    private function registerReceipt(Db $db, float $amount, int $idCompany){
+        $receipt = new Receipt(floatval($amount),0,$idCompany);
+        if(!$receipt->insert($db)){
+            return false;
+        }
+
+        return true;
+    }
+
+    private function registerPaymentsCollaborators(Db $db,int $idCollaborator, int $idService,int $idCompany){
+        $service = new Service();
+        $service = $service->getById($db,$idService);
+        $collaborator = new Collaborator();
+        $collaborator = $collaborator->getById($db,$idCollaborator);
+
+        $amountCollaborator = $service->getPrice() * $collaborator->getCommission();
+        $receipt = new Receipt(floatval($amountCollaborator),$idCollaborator,$idCompany);
+        if(!$receipt->insert($db)){
+            return false;
+        }
+
+        return true;
+    }
+
+    public function evaluateSchedule(array $args){
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $db = new Db();
+            $db->connect();
+            $evaluation = new Evaluation();
+            
+
+        }
+    }
+
+    public function cancel(array $args){
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $validate = new Validate();
+            if($_POST['message'] && $_POST['id']){
+                $validate->handle([
+                    'message'=>[REQUIRED],
+                    'reason'=>[REQUIRED]
+                ],'schedule');
+
+                $id = intval($_POST['id']);
+            }
+    
+            if($validate->errors) {
+                Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');
+                return redirect("/schedule");
+            }
+
+            $db = new Db();
+            $db->connect();
+            $schedule = new Schedule();
+            $schedule = $schedule->getById($db,$id);
+            $schedule->setStatus('cancelado');
+            $schedule->setCancellationReason($validate->data['reason']);
+            $schedule->setCancellationDescription($validate->data['message']);
+            
+            if($schedule->update($db,$id)){
+                Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');
+                return redirect("/schedule");
+            }
+        }
     }
 
 
     public function destroy(array $args){
-        BlockNotAdmin::block($this,['destroy']);
-
-        if(isset($args)){
-
-            $db = new Db();
-            $db->connect();
-    
-            $service = new Service();
-            if($service->delete($db,intval($args[0]))){
-                Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','message sucess');
-                return redirect("/admin/service");
-            }
-
-            Flash::set('reultDeleteService', 'Erro ao excluir colaborador!','message error');
-            return redirect("/admin/service");
-        }
+     
     }
 }
 

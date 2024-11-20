@@ -12,3 +12,4 @@ menuTabManager.init();
 
 const searchServices = new search('.service','#inputSearchService');
 searchServices.init();
+

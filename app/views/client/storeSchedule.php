@@ -6,18 +6,21 @@
         <main class="bg-bgPrincipal w-full h-full flex flex-col gap-8 p-4"  >
             
             <form action="/schedule/store"  method="POST" class="flex flex-col gap-4 bg-white p-4 border border-lightGray rounded-lg shadow shadow-borderFormColor" >
-                <legend class="w-full font-Urbanist font-semibold text-4xl text-black ">Agendar serviços</legend>
+                <input type="text" class="hidden" id="inputDate">
+                <legend class="w-full font-Urbanist font-semibold text-2xl text-black ">Agendar serviços</legend>
 
                 <section class="acordion active check w-full  flex flex-col gap-4" id="sectionData">
 
                         <legend class="w-full text-grayInput font-Urbanist font-semibold text-xl  border-b border-b-lightGray">Selecionar data e horario</legend>
 
-                        <div class="body w-full flex gap-4 pt-4">
-                            <div class="w-2/4" id="containerCalendar"></div>
+                        <div class="body w-full flex gap-8 pt-4">
+                            <div class="w-2/4 hidden" id="containerCalendar"></div>
+                            <div class="w-full bg-white border-lightGray shadow-sm shadow-black rounded-md p-2" id="calendar"></div>
 
-                            <section class="bg-white w-2/4 flex flex-col gap-2 border border-lightGray shadow-sm shadow-black rounded-md p-2 " id="times">
-                                <h2 class="font-Urbanist font-semibold text-xl text-black w-full" id="legendTimes"></h2>
-                                <div class="w-full  max-h-60 flex flex-col gap-4  overflow-y-auto " id="containerTimes">
+
+                            <section class="bg-white  w-2/4 flex flex-col gap-2 border border-lightGray shadow-sm shadow-black rounded-md p-2 " id="times">
+                                <h2 class="font-Poppins text-lg text-black w-full" id="legendTimes"></h2>
+                                <div class="w-full  max-h-60 flex flex-col gap-4  " id="containerTimes">
                         
                                 </div>
                             </section>
@@ -25,6 +28,8 @@
                     </section>
 
                             <?php if(count($services) != 0){ ?>
+                            <legend class="w-full text-grayInput font-Urbanist font-semibold text-xl  border-b border-b-lightGray">Serviços selecionados</legend>
+
                                 <?php foreach ($services as $index => $service) { ?>
                                     <section class="acordion active service w-full bg-white p-2 border border-lightGray rounded-lg shadow shadow-borderFormColor " >
                                         <div class="col1 w-full flex  justify-start">
@@ -82,30 +87,18 @@
                         </textarea>
                     </section>
 
-                    <section class="w-full flex items-end gap-4">
-                            <div class="field w-2/4 focus-within:text-principal10 text-grayInput ">
-                                <div>
-                                    <label for="inputCodeVoucher" >Aplicar codigo de cupom</label>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="flex items-center border-2 border-grayInput   rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white" style="box-shadow:0 0 10px 5px rgb(0,0,0,0.02);">
-                                        <i class='fa-solid fa-ticket' style=' padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="text" name="codeVoucher" id="inputCodeVoucher" value="<?php echo old('codeVoucher'); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder " placeholder="Digite o codigo">
-                                    </div>
-                                    <button id="btSendCode" class="h-full bg-principal10 text-white font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">Aplicar</button>
-                                </div>
-                                <span class="text-errorColor " id="msgNameError"><?php echo flash('name');  ?></span>
-                            </div>
-                    </section>
+         
 
-                    <section class="acordion active check w-full  flex flex-col gap-4 mt-4 border-t border-t-lightGray pt-2" id="sectionData">
-                        <legend class="flex flex-col items-start gap-1">
+                    <section class="acordion active check w-full  flex flex-col gap-4 mt-4 " id="sectionData">
+                        <legend class="w-full text-grayInput font-Urbanist font-semibold text-xl  border-b border-b-lightGray">Finalizar agendamento</legend>
+                        
+                        <div class="flex flex-col items-start gap-1">
                             <span class="font-Urbanist font-semibold  flex items-end gap-2">
                                 <span class="text-base ">Total</span>
                                 <span class="text-2xl font-bold"><?php echo 'R$ '.number_format($amount, 2, ',', '.');?></span>
                             </span>
-                            <span class="font-Urbanist font-semibold text-base text-grayInput"><?php echo $totalDuration;?></span>
-                        </legend>
+                            <span class="font-Urbanist font-semibold text-base text-grayInput">Duração <?php echo $totalDuration;?></span>
+                        </div>
 
                     </section>
                 
@@ -140,6 +133,7 @@
     </dialog>
 
        <!-- modal cancel -->
+       
        <dialog id="modalCancel" class="w-2/5 bg-white text-black rounded p-4 shadow-lg shadow-black ">
         <div class="w-full flex justify-between items-center mb-4">
             <div class="flex gap-4 items-center">
@@ -157,6 +151,8 @@
 
     <?php echo flash('resultInsertSchedule');  ?>
 
+    <script src='/assets/js/dist/index.global.min.js'></script>
+    <script src='/assets/js/dist/locales-all.global.min.js'></script>
     <script type="module"  src="/assets/js/storeSchedule.js"></script>
 
 </body>

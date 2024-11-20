@@ -57,7 +57,15 @@ class Notification implements ModelInterface, JsonSerializable{
             return false;
         }
 
-        $notificationObject = new Notification($notificationFound[0]['idRecipient'],$notificationFound[0]['idSender'],$notificationFound[0]['message'],$notificationFound[0]['link'],$notificationFound[0]['typeNotification'],$notificationFound[0]['date']);
+        $notificationObject = new Notification(
+                                                $notificationFound[0]['idSender'],
+                                                $notificationFound[0]['message'],
+                                                $notificationFound[0]['link'],
+                                                $notificationFound[0]['created_at'],
+                                                $notificationFound[0]['notified'],
+                                                $notificationFound[0]['idCompanyRecipient'],
+                                                $notificationFound[0]['idUserRecipient']);
+
         $notificationObject->setId($notificationFound[0]['idNotification'],);
         return $notificationObject;
     }

@@ -9,7 +9,7 @@ export default class calendar{
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const firstDay = new Date(year, month, 1).getDay();
         
-        let html = '<div class="bg-white w-full border border-lightGray shadow-sm shadow-black rounded-md flex flex-col gap-2"><h3 class="font-Poppins font-semibold text-lg p-4">'+this.now.toLocaleString('pt-BR', { month: 'long' }).charAt(0).toUpperCase() + this.now.toLocaleString('pt-BR', { month: 'long' }).slice(1)+' '+this.now.getFullYear()+'</h3><table><thead><tr>';
+        let html = '<div class="bg-white w-full border border-lightGray shadow-sm shadow-black rounded-md flex flex-col gap-2"><label for="inputMonthYear">Novembro<input id="inputMonthYear" type="month" min="2024-01" max="2024-12" class="hidden"></label><table><thead><tr>';
         html += '<th class="text-grayInput font-Poppins font-light">Dom</th><th class="text-grayInput font-Poppins font-light">Seg</th><th class="text-grayInput font-Poppins font-light">Ter</th><th class="text-grayInput font-Poppins font-light">Qua</th><th class="text-grayInput font-Poppins font-light">Qui</th><th class="text-grayInput font-Poppins font-light">Sex</th><th class="text-grayInput font-Poppins font-light">Sáb</th>';
         html += '</tr></thead><tbody><tr>';
 

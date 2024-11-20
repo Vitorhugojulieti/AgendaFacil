@@ -110,6 +110,7 @@ class Company implements ModelInterface, JsonSerializable{
                                         $company['registrationComplete'],
                                         );
 
+            $companyObject->getServicesDb($db,$company['idCompany']);
             $companyObject->setId($company['idCompany']);
             array_push($arrayObjectsCompany,$companyObject);
         }
@@ -217,8 +218,10 @@ class Company implements ModelInterface, JsonSerializable{
                                         $company['registrationComplete'],
                                         );
 
+            $companyObject->getServicesDb($db,$company['idCompany']);
             $companyObject->setId($company['idCompany']);
             array_push($arrayObjectsCompany,$companyObject);
+        }
 
             $pagination = [
                 'currentPage' => $filteredCompanys['currentPage'],
@@ -229,7 +232,6 @@ class Company implements ModelInterface, JsonSerializable{
 
             return ['data'=>$arrayObjectsCompany,'pagination'=>$pagination];
     }
-}
 
     public function insert(Db $db){
         $db->setTable($this->table);
@@ -499,9 +501,25 @@ class Company implements ModelInterface, JsonSerializable{
     public function getServices(): array {
         return $this->services;
     }
-    private function getServicesDb($db,$id): array {
+    private function getServicesDb($db,$id): void {
         $serviceManager = new Service();
-        return $this->services = $serviceManager->getByCompany($db,$id);
+        $services = $serviceManager->getByCompany($db,$id);
+        $this->services = $services['services'];
+    }
+
+    public function getHourByDay($day) {
+        $hoursForDay = array_filter($this->hours, function($hour) use ($day) {
+            return $hour->getDayOfWeek() == $day;
+        });
+
+        if ($hoursForDay) {
+            if (!empty($hoursForDay)) {
+                return array_values($hoursForDay)[0]; // Return the first hour
+            }else{
+                return false;
+            }
+        }
+        return false; // Return false if no hours are found
     }
 }
 

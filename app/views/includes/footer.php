@@ -1,20 +1,19 @@
-<footer class="h-max w-full border-t-2 border-white bg-principal10 flex flex-col items-center text-center p-4 gap-8">
-    <a href="#"><img src="/assets/images/logo-white.png" alt="logo agendaFacil"></a>
+<footer class=" w-full border-t border-lightGray bg-principal10 flex flex-col items-center justify-center text-center p-4 gap-6">
+    <a href="/"><img src="/assets/images/logo-white.png" alt="logo agendaFacil" style="width:70%;"></a>
 
-    <div class="w-4/5 flex items-center justify-center gap-24 border-b-2 border-white p-8">
+    <div class="w-4/5 flex items-center justify-center gap-24 border-b-2 border-white p-4">
         <nav >
             <ul class="flex items-center gap-4 text-white">
-                <li class="text-lg hover:underline hover:cursor-pointer">Serviços</li>
-                <li class="text-lg hover:underline hover:cursor-pointer">Planos</li>
-                <li class="text-lg hover:underline hover:cursor-pointer">Quem somos</li>
-                <li class="text-lg hover:underline hover:cursor-pointer">Contato</li>    
-                <li class="text-lg hover:underline hover:cursor-pointer">Duvidas</li>
+                <li class="text-base hover:underline hover:cursor-pointer"><a href="#funcionalidades">Funcionalidades</a></li>
+                <li class="text-base hover:underline hover:cursor-pointer"><a href="#funcionamento">Como funciona</a></li>
+                <li class="text-base hover:underline hover:cursor-pointer"><a href="#vantagens">Vantagens</a></li>    
+                <li class="text-base hover:underline hover:cursor-pointer"><a href="#contato">Contato</a></li>
             </ul>
         </nav>
     </div>
 
-    <div class="w-4/5 p-4">
-        <h3 class="text-white">Desenvolvido por vitor hugo</h3>
-        <h3 class="text-white">Direitos de imagem freepick</h3>
+    <div class="w-4/5 flex items-center gap-8 justify-center ">
+        <h3 class="text-white text-base">Desenvolvido por vitor hugo</h3>
+        <h3 class="text-white text-base">Direitos de imagem freepick</h3>
     </div>
 </footer>

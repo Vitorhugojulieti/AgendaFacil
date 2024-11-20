@@ -158,7 +158,6 @@ class ServiceVoucher implements ModelInterface{
         $paginationVouchers = $paginationResult['data'];
         $arrayObjectsVouchers = [];
     
-        // Criar objetos ServiceVoucher para cada voucher retornado
         foreach ($paginationVouchers as $voucher) {
             $voucherObj = new ServiceVoucher(
                 $voucher['Company_idCompany'],
@@ -178,6 +177,52 @@ class ServiceVoucher implements ModelInterface{
         }
     
         // Retornar os vouchers paginados junto com as informações de paginação
+        return [
+            'vouchers' => $arrayObjectsVouchers,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
+    }
+
+    public function getVouchersByFilters(Db $db, int $idCompany, int $maxPrice = 0, string $status = "", int $currentPage = 1, int $recordsPerPage = 10) {
+        $db->setTable($this->table);
+        $where = "Company_idCompany = {$idCompany}";
+    
+        if ($maxPrice != 0) {
+            $where .= " AND amount <= {$maxPrice}";
+        }
+    
+        if ($status != "") {
+            $where .= " AND active = {$status}";
+        }
+    
+        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
+        $paginationVouchers = $paginationResult['data'];
+        $arrayObjectsVouchers = [];
+    
+        foreach ($paginationVouchers as $voucher) {
+            $voucherObj = new ServiceVoucher(
+                $voucher['Company_idCompany'],
+                $voucher['name'],
+                $voucher['amount'],
+                new \DateTime($voucher['dateExpiration']),
+                $voucher['code'],
+                $voucher['active'],
+                $voucher['description'],
+                new \DateTime($voucher['created_at']),
+                $voucher['duration'],
+                $voucher['discount']
+            );
+            $voucherObj->setId($voucher['idServiceVoucher']);
+            $voucherObj->getServicesDb($db);
+            array_push($arrayObjectsVouchers, $voucherObj);
+        }
+    
+        // Retorna o array de objetos Service e os dados de paginação
         return [
             'vouchers' => $arrayObjectsVouchers,
             'pagination' => [

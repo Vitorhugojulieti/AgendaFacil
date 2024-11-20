@@ -16,7 +16,7 @@ module.exports = {
       'iconFormColor':'#AFB6C2',
       'borderFormColor':'#868686',
       'errorColor':'#F3A29F',
-      'sucessColor':'#8EF1B3',
+      'sucessColor':'#7ED59E',
       'black':"#000000",
       'white':"#ffff",
       'lightGray':"#C1C1C1",

@@ -19,44 +19,59 @@ export default class generateDashboard{
           }
     }
 
-    generateDonutChart(container,data){
-        console.log(data);
-        var options = {
-            chart: {
-                type: 'donut',
-                width: '100%',
-                height: 400
-            },
-            dataLabels: {
-                enabled: false
-            },
-            plotOptions: {
-                pie: {
-                    customScale: 0.8,
-                    donut: {
-                        size: '75%',
-                    },
-                    offsetY: 20
-                },
-                stroke: {
-                    colors: undefined
-                }
-            },
-            colors: ['#00D8B6', '#008FFB', '#FEB019', '#FF4560', '#775DD0'], // Customize as needed
-            series: data.series,
-            labels: data.labels,
-            legend: {
-                position: 'left',
-                offsetY: 80
-            }
-        };
+    generateDonutChart(container, data) {
+      console.log(data);
+      var options = {
+          chart: {
+              type: 'donut',
+              background: '#FFFF',
+              height: 650, // Define a altura igual para ambos os gráficos
+              dropShadow: {
+                  enabled: false,  // Habilita a sombra
+               
+              },
+              width: '100%'
+          },
+          title: {
+              text: 'Serviços agendados',
+              align: 'center',
+              style: {
+                  fontSize: '20px',
+                  fontWeight: 'normal',
+                  color: '#223249'
+              }
+          },
+          dataLabels: {
+              enabled: false
+          },
+          plotOptions: {
+              pie: {
+                  customScale: 0.9,
+                  donut: {
+                      size: '70%',
+                  },
+                  offsetY: 20
+              },
+              stroke: {
+                  colors: undefined
+              }
+          },
+          colors: ['#00D8B6', '#008FFB', '#FEB019', '#FF4560', '#775DD0'],
+          series: data.series,
+          labels: data.labels,
+          legend: {
+              position: 'right',
+              offsetY: 80,
+              fontSize: '16px',
+          }
+      };
+  
+      console.log(data.services);
+      var chart = new ApexCharts(container, options);
+      chart.render();
+  }
 
-        console.log(data.services);
-        var chart = new ApexCharts(container, options);
-        chart.render();
-    }
-
-    generateLineChart(container,data){
+    generateLineChart(container, data) {
       const dataLine = [
         {
           name: 'Agendamentos',
@@ -67,91 +82,209 @@ export default class generateDashboard{
           data: data.cancellations.map(month => Object.values(month)[0])
         }
       ];
-  
-        var options = {
-            series: dataLine,
-            chart: {
-            height: 350,
-            type: 'line',
-            dropShadow: {
-              enabled: true,
-              color: '#000',
-              top: 18,
-              left: 7,
-              blur: 10,
-              opacity: 0.2
-            },
-            zoom: {
-              enabled: false
-            },
-            toolbar: {
-              show: false
+    
+      var options = {
+        series: dataLine,
+        chart: {
+          height: 350,
+          type: 'line',
+          background: '#F8F8FF', // Fundo branco
+          dropShadow: {
+            enabled: false // Desabilita completamente a sombra
+          },
+          zoom: {
+            enabled: false
+          },
+          toolbar: {
+            show: false
+          }
+        },
+        title: {
+            text: 'Agendamentos e cancelamentos', 
+            align: 'center', 
+            style: {
+                fontSize: '20px',
+                fontWeight:'normal',
+                color: '#223249'
             }
+        },
+        colors: ['#77B6EA', '#545454'],
+        dataLabels: {
+          enabled: true,
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+  
+   
+        markers: {
+          size: 1
+        },
+        xaxis: {
+          categories: [
+            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+          ],
+          title: {
+            text: '',
+            style: {
+              color: '#333'
+            }
+          },
+          labels: {
+            style: {
+              colors: '#333'
+            }
+          }
+        },
+        yaxis: {
+          title: {
+            text: '',
+            style: {
+              color: '#333'
+            }
+          },
+          labels: {
+            style: {
+              colors: '#333'
+            }
+          },
+          min: 0,
+          max: 200,
+          tickAmount: 10
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'right',
+          floating: true,
+          offsetY: -25,
+          offsetX: -5,
+          fontSize: '14px',
+          labels: {
+            colors: '#333'
+          }
+        }
+      };
+    
+      var chart = new ApexCharts(container, options);
+      chart.render();
+    }
+
+    generateCombinedChart(container, data) {
+      const allMonths = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+  
+      function fillData(seriesData) {
+          return allMonths.map(month => {
+              const dataForMonth = seriesData.find(item => Object.keys(item)[0] === month);
+              return dataForMonth ? Object.values(dataForMonth)[0] : 0;
+          });
+      }
+  
+      const dataSeries = [
+          {
+              name: 'Agendamentos',
+              type: 'column',
+              data: fillData(data.schedules)
+          },
+          {
+              name: 'Cancelamentos',
+              type: 'column',
+              data: fillData(data.cancellations)
+          }
+      ];
+  
+      var options = {
+          series: dataSeries,
+          chart: {
+              height: 450, // Define a altura igual para ambos os gráficos
+              type: 'line',
+              stacked: false,
+              background: '#FFFF',
+              zoom: { enabled: false },
+              toolbar: { show: false },
+              dropShadow: {
+                  enabled: false,  // Habilita a sombra
+                 
+              }
+          },
+          title: {
+              text: 'Análise de Agendamentos e Cancelamentos',
+              align: 'center',
+              style: {
+                  fontSize: '20px',
+                  fontWeight: 'normal',
+                  color: '#223249'
+              }
           },
           colors: ['#77B6EA', '#545454'],
           dataLabels: {
-            enabled: true,
+              enabled: false,
           },
           stroke: {
-            curve: 'smooth'
-          },
-          title: {
-            text: 'Agendamentos',
-            align: 'left',
-            fontSize: '18px',
-            fontFamily: 'Urbanist, sans-serif', // Definindo a fonte para os rótulos de dados
-            fontWeight: 300, // Definindo o peso da fonte
-          },
-          grid: {
-            borderColor: '#e7e7e7',
-            row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-              opacity: 0.5
-            },
-          },
-          markers: {
-            size: 1
+              width: [1, 1],
+              curve: 'smooth'
           },
           xaxis: {
-            categories: [
-              'Janeiro',
-              'Fevereiro',
-              'Março',
-              'Abril',
-              'Maio',
-              'Junho',
-              'Julho',
-              'Agosto',
-              'Setembro',
-              'Outubro',
-              'Novembro',
-              'Dezembro'
-            ],
-            title: {
-              text: 'Mêses'
-            }
+              categories: allMonths,
+              labels: { style: { colors: '#333' } }
           },
-          yaxis: {
-            title: {
-              text: 'Agendamentos'
-            },
-            min: 0,
-            max: 200,
-            tickAmount: 10
+          yaxis: [
+              {
+                  seriesName: 'Agendamentos',
+                  axisTicks: { show: true },
+                  axisBorder: {
+                      show: true,
+                      color: '#77B6EA'
+                  },
+                  labels: {
+                      style: { colors: '#77B6EA' }
+                  },
+                  title: {
+                      text: "",
+                      style: { color: '#77B6EA' },
+                  }
+              },
+              {
+                  seriesName: 'Cancelamentos',
+                  opposite: true,
+                  axisTicks: { show: true },
+                  axisBorder: {
+                      show: true,
+                      color: '#545454'
+                  },
+                  labels: {
+                      style: { colors: '#545454' }
+                  },
+                  title: {
+                      text: "",
+                      style: { color: '#545454' }
+                  }
+              }
+          ],
+          tooltip: {
+              fixed: {
+                  enabled: true,
+                  position: 'topLeft',
+                  offsetY: 30,
+                  offsetX: 60
+              }
           },
           legend: {
-            position: 'top',
-            horizontalAlign: 'right',
-            floating: true,
-            offsetY: -25,
-            offsetX: -5
+              horizontalAlign: 'left',
+              offsetX: 40,
+              fontSize: '14px',
+              labels: {
+                  colors: '#333'
+              }
           }
-          };
+      };
   
-          var chart = new ApexCharts(container, options);
-          chart.render();
-    }
+      var chart = new ApexCharts(container, options);
+      chart.render();
+  }
+  
 
+  
     generateRandomColor() {
       return '#' + Math.floor(Math.random() * 16777215).toString(16);
     }
@@ -165,6 +298,10 @@ export default class generateDashboard{
         chart: {
         height: 350,
         type: 'bar',
+        background: '#ffffff',
+        dropShadow: {
+          enabled: true // Desabilita a sombra
+        },
         events: {
           click: function(chart, w, e) {
             // console.log(chart, w, e)
@@ -187,6 +324,7 @@ export default class generateDashboard{
       legend: {
         show: false
       },
+   
       xaxis: {
         categories: data.map(item => (typeof item === 'object' ? item.x : item)),
         labels: {
@@ -207,8 +345,9 @@ export default class generateDashboard{
             console.log(data);
             if(data != 0){
               this.generateDonutChart(this.containerDonutChart,data.donutChart);
-              this.generateLineChart(this.containerLineChart,data.lineChart);
-              this.generateColumnChart(this.containerColumnChart,data.columnChart);
+              this.generateCombinedChart(this.containerLineChart,data.lineChart);
+              // this.generateLineChart(this.containerLineChart,data.lineChart);
+              // this.generateColumnChart(this.containerColumnChart,data.columnChart);
             }else{
               this.container.innerHTML =` <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
                                               <i class='bx bxs-info-circle text-4xl'></i>

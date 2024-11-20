@@ -15,7 +15,14 @@ class Client implements ModelInterface{
     private int $registrationComplete;
     private string $table;
 
-    public function __construct($avatar = "", $name = "", $cpf = "", $phone = "", $email = "", $password = "", $registrationDate = "",$registrationComplete = 0){
+    public function __construct($avatar = "",
+                               $name = "",
+                                $cpf = "",
+                                $phone = "",
+                                $email = "",
+                                $password = "",
+                                $registrationDate = "",
+                                $registrationComplete = 0){
         $this->avatar = $avatar;
         $this->name = $name;
         $this->cpf = $cpf;
@@ -216,6 +223,19 @@ class Client implements ModelInterface{
     public function setRegistrationComplete(int $registrationComplete): void {
         $this->registrationComplete = $registrationComplete;
     }
+
+    public function getDefaultClient(){
+        $clientDefault = new Client(AVATAR_DEFAULT,
+                                    'Colaborador padrão',
+                                    'xxx.xxx.xxx',
+                                    '(xx)xxxxx-xxxx',
+                                    'xxxxx@xxx.com',
+                                    'xxxxxxxxxxxxxxx',
+                                    '',1);
+        $clientDefault->setId(0);
+        return $clientDefault;
+    }
+
 }
 
 ?>

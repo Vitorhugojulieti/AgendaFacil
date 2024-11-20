@@ -3,6 +3,7 @@ namespace app\controllers\admin;
 use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Service;
+use app\models\Company;
 use app\models\Schedule;
 use app\models\Images;
 use app\classes\Flash;
@@ -22,13 +23,39 @@ class ServiceController implements ControllerInterface{
     }
 
     public function index(array $args){
-        BlockNotAdmin::block($this,['index']);
+        BlockNotAdmin::block($this, ['index']);
         $db = new Db();
         $db->connect();
-
         $services = new Service();
-        $services = $services->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
-        //ordenando com inativos por ultimo
+        $currentPage = 1;
+        $recordsPerPage = 10;
+
+        if(isset($args[0])){
+            $currentPage = intval($args[0]);
+        }
+     
+
+        $price = isset($_GET['price']) ? intval($_GET['price']) : 0;
+        $duration = isset($_GET['duration']) ? intval($_GET['duration']) : 0;
+        $status = isset($_GET['status']) ? $_GET['status'] : "";
+    
+        if (!isset($_GET['duration']) && !isset($_GET['price']) && !isset($_GET['status'])) {
+            $result = $services->getByCompany($db, $_SESSION['collaborator']->getIdCompany(), $currentPage, $recordsPerPage);
+        } else {
+            $result = $services->getServicesByFilters(
+                $db,
+                $_SESSION['collaborator']->getIdCompany(),
+                $price,
+                $duration,
+                $status,
+                $currentPage,
+                $recordsPerPage
+            );
+        }
+    
+        $pagination = $result['pagination'];
+        $services = $result['services'];
+
         usort($services, function($a, $b) {
             return $b->getVisible() - $a->getVisible();
         });
@@ -38,7 +65,7 @@ class ServiceController implements ControllerInterface{
             'title'=>'Serviços | AgendaFacil',
             'services'=>$services,
             'navActive'=>'servicos',
-            'breadcrumb'=>Breadcrumb::getForAdmin()
+            'pagination'=>$pagination,
         ];
     }
 
@@ -351,21 +378,33 @@ class ServiceController implements ControllerInterface{
     public function destroy(array $args){
         BlockNotAdmin::block($this,['destroy']);
 
-        if(isset($args)){
+        if(isset($args[0]) && isset($args[1])){
             $idService = filter_var($args[0], FILTER_SANITIZE_NUMBER_INT);
+            $used = $args[1];
             if(filter_var($idService, FILTER_VALIDATE_INT)){
                 $db = new Db();
                 $db->connect();
-        
                 $service = new Service();
-                $service->setVisible(0);
-                $service->setIdCompany($_SESSION['collaborator']->getIdCompany());
-                if($service->update($db,$idService)){
-                    Flash::set('reultDeleteService', 'Serviço inativado com sucesso!','notification sucess');
+
+                if($used){
+                    $service->setVisible(0);
+                    $service->setIdCompany($_SESSION['collaborator']->getIdCompany());
+                    if($service->update($db,$idService)){
+                        Flash::set('reultDeleteService', 'Serviço inativado com sucesso!','notification sucess');
+                        return redirect("/admin/service");
+                    }
+                    Flash::set('reultDeleteService', 'Erro ao inativar serviço!','notification error');
+                    return redirect("/admin/service");
+                }else{
+                    $service->setIdCompany($_SESSION['collaborator']->getIdCompany());
+                    if($service->delete($db,$idService)){
+                        Flash::set('reultDeleteService', 'Serviço excluido com sucesso!','notification sucess');
+                        return redirect("/admin/service");
+                    }
+                    Flash::set('reultDeleteService', 'Erro ao excluir serviço!','notification error');
                     return redirect("/admin/service");
                 }
-                Flash::set('reultDeleteService', 'Erro ao inativar serviço!','notification error');
-                return redirect("/admin/service");
+
             }
         }else{
             Flash::set('reultDeleteService', 'Erro ao inativar serviço!','notification error');

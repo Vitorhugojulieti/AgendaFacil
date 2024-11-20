@@ -25,9 +25,6 @@ class SignupController{
     }
 
     public function store(){
-
-        // validar crsm token
-        // $validateImages = $this->validateImages();
         $validateCompanyData = $this->validateCompanyData();
         $validateCompanyAddress = $this->validateCompanyAddress();
         $validateCollaboratorData = $this->validateCollaboratorData();
@@ -39,8 +36,7 @@ class SignupController{
         $db->connect();
       
         $company = $this->registerCompany($db,$validateCompanyData,$validateCompanyAddress);
-        $collaborator = $this->registerCollaborator($db,$validateCollaboratorData,$validateImages,$company);
-        // $images = $this->registerCompanyImages($db,$validateImages,$company);
+        $collaborator = $this->registerCollaborator($db,$validateCollaboratorData,$company);
 
         if(!$company || !$collaborator){
             Flash::set('registrationCompany', 'Erro ao registrar empresa');
@@ -149,7 +145,7 @@ class SignupController{
         return $company ? $company : false;
     }
 
-    private function registerCollaborator(Db $db,$validateData,$validateImages,int $idCompany){
+    private function registerCollaborator(Db $db,$validateData,int $idCompany){
         $collaborator = new Collaborator(
             AVATAR_DEFAULT,
             $validateData->data['name'],
@@ -251,14 +247,22 @@ class SignupController{
 
     public function completeRegistration($args){
         $this->view = 'admin/completeRegistration.php';
-        $this->data = [
-            'title'=>'Concluir cadastro | AgendaFacil',
-        ];
+
+        if(isset($args[0])){
+            $idNotification = $args[0];
+        }
+
+
+     
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $complete = true;
             $db = new Db();
             $db->connect();
+
+            $idNotificationPost = $_POST['idNotification'];
+            $notification = new Notification();
+            $notification = $notification->getById($db,$idNotificationPost);
 
             $days = isset($_POST['days']) ? $_POST['days'] : ''; 
             $startHourMorning = isset($_POST['inputOpeningHoursMorningStart']) ? $_POST['inputOpeningHoursMorningStart'] : ''; 
@@ -269,7 +273,7 @@ class SignupController{
 
             if($days == "" || $startHourMorning == "" ||  $endHourAfternoon == ""){
                 Flash::set('completeRegistration','Erro ao concluir cadastro!');
-                redirect('/admin/signup/confirmEmail');
+                redirect('/admin/signup/confirmEmail/'.$idNotificationPost);
             }
 
             foreach ($days as $index => $dayArray) {
@@ -315,7 +319,7 @@ class SignupController{
          
             if(!$validateImages){
                 Flash::set('resultCompleteRegistration', 'Erro ao concluir cadastro!','notification error');
-                return redirect("/admin/signup/completeRegistration");
+                return redirect("/admin/signup/completeRegistration".$idNotificationPost);
             }
 
             $images = $this->registerCompanyImages($db,$validateImages,$_SESSION['collaborator']->getIdCompany());
@@ -326,19 +330,26 @@ class SignupController{
 
             if(!$complete){
                 Flash::set('resultCompleteRegistration', 'Erro ao concluir cadastro!','notification error');
-                return redirect("/admin/signup/completeRegistration");
+                return redirect("/admin/signup/completeRegistration".$idNotificationPost);
             }
 
             $company = new Company();
             $company = $company->getById($db,$_SESSION['collaborator']->getIdCompany());
             $company->setRegistrationComplete(1);
+            $company->update($db,$_SESSION['collaborator']->getIdCompany());
+            $_SESSION['activeCompany'] = 1;
 
-          
-            // logica para marcar notificacao
+            $notification->setNotified(1);
+            $notification->update($db,$_SESSION['collaborator']->getIdCompany());
 
             Flash::set('resultCompleteRegistration', 'Cadastro finalizado!','notification sucess');
             return redirect("/admin/");
         }
+
+        $this->data = [
+            'title'=>'Concluir cadastro | AgendaFacil',
+            'idNotification'=>$idNotification
+        ];
     }
 
     public function destroy(array $args){

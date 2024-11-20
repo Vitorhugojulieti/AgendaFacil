@@ -1,259 +1,168 @@
-<header class="h-1/6 flex items-center justify-around p-4 border-b-2 border-black">
-    <a href="#"><img src="/assets/images/logo.png" alt="logo agendaFacil"></a>
+<header class="w-full bg-principal10 text-white flex items-center justify-between p-2 px-4 fixed top-0 left-0 z-10 ">
+    <a href="#"><img src="/assets/images/logo-white.png" alt="logo agendaFacil" style="width:50%"></a>
     
     <nav>
         <ul class="flex items-center gap-4 ">
-            <li class="text-lg hover:underline hover:cursor-pointer">Serviços</li>
-            <li class="text-lg hover:underline hover:cursor-pointer">Planos</li>
-            <li class="text-lg hover:underline hover:cursor-pointer">Quem somos</li>
-            <li class="text-lg hover:underline hover:cursor-pointer">Contato</li>    
-            <li class="text-lg hover:underline hover:cursor-pointer">Duvidas</li>
+            <li class="text-base hover:underline hover:cursor-pointer"><a href="#funcionalidades">Funcionalidades</a></li>
+            <li class="text-base hover:underline hover:cursor-pointer"><a href="#funcionamento">Como funciona</a></li>
+            <li class="text-base hover:underline hover:cursor-pointer"><a href="#vantagens">Vantagens</a></li>    
+            <li class="text-base hover:underline hover:cursor-pointer"><a href="#contato">Contato</a></li>
         </ul>
     </nav>
 
-    <div class="w-1/4 flex gap-4">
-        <button class="text-lg text-black border-2 border-solid border-black rounded-xl p-2 w-full hover:underline hover:cursor-pointer"><a href="/login">Area cliente</a></button>
-        <button class="text-lg bg-principal10 text-white rounded-xl p-2 w-full hover:underline hover:cursor-pointer"><a href="/admin/login">Area empresa</a></button>
+    <div class="w-1/4 flex items-center justify-end gap-8 pr-2">
+        <a class=" bg-white text-principal10 text-base  rounded p-2   hover:cursor-pointer hover:underline" href="/login" >Área cliente</a>
+        <a class="text-base  text-white rounded    hover:cursor-pointer hover:underline" href="/admin/login" >Área empresa</a>
     </div>
 </header>
 
-<body class="w-screen h-screen overflow-y-auto overflow-x-hidden">    
+<main class="w-screen overflow-y-hidden overflow-x-hidden  absolute" style="top:9%;">    
 <!-- hero -->
-    <div class="w-full h-5/6 flex p-12 relative border-b-2 border-white">
-        <div class="w-3/5 flex flex-col gap-8 p-4 text-start">
-            <h1 class="font-Urbanist font-bold italic text-7xl text-principal10 ">A facilidade que cabe na sua agenda!</h1>
-            <p class="w-3/5 text-xl">Com apenas alguns cliques, seus clientes podem reservar horários convenientes, garantindo um atendimento personalizado e seguro. </p>
-            <button class="w-2/4 bg-principal9 text-white text-xl rounded-xl p-2 hover:underline hover:cursor-pointer">Saiba mais</button>
-        </div>
-        <div class="triangulo bg-principal10"></div>
-        <img class="w-1/4 absolute bottom-0 right-10 " src="/assets/images/img_hero.png" alt="">
-    </div>  
+    <section class="hero w-full h-screen flex p-12 relative  flex-col items-center justify-center gap-8 text-center">
+        <!-- <div class=" flex flex-col gap-8 p-4 text-center"> -->
+            <img src="/assets/images/logo-white.png" alt="">
+            <h1 class="font-Urbanist font-bold italic text-5xl text-white ">A facilidade que cabe na sua agenda!</h1>
+            <p class="w-3/5 text-xl text-white">Com apenas alguns cliques, seus clientes podem reservar horários convenientes, garantindo um atendimento personalizado e seguro. </p>
+            <button class="w-1/5 bg-white text-principal10 text-xl rounded-xl p-2 hover:underline hover:cursor-pointer"><a href="#funcionalidades">Saiba mais</a></button>
+        <!-- </div> -->
+    </section>  
 
     <!-- servicos -->
-    <div class="w-full h-max bg-principal10 text-center flex flex-col items-center p-12 gap-16 ">
-        <h2 class="w-3/4 font-Urbanist font-bold italic text-5xl text-white">Economize tempo gerenciando sua agenda com nossos melhores serviços</h2>
+    <section id="funcionalidades" class="w-full h-2/4 bg-white text-principal10 text-start flex flex-col items-center justify-start p-12  gap-16 border-b border-lightGray">
+        <h2 class="w-4/5 font-Urbanist font-bold italic text-4xl ">Principais funcionalidades</h2>
 
         <!-- container serviços -->
-       <div class="container w-full flex justify-around items-center">
-         <!-- item servico -->
-         <div class="container w-1/4 h-full border-t-2 border-l-2 border-r-2 border-b-8 border-principal3 rounded p-4 flex flex-col items-center gap-8">
-            <i class='bx bx-check-circle text-7xl' style='color:#ffffff;'></i>
-            <h3 class="text-white font-bold font-Urbanist text-3xl">Agendamento agil</h3>
-            <p class="text-white text-xl">Cansado daquelas ligaçoes chatas? , mensagens que demroam a ser respondidas</p>
-        </div>
+        <div class="container w-4/5 flex justify-between items-center">
 
-         <!-- item servico -->
-        <div class="container w-1/4 h-full border-t-2 border-l-2 border-r-2 border-b-8 border-principal3 rounded p-4 flex flex-col items-center gap-8">
-            <i class='bx bx bx-lock-alt text-7xl' style='color:#ffffff;'></i>
-            <h3 class="text-white font-bold font-Urbanist text-3xl">Agendamento agil</h3>
-            <p class="text-white text-xl">Cansado daquelas ligaçoes chatas? , mensagens que demroam a ser respondidas</p>
-        </div>
-
-         <!-- item servico -->
-        <div class="container w-1/4 h-full border-t-2 border-l-2 border-r-2 border-b-8 border-principal3 rounded p-4 flex flex-col items-center gap-8">
-            <i class='bx bx-phone-off text-7xl' style='color:#ffffff;'></i>
-            <h3 class="text-white font-bold font-Urbanist text-3xl">Agendamento agil</h3>
-            <p class="text-white text-xl">Cansado daquelas ligaçoes chatas? , mensagens que demroam a ser respondidas</p>
-        </div>
-       </div>
-    </div>
-
-    <!-- planos -->
-    <div class="w-full h-max text-center flex flex-col items-center p-12 pb-28 gap-16 border-b-2 border-black">
-        <h2 class="w-2/4 font-Urbanist font-bold italic text-5xl text-black ">Comece hoje, com o plano basico ou premium, você escolhe</h2>
-
-        <!-- container planos -->
-        <div class="w-full h-full flex justify-center items-center gap-16 ">
-            <!-- plano -->
-            <div class="w-1/4 h-full p-8 border-2 border-principal10 rounded flex flex-col items-center gap-12 shadow-xl">
-                <div class="">
-                    <h2 class="text-5xl font-semibold italic text-principal9">Basico</h2>
-                    <h3 class="text-4xl font-bold text-principal10">R$ 0.00 <span class="font-normal">/mês</span></h3>
-                </div>
-
-                <div class="container flex flex-col items-start gap-4 tex-center">
-                        <!-- item check -->
-                    <div class="flex items-center gap-2">
-                        <i class='bx bx-check text-4xl' style='color:#0e7f0c'></i>
-                        <h4 class="text-2xl">Cadastrar serviços</h4>
-                    </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-check text-4xl' style='color:#0e7f0c'></i>
-                        <h4 class="text-2xl">Consultar agendamentos</h4>
-                    </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-check text-4xl' style='color:#0e7f0c'></i>
-                        <h4 class="text-2xl">Cadastrar colaboradores</h4>
-                    </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-x text-4xl' style='color:#e22b20'></i>
-                        <h4 class="text-2xl">Gerar relatórios personalizados</h4>
-                     </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-x text-4xl' style='color:#e22b20'></i>
-                        <h4 class="text-2xl">Cadastrar vale serviços</h4>
-                    </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-x text-4xl' style='color:#e22b20'></i>
-                        <h4 class="text-2xl">Plataforma sem anuncios</h4>
-                    </div>
-                </div>
-
-                <button class="w-3/4 bg-principal9 p-4 rounded outline-none text-white  text-lg hover:underline">COMPRAR AGORA</button>
+            <div class="w-1/4 flex flex-col gap-4 justify-start">
+                <i class='bx bx-desktop text-5xl' style='color:#223249'  ></i>
+                <h3 class="text-xl  font-semibold text-start">Agendamento Online</h3>
+                <p class="text-start  text-base">Seus clientes podem agendar serviços diretamente pelo site ou aplicativo, de forma prática e rápida.</p>
             </div>
 
-              <!-- plano -->
-              <div class="w-1/4 h-full bg-principal10 p-8 border-2 border-principal10 rounded flex flex-col items-center gap-12 shadow-2xl scale-110">
-                <div class="">
-                    <h2 class="text-5xl font-semibold italic text-white">Premium</h2>
-                    <h3 class="text-4xl font-bold text-white">R$ 0.00 <span class="font-normal">/mês</span></h3>
-                </div>
+            <div class="w-1/4 flex flex-col gap-4 justify-start">
+                <i class='bx bx-calendar-check text-5xl' style='color:#223249'></i>
+                <h3 class="text-xl  font-semibold text-start">Gestão de Agenda</h3>
+                <p class="text-start  text-base">Mantenha sua agenda organizada e atualizada, com recursos de confirmação e lembretes.</p>
+            </div>
 
-                <div class="container flex flex-col items-start gap-4 tex-center">
-                        <!-- item check -->
-                    <div class="flex items-center gap-2">
-                        <i class='bx bx-check text-4xl' style='color:#96DD8C'></i>
-                        <h4 class="text-2xl text-white">Cadastrar serviços</h4>
-                    </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-check text-4xl' style='color:#96DD8C'></i>
-                        <h4 class="text-2xl text-white">Consultar agendamentos</h4>
-                    </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-check text-4xl' style='color:#96DD8C'></i>
-                        <h4 class="text-2xl text-white">Cadastrar colaboradores</h4>
-                    </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-check text-4xl' style='color:#96DD8C'></i>
-                        <h4 class="text-2xl text-white">Gerar relatórios personalizados</h4>
-                     </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-check text-4xl' style='color:#96DD8C'></i>
-                        <h4 class="text-2xl text-white">Cadastrar vale serviços</h4>
-                    </div>
-                           <!-- item check -->
-                        <div class="flex items-center gap-2">
-                        <i class='bx bx-check text-4xl' style='color:#96DD8C'></i>
-                        <h4 class="text-2xl text-white">Plataforma sem anuncios</h4>
-                    </div>
-                </div>
+            <div class="w-1/4 flex flex-col gap-4 justify-start">
+                <i class='bx bx-line-chart text-5xl' style='color:#223249'  ></i>
+                <h3 class="text-xl  font-semibold text-start">Relatórios e Análises</h3>
+                <p class="text-start  text-base">Obtenha insights valiosos sobre o desempenho do seu negócio com nossos relatórios gerenciais.</p>
+            </div>
+        
+        </div>
 
-                <button class="w-3/4 bg-white p-4 rounded outline-none text-black  text-lg hover:underline">COMPRAR AGORA</button>
+    </section>
+
+    <section id="funcionamento" class="w-full h-2/4 bg-principal10 text-white text-start flex flex-col items-center justify-start p-12  gap-16 border-b border-lightGray">
+        <h2 class="w-4/5 font-Urbanist font-bold italic text-4xl">Como funciona o agendamento</h2>
+
+        <div class="container w-4/5 flex justify-between items-center">
+
+            <div class="w-1/4 flex flex-col gap-4 justify-start items-center">
+                <div class="bullet-landing text-xl text-center  ">1</div>
+                <h3 class="w-full text-xl  font-semibold text-center">Escolha o Serviço</h3>
+                <p class="w-full text-center  text-base">Seus clientes selecionam o serviço desejado e verificam a disponibilidade.</p>
+            </div>
+
+            <div class="w-1/4 flex flex-col gap-4 justify-start items-center">
+                <div class="bullet-landing text-xl text-center">2</div>
+                <h3 class="w-full text-xl  font-semibold text-center">Agende o Horário</h3>
+                <p class="w-full text-center  text-base">O cliente escolhe a data e o horário que melhor se encaixa em sua agenda.</p>
+            </div>
+
+            <div class="w-1/4 flex flex-col gap-4 justify-start items-center">
+                <div class="bullet-landing last text-xl text-center">3</div>
+                <h3 class="w-full text-xl  font-semibold text-center">Confirme o Agendamento</h3>
+                <p class="w-full text-center  text-base">O cliente recebe uma confirmação e lembretes sobre o serviço agendado.</p>
             </div>
 
         </div>
-    </div>
 
-    <!-- sobre nos -->
-    <div class="w-full h-full flex">
-        <div class="w-2/4 h-full bg-img bg-cover bg-center"></div>
+    </section>
 
-        <div class="w-2/4 h-full bg-principal10 p-16 flex flex-col items-start justify-around">
-            <h2 class="w-3/4 font-Urbanist font-bold italic text-5xl text-white">O que é a agendaFacil ?</h2>
-            <p class="w-3/5 text-xl text-white">
-            Com apenas alguns cliques, seus clientes podem reservar horários convenientes, garantindo um atendimento personalizado e seguro. 
-             demoradas e esperas frustrantes, descubra como podemos simplificar sua vida e proporcionar uma experiência única para seu público.
-            </p>
+    <section id="vantagens" class="container-company w-full h-3/4 bg-principal10 text-start flex flex-col items-center justify-start p-12  gap-16 border-b border-lightGray">
+        <h2 class="w-4/5 font-Urbanist font-bold italic text-4xl text-start text-white ">Vantagens para os profissionais</h2>
+        
+        <div class="w-4/5 h-full flex justify-between items-center gap-8">
 
-            <button class="w-2/4 bg-white p-4 rounded outline-none text-black  text-lg hover:underline">SAIBA MAIS</button>
+           <div class="box w-1/4 p-4 rounded flex flex-col gap-4 justify-start">
+                <i class='bx bx-calendar text-5xl' style='color:#ffffff'  ></i>
+                <h3 class="text-xl text-white font-semibold text-start">Agenda organizada</h3>
+                <p class="text-start text-white text-base">Mantenha sua agenda sincronizada e atualizada com facilidade.</p>
+           </div>
+
+           <div class="box w-1/4 p-4 rounded flex flex-col gap-4 justify-start">
+                <i class='bx bx-group text-5xl' style='color:#ffffff'  ></i>
+                <h3 class="text-xl text-white font-semibold text-start">Equipe Eficiente</h3>
+                <p class="text-start text-white text-base">Gerencie sua equipe de forma integrada e otimize os recursos.</p>
+           </div>
+
+           <div class="box w-1/4 p-4 rounded flex flex-col gap-4 justify-start">
+                <i class='bx bx-bar-chart-square text-5xl' style='color:#ffffff'  ></i>
+                <h3 class="text-xl text-white font-semibold text-start">Insights Valiosos</h3>
+                <p class="text-start text-white text-base">Obtenha dados e relatórios para tomar decisões mais assertivas.</p>
+           </div>
+
+           <div class="box w-1/4 p-4 rounded flex flex-col gap-4 justify-start">
+                <i class='bx bxs-dollar-circle text-5xl' style='color:#ffffff'  ></i>
+                <h3 class="text-xl text-white font-semibold text-start">Maior Faturamento</h3>
+                <p class="text-start text-white text-base">Aumente seu faturamento com agendamentos otimizados.</p>
+           </div>
+
         </div>
-    </div>
+    </section>
 
-    <!-- contato -->
-    <div class="w-full h-max flex flex-col items-center gap-8 p-12 text-center">
-        <h2 class="w-full font-Urbanist font-bold italic text-5xl text-black ">Entre em contato com a gente</h2>
+    <section id="contato" class="w-full h-2/4 bg-white text-principal10 text-start flex flex-col items-center justify-center p-12  gap-16 border-b border-lightGray">
 
-        <form action="" class="w-full flex flex-col items-center gap-8 p-8">
-            <fieldset class="w-3/5 flex flex-col items-center gap-8">
-                <!-- campo -->
-                <div class="w-full text-start bg-inherit flex flex-col">
-                    <label for="inputNome" >Nome completo</label>
-                    <input type="text" id="inputNome" class="w-full border-2 border-black rounded p-2">
-                </div>
+            <h2 class="w-full font-Urbanist font-bold italic text-4xl text-center ">Entre em contato com a gente</h2>
+            <form action="" method="post" class="w-2/4 ">
+                <fieldset class="w-full flex flex-col gap-1 items-center">
+                    <div class="field w-full focus-within:text-principal10 text-grayInput ">
+                        <div>
+                            <label for="inputName" >Nome</label>
+                        </div>
+                        <div class="flex items-center border-2 border-grayInput   rounded focus-within:border-principal10 focus-within:text-principal10" style="box-shadow:0 0 10px 5px rgb(0,0,0,0.02);">
+                            <i class='bx bx-rename' style=' padding-left:1rem; padding-right:1rem;'></i>
+                            <input type="text" name="name" id="inputName" value="<?php echo old('name') ?? (isset($service) ? $service->getName() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-white placeholder:text-placeholder " placeholder="Digite nome do serviço">
+                        </div>
+                        <span class="text-errorColor " id="msgNameError"><?php echo flash('name');  ?></span>
+                    </div>
 
-                 <!-- campo -->
-                 <div class="w-full text-start bg-inherit flex flex-col">
-                    <label for="inputEmail" >Email</label>
-                    <input type="text" id="inputEmail" class="w-full border-2 border-black rounded p-2">
-                </div>
+                    <div class="field w-full focus-within:text-principal10 text-grayInput ">
+                        <div>
+                            <label for="inputName" >Email</label>
+                        </div>
+                        <div class="flex items-center border-2 border-grayInput   rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white" style="box-shadow:0 0 10px 5px rgb(0,0,0,0.02);">
+                            <i class='bx bx-envelope' style=' padding-left:1rem; padding-right:1rem;'></i>
+                            <input type="text" name="name" id="inputName" value="<?php echo old('name') ?? (isset($service) ? $service->getName() : ''); ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder " placeholder="Digite nome do serviço">
+                        </div>
+                        <span class="text-errorColor " id="msgNameError"><?php echo flash('name');  ?></span>
+                    </div>
 
-                 <!-- campo -->
-                 <div class="w-full text-start bg-inherit flex flex-col">
-                    <label for="inputMensagem" >Mensagem</label>
-                    <textarea cols=1 rows="10" name="inputMensagem" id="inputMensagem" class="w-full border-2 border-black rounded p-2"></textarea>
-                </div>
-            </fieldset>
+                    <div  class="field w-full h-full focus-within:text-principal10 text-grayInput">
+                        <div>
+                            <label for="inputDescription" >Mensagem</label>
+                        </div>
+                        <div class="h-5/6 flex items-center border-2 border-grayInput text-start rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white">
+                            <textarea name="description" id="inputDescription" class="w-full h-full resize-none p-4 text-start" cols="1">
+                            </textarea>
+                        </div>
+                        <span class="text-errorColor " id="msgDescriptionError"><?php echo flash('description');  ?></span>
+                    </div>
 
-            <button type="submit" class="w-1/4 bg-principal9 p-2 rounded outline-none text-white  text-lg hover:underline">Enviar</button>
-        </form>
-    </div>
-    <!-- duvidas -->
-    <div class="w-full h-max bg-principal10 py-12 flex flex-col items-center gap-12">
-        <h2 class="font-Urbanist font-bold italic text-5xl text-white text-center">Principais duvidas</h2>
-        <!-- container acordions -->
-        <div class="w-full border-t-2 border-white">
-            <!-- acordion -->
-            <div class="flex flex-col ">
-                <button onclick="toggleAcordion(this)" class=" w-full border-b border-white p-4 text-left text-white text-2xl font-semibold flex justify-between items-center px-8">Pra quem é o sistema 
-                    <i class='bx bx-chevron-down' style='color:#ffffff; font-size:3rem;' ></i>
-                    <i class='bx bx-chevron-up' style='color:#ffffff; font-size:3rem;  display:none;' ></i>
-                </button>
-                
-                <div class="panel bg-white text-principal10 w-full p-8">
-                    <p>Prestadores de serviços que desejam uma nova forma de gerenciar seus agendamentos</p>
-                </div>
-            </div>
 
-             <!-- acordion -->
-             <div class="flex flex-col ">
-                <button onclick="toggleAcordion(this)" class="w-full border-b border-white p-4 text-left text-white text-2xl font-semibold flex justify-between items-center px-8">Pra quem é o sistema 
-                    <i class='bx bx-chevron-down' style='color:#ffffff; font-size:3rem;' ></i>
-                    <i class='bx bx-chevron-up' style='color:#ffffff; font-size:3rem; display:none;' ></i>
-                </button>
-                
-                <div class="panel bg-white text-principal10 w-full p-8">
-                    <p>Lorem ipsum...</p>
-                </div>
-            </div>
+                    <button class="w-1/4 bg-principal10 text-white rounded p-2 hover:underline">Enviar</button>
+                    
+                </fieldset>
+            </form>
 
-             <!-- acordion -->
-             <div class="flex flex-col ">
-                <button onclick="toggleAcordion(this)" class="w-full border-b border-white p-4 text-left text-white text-2xl font-semibold flex justify-between items-center px-8">Pra quem é o sistema 
-                    <i class='bx bx-chevron-down' style='color:#ffffff; font-size:3rem;' ></i>
-                    <i class='bx bx-chevron-up' style='color:#ffffff; font-size:3rem; display:none;' ></i>
-                </button>
-                
-                <div class="panel bg-white text-principal10 w-full p-8">
-                    <p>Lorem ipsum...</p>
-                </div>
-            </div>
+    </section>
 
-             <!-- acordion -->
-             <div class="flex flex-col ">
-                <button onclick="toggleAcordion(this)" class="w-full border-b-1 border-white p-4 text-left text-white text-2xl font-semibold flex justify-between items-center px-8">Pra quem é o sistema 
-                    <i class='bx bx-chevron-down' style='color:#ffffff; font-size:3rem;' ></i>
-                    <i class='bx bx-chevron-up' style='color:#ffffff; font-size:3rem; display:none;' ></i>
-                </button>
-                
-                <div class="panel bg-white text-principal10 w-full p-8">
-                    <p>Lorem ipsum...</p>
-                </div>
-            </div>
-        </div>
-    </div>
+   
     <!-- footer -->
     <?php require 'includes/footer.php';?>
     <script type="module" src="/assets/js/modules/acordions.js" deffer></script>
-</body>
-</html>
-
-
+</main>

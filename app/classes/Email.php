@@ -35,10 +35,10 @@ abstract class Email {
     public function setMessage(string $message){
         $this->message = $message;
     }
-                                  
+
     protected function config(){
         // $this->mailer->SMTPDebug = SMTP::DEBUG_SERVER;     
-        $this->mailer = new PHPMailer();
+        $this->mailer = new PHPMailer(true);
         $this->mailer->isSMTP();                                            
         $this->mailer->Host       = $_ENV['EMAIL_HOST'];                     
         $this->mailer->SMTPAuth   = true;                                  
@@ -46,6 +46,7 @@ abstract class Email {
         $this->mailer->Password   = $_ENV['EMAIL_PASSWORD'];                               
         // $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            
         $this->mailer->Port = $_ENV['EMAIL_PORT'];  
+        $this->mailer->CharSet = 'UTF-8';
     }
 }
 

@@ -23,28 +23,27 @@ class ContactEmail extends Email{
     }
 
     public static function sendConfirmationEmail(String $name,String $email){
-         //generate code confirm
-         $code = CodeGenerator::generate(4);
-         $_SESSION['codeConfirmEmail'] = $code;
-          //message for email
-          $message= "
-          <div>
-              <h1>Bem vindo ao Agenda Facil!</h1>
-              <h2>Confirme seu E-mail</h2>
-              <p>Codigo para confirmacaoo: {$code}</p>
-          </div>";
-                 
-         //send email
+         
          try {
-             $contactEmail = new ContactEmail();
-             $contactEmail->setTo(["email"=>$email,"name"=>$name]);
-             $contactEmail->setFrom(["email"=>"vitorhugo6331@outlook.com","name"=>"vitor"]);
-             $contactEmail->setSubject("Confirmar E-mail");
-             $contactEmail->setMessage($message);
-             $contactEmail->send();
-             return true;
-             unset($_SESSION['nameSend']);
-             unset($_SESSION['emailSend']);
+            $contactEmail = new ContactEmail();
+            $contactEmail->setTo(["email"=>$email,"name"=>$name]);
+            $contactEmail->setFrom(["email"=>"vitorhugojulieti@gmail.com","name"=>"vitor hugo"]);
+            $contactEmail->setSubject("Confirmar E-mail");
+
+            $code = CodeGenerator::generate(4);
+            $_SESSION['codeConfirmEmail'] = $code;
+    
+            $template = file_get_contents(__DIR__ .'../../views/templateEmail.html');
+                
+            $message = str_replace('{{name}}', $name, $template);
+            $message = str_replace('{{code}}', $code, $message);
+
+            // $contactEmail->addEmbeddedImage(__DIR__ .'../../../public/assets/images/logo.png', 'logo_agenda');
+            // $message = str_replace('{{logo}}', 'cid:logo_agenda', $message);
+                    
+            $contactEmail->setMessage($message);
+            $contactEmail->send();
+            return true;
  
          } catch (\Throwable $th) {
             return false;

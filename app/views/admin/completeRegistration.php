@@ -1,14 +1,12 @@
 <main class="lg:w-5/6 w-full flex lg:absolute" style="left:17%; top:10%;">
-    <?php echo flash('resultInsertService');  ?>
-    <?php echo flash('resultUpdateService');  ?>
-    <?php echo flash('reultDeleteService');  ?>
+    <?php echo flash('resultCompleteRegistration');  ?>
         <?php  require __DIR__ . '/../includes/nav.php'; ?>
 
         <div class="w-full min-h-screen flex flex-col justify-start items-start bg-bgPrincipal p-4 pl-8">
             <form action="/admin/signup/completeRegistration" method="post" enctype="multipart/form-data" id="formCompleteRegistration" class="bg-white w-5/6 md:w-full flex flex-col items-start justify-start gap-4 shadow shadow-borderFormColor p-2 rounded-lg ">
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">
                 <legend id="legendForm" class="w-full font-Urbanist font-semibold text-black text-2xl md:text-3xl ">Concluir cadastro</legend>
-                <input type="hidden" name="id" id="id" type="number" value="<?php echo isset($service) ? $service->getId():'';?>">
+                <input type="hidden" name="idNotification" id="id"  value="<?php echo isset($idNotification) ? $idNotification:'';?>">
                 <!-- container data service -->
                 <fieldset id="containerDataService" class="w-full  justify-start items-start">
 

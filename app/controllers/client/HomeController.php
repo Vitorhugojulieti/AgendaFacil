@@ -24,8 +24,6 @@ class HomeController{
         // $companys = $companys->getAll($db);
         if(isset($_SESSION['location'])){
             $companys = $companys->filterByLocationAndCategory($db,['city'=>$_SESSION['location']['localidade'],'state'=>$_SESSION['location']['uf']],'',1,10);
-            
-          
         }else{
             $companys = ["data"=>[]];
         }
