@@ -146,6 +146,7 @@ class SignupController{
 
     }
 
+    //TODO remover
     public function chooseAvatar(){
         $this->view = 'chooseAvatar.php';
         $this->data = [

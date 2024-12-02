@@ -71,6 +71,7 @@
 
                 <div class="w-2/5 flex gap-4 p-4">
                     <?php if($schedule->getStatus() !== "cancelado" && $schedule->getStatus() !== "Concluido"){?>
+                        <button class="w-full bg-sucessColor text-white text-center font-Poppins font-normal p-2 rounded  hover:underline hover:cursor-pointer  "  id="btnOpenModalComplete">Concluir</button>
                         <button class="w-full bg-red text-white text-center font-Poppins font-normal p-2 rounded  hover:underline hover:cursor-pointer  "  id="btnOpenModalCancel">Cancelar</button>
                     <?php } ?>
                     <a href="<?php echo $linkBack; ?>" class="w-full border border-lightGray text-principal10 text-center font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">Voltar</a>
@@ -82,7 +83,7 @@
 
 
     <dialog id="modalCancel" class="w-2/5 bg-white text-black rounded p-4 shadow-lg shadow-black ">
-        <form action="<?php echo $action;?>" method="post" class="w-full flex flex-col gap-4">
+        <form action="<?php echo $actionCancel;?>" method="post" class="w-full flex flex-col gap-4">
             <input type="number" class="hidden" name="id" value="<?php echo $schedule->getId();?>">
             <legend class="text-xl font-semibold font-Urbanist">Deseja cancelar o agendamento?</legend>
 
@@ -109,6 +110,20 @@
                     <button type="submit"  class="w-full bg-red text-white text-base text-center border border-lightGray rounded p-2 hover:cursor-pointer hover:underline">Cancelar agendamento</button>
                 <?php }?>
                 <button id="btnCloseModalCancel" type="button" class="w-full border border-lightGray bg-white text-principal10 text-center text-base font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">Descartar</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="modalComplete" class="w-2/5 bg-white text-black rounded p-4 shadow-lg shadow-black ">
+        <form action="<?php echo $actionComplete;?>" method="post" class="w-full flex flex-col gap-4">
+            <input type="number" class="hidden" name="id" value="<?php echo $schedule->getId();?>">
+            <legend class="text-xl font-semibold font-Urbanist">Concluir agendamento?</legend>
+
+    
+
+            <div class="buttons w-full flex  gap-4">
+         
+                <button id="btnCloseModalComplete" type="button" class="w-full border border-lightGray bg-white text-principal10 text-center text-base font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">Descartar</button>
             </div>
         </form>
     </dialog>

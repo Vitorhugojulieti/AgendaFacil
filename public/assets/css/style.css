@@ -352,10 +352,10 @@
 
 /* message style  */
 .notification{
-  position: absolute;
+  position: fixed !important;
   transform: translateX(-50%);
-  left: 45%;
-  top:90%;
+  left: 50% !important;
+  top:10% !important;
   display: inline-block;
   max-width: 300px;
   padding: 20px 15px;
@@ -372,18 +372,18 @@
     5%{
       opacity: 1;
       visibility: visible;
-      transform: translateY(0px);
+      transform: translateX(0px) !important;
     }
     90%{
       opacity: 1;
-      transform: translateY(0px);
+      transform: translateX(0px) !important;
     }
     95%{
       opacity: 0;
     }
     100%{
       opacity: 0;
-      transform: translateY(-30px);
+      transform: translateX(-30px) !important; 
     }
   }
   

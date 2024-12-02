@@ -40,12 +40,14 @@ class CollaboratorController implements ControllerInterface{
             $currentPage = intval($args[0]);
         }
     
-        $status = isset($_GET['status']) ? $_GET['status'] : "";
-        $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : "";
-
+       
         if (!isset($_GET['nivel']) && !isset($_GET['status'])) {
             $result = $collaborators->getByCompany($db,$_SESSION['collaborator']->getIdCompany(), $currentPage, $recordsPerPage);
         } else {
+
+            $status = isset($_GET['status']) ? $_GET['status'] : "";
+            $nivel = isset($_GET['nivel']) ? $_GET['nivel'] : "";
+    
             $result = $collaborators->getCollaboratorsByFilters(
                 $db,
                 $_SESSION['collaborator']->getIdCompany(),
@@ -278,6 +280,7 @@ class CollaboratorController implements ControllerInterface{
 
         $services = new Service();
         $services = $services->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
+        $services = $services['services'];
 
         $this->view = 'admin/registerAndUploadCollaborator.php';
         $this->data = [

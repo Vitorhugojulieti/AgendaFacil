@@ -25,15 +25,79 @@ class Receipt implements ModelInterface{
         return $total[0]['total'];
     }
 
-    public function getIdByName(Db $db, $name,$idCompany){
+    //TODO finalizar esse metodo
+    public function getReceiptsByFilters(
+        Db $db,
+        int $idCompany,
+        string $status = "",
+        string $startDate = "",
+        string $endDate = "",
+        int $collaboratorId = 0,
+        int $serviceId = 0,
+        int $currentPage = 1,
+        int $recordsPerPage = 10
+    ) {
         $db->setTable($this->table);
-        $idFound = $db->query("idService","name='{$name}' AND Company_idCompany = {$idCompany}");
-
-        if(!$idFound){
-            return false;
+        $where = "Company_idCompany = {$idCompany}";
+    
+        // Filtros opcionais
+        if ($status != "") {
+            if($status != 'all'){
+                $where .= " AND status = '{$status}'";
+            }
         }
-
-        return $idFound[0]['idService'];
+    
+        if ($startDate != "" && $endDate != "") {
+            $where .= " AND dateSchedule BETWEEN '{$startDate}' AND '{$endDate}'";
+        }
+    
+        if ($collaboratorId > 0) {
+            $where .= " AND idCollaborator = {$collaboratorId}";
+        }
+    
+        if ($serviceId > 0) {
+            $where .= " AND idService = {$serviceId}";
+        }
+ 
+        
+        // Realiza a paginação com os filtros
+        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
+        $schedules = $paginationResult['data'];
+        $arrayObjectsSchedule = [];
+    
+        foreach ($schedules as $schedule) {
+            $newSchedule = new Schedule(
+                $schedule['Client_idClient'],
+                $schedule['Company_idCompany'],
+                $schedule['paidOut'],
+                floatval($schedule['totalPaid']),
+                $schedule['voucherService'],
+                $schedule['cancellationReason'],
+                $schedule['observation'],
+                $schedule['status'],
+                new \DateTime($schedule['startTime']),
+                new \DateTime($schedule['endTime']),
+                new \DateTime($schedule['dateSchedule']),
+                new \DateTime($schedule['created_at']),
+                $schedule['cancellationDescripton'] != null ? $schedule['cancellationDescripton'] : ''
+            );
+    
+            $newSchedule->setId($schedule['idSchedule']);
+            $client = new Client(); 
+            $client = $client->getById($db,$schedule['Client_idClient']);
+            $newSchedule->setClient($client);
+            array_push($arrayObjectsSchedule,$newSchedule);
+        }
+    
+        return [
+            'schedules' => $arrayObjectsSchedule,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
     }
 
     public function getAll(Db $db){
@@ -113,77 +177,6 @@ class Receipt implements ModelInterface{
         ];
     }
 
-    public function getServicesByFilters(Db $db, int $idCompany, int $maxPrice = 0, int $maxDuration = 0, string $status = "", int $currentPage = 1, int $recordsPerPage = 10) {
-        $db->setTable($this->table);
-        $where = "Company_idCompany = {$idCompany}";
-    
-        // Filtro por preço
-        if ($maxPrice != 0) {
-            $where .= " AND price <= {$maxPrice}";
-        }
-    
-        // Filtro por duração
-        if ($maxDuration != 0) {
-            $hours = (($maxDuration - 60) / 10) == 0 ? 1 : (($maxDuration - 60) / 10) + 1;
-            if ($hours > 0 && $hours < 4) {
-                $where .= " AND duration <= '0{$hours}:00:00'";
-            } else {
-                $where .= " AND duration <= '00:{$maxDuration}:00'";
-            }
-        }
-    
-        // Filtro por status
-        if ($status != "") {
-            $where .= " AND visible = {$status}";
-        }
-    
-        // Realiza a paginação com os filtros
-        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
-        $services = $paginationResult['data'];
-        $arrayObjectsService = [];
-    
-        // Cria objetos Service a partir dos resultados
-        foreach ($services as $service) {
-            $newService = new Service(
-                $service['name'],
-                $service['description'],
-                $service['price'],
-                new \DateTime($service['duration']),
-                $service['Company_idCompany'],
-                $service['visible'],
-                new \DateTime($service['created_at'])
-            );
-    
-            $newService->setId($service['idService']);
-            $arrayObjectsService[] = $newService;
-        }
-    
-        // Retorna o array de objetos Service e os dados de paginação
-        return [
-            'services' => $arrayObjectsService,
-            'pagination' => [
-                'currentPage' => $paginationResult['currentPage'],
-                'recordsPerPage' => $paginationResult['recordsPerPage'],
-                'totalRecords' => $paginationResult['totalRecords'],
-                'totalPages' => $paginationResult['totalPages']
-            ]
-        ];
-    }
-    
-
-    public function getCollaborators(){
-        $db = new Db();
-        $db->connect();
-
-        $collaboratorManager = new Collaborator();
-        $db->setTable($this->tableCollaboratorsHasService);
-        $idsCollaborators = $db->query("Collaborator_idCollaborator","Services_idService={$this->getId()} AND Collaborator_Company_idCompany={$this->getIdCompany()}");
-        $arrayObjCollaborators = [];
-        foreach ($idsCollaborators as $idCollaborator) {
-            array_push($arrayObjCollaborators,$collaboratorManager->getById($db,$idCollaborator["Collaborator_idCollaborator"]));
-        }
-        return $arrayObjCollaborators;
-    }
 
     public function insert(DB $db){
         $db->setTable($this->table);

@@ -149,11 +149,13 @@ class ScheduleController{
             
              
                 if(!$schedule || !$orders){
-                    Flash::set('resultInsertSchedule', 'Erro ao agendar serviço!','message error');
+                    Flash::set('resultInsertSchedule', 'Erro ao agendar serviço!','notification error');
                     return redirect("/schedule/store");
                 }
 
                 Cart::delete();
+                //TODO enviar email para agendamento
+                Flash::set('resultInsertSchedule', 'Erro ao agendar serviço!','notification sucess');
                 return redirect("/schedule");
             }
         }
@@ -203,41 +205,6 @@ class ScheduleController{
             echo json_encode(['error' => 'Parameter "start" and "end" is required']);
         }
     }
-  
-    // public function getSchedules(){
-    //     //evita erros com o mvc
-    //     $this->master = 'masterapi.php';
-    //     $this->view = 'api.php';
-    //     $this->data = [
-    //         'title'=>'api',
-    //     ];
-
-    //     if (isset($_GET['day']) && isset($_GET['month']) ) {
-
-    //         $day = intval($_GET['day']);
-    //         $month = intval($_GET['month']);
-
-    //         $date = new \DateTime();
-    //         $date->setDate(date('Y'), $month, $day);
-    //         $date->setTime(0, 0, 0);
-
-    //         $db = new Db();
-    //         $db->connect();
-
-    //         $schedules = new Schedule();
-    //         // $schedules = $schedules->getByClient($db,1);
-    //         $schedules = $schedules->getByClient($db,$_SESSION['user']->getId());
-            
-    //         $schedules = array_filter($schedules, fn($schedule) => $schedule->getDateSchedule() == $date);
-
-    //         header('Content-Type: application/json');
-    //         echo json_encode($schedules);
-    //         exit();
-    //     }else {
-    //         header('HTTP/1.1 400 Bad Request');
-    //         echo json_encode(['error' => 'Parameter "day" and "month" is required']);
-    //     }
-    // }
 
 
     public function getAvailableTimes(){

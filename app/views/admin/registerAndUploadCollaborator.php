@@ -148,7 +148,7 @@
                                     </div>
 
                                     <div class="pl-5">
-                                        <?php if(isset($service)){ ?>
+                                        <?php if(isset($services)){ ?>
                                             <?php foreach ($services as $service) { ?>
                                                 <label for="input<?php echo $service->getName()?>" class="flex items-center gap-2 hover:text-principal10 hover:cursor-pointer scale-125">
                                                     <input type="checkbox" id="input<?php echo $service->getName()?>" name="services[]" value="<?php echo $service->getId() ?>" <?php echo in_array($service->getId(), $servicesCollaborator) ? "checked" : ''; ?> class="check"><?php echo $service->getName() ?>

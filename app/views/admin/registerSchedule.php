@@ -10,18 +10,53 @@
                 <input type="hidden" name="date" id="inputDate">
                 <legend class="w-full font-Urbanist font-semibold text-black text-2xl md:text-3xl ">Cadastrar novo agendamento</legend>
 
+
                 <fieldset id="fieldsetSearchClient" class="w-full flex flex-col gap-2 border-t border-t-lightGrayInput pt-4">
                     <?php if(!isset($client)){?>
                         <h3 class="font-Urbanist font-semibold text-black text-xl">Selecionar cliente</h3>
                         <div class="w-full flex items-center gap-4 relative">
+                            <div class="field w-full focus-within:text-principal10 text-grayInput ">
+                                <div class="flex items-center border-2 border-grayInput   rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white" style="box-shadow:0 0 10px 5px rgb(0,0,0,0.02);">
+                                    <i class='bx bx-search'  style=' padding-left:1rem; padding-right:1rem;'></i>
+                                    <div class="relative w-full">
+                                        <input id="inputSearchClient" type="text" placeholder="Digite para buscar..." class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black" />
+                                    </div>
+                                </div>
+                            </div>
+
+                           
+
+                            <div id="listClients" class="w-11/12 bg-white rounded-b-md shadow-sm shadow-black p-2 hidden flex-col gap-4 absolute z-10" style="top:110%; left:2%;">
+                                <div class="client w-full flex items-center gap-4 border-b border-lightGray p-2">
+                                    <img src="<?php echo AVATAR_DEFAULT?>" alt="img-cliente" class="redondShapeImageCollaborator">
+                                    <div class="w-full flex justify-between items-center">
+                                        <span>Nome: Cliente Padrão</span>
+                                        <span>telefone:(xx)xxxxx-xxxx</span>
+                                        <a href="/admin/schedule/store/client/default" class="bg-principal10 text-white text-sm p-2 rounded">Selecionar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php }else{ ?>
+
+                        <div class="w-full hidden items-center gap-4 relative">
                             <div  class=" flex  search w-full  items-center bg-white  rounded focus-within:shadow-sm focus-within:shadow-black focus-within:border-grayInput shadow shadow-borderFormColor">
-                                <input type="text" id="btnOpenModalSearchClient" class="w-full ml-2 outline-none bg-transparent p-2 placeholder:text-placeholder" placeholder="Digite o telefone do cliente buscado">
+                                <input type="text" id="inputSearchClient" class="w-full ml-2 outline-none bg-transparent p-2 placeholder:text-placeholder" placeholder="Digite o telefone do cliente buscado">
                                 <i class='bx bx-search p-2  text-principal10 cursor-pointer'></i>
                             </div>
                             <i class='bx bxs-help-circle text-2xl hover:text-principal10 hover:cursor-pointer' id="btnOpenModalPassword"></i>
 
+                            <div id="listClients" class="w-11/12 bg-white rounded-b-md shadow-sm shadow-black p-2 hidden flex-col gap-4 absolute z-10" style="top:110%; left:2%;">
+                                <div class="client w-full flex items-center gap-4 border-b border-lightGray p-2">
+                                    <img src="<?php echo AVATAR_DEFAULT?>" alt="img-cliente" class="redondShapeImageCollaborator">
+                                    <div class="w-full flex justify-between items-center">
+                                        <span>Nome: Cliente Padrão</span>
+                                        <span>telefone:(xx)xxxxx-xxxx</span>
+                                        <a href="/admin/schedule/store/client/default" class="bg-principal10 text-white text-sm p-2 rounded">Selecionar</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    <?php }else{ ?>
 
                         <!-- visible -->
                         <h3 class="font-Urbanist font-semibold text-black text-xl">Cliente selecionado</h3>
@@ -37,6 +72,10 @@
                     <?php } ?>
                 </fieldset>
 
+       
+
+                
+
                 <fieldset id="fieldsetServices" class="w-full flex flex-col gap-4">
                     <h3 class="font-Urbanist font-semibold text-black text-xl">Selecionar serviços</h3>
                     <?php if(count($services) != 0){ ?>
@@ -51,7 +90,7 @@
 
                                         <div class="col2 w-full flex flex-col ml-4">
                                             <div class="details mr-8 pb-2 flex justify-between items-center gap-8 border-b border-b-lightGray box-border" id="services">
-                                                <span class="flex items-center gap-4 font-Poppins text-lg">
+                                                <span class="flex items-center gap-4 font-Poppins text-lg font-semibold">
                                                 
                                                     <?php echo ucfirst($service->getName()); ?>
                                                 </span>
@@ -59,23 +98,16 @@
                                             </div>
 
                                             <div class="collaborators pt-2">
-                                                <span class="font-Poppins text-lg pt-2">Colaboradores disponiveis</span>
-
-                                                <div class="body w-full pt-4">
-                                                    <div class="collaborators-service w-full flex gap-6">
-                                                        <?php if(count($service->getCollaborators()) !== 0){ ?>
-                                                            <?php foreach ($service->getCollaborators() as $indexCollaborator => $collaborator) {?>
-                                                                <div class="collaborator-selection w-max flex gap-4 p-2" data-service-index="<?php echo $index; ?>">
-                                                                    <label for="collaborator<?php echo $collaborator->getId()?>" class="labelCollaborator flex flex-col items-center gap-2 hover:cursor-pointer" onclick="selectCollaborator(<?php echo $index; ?>, <?php echo $collaborator->getId(); ?>)"> 
-                                                                        <img src="<?php echo IMAGES_DIR.$collaborator->getAvatar()?>" alt="" class="collaborator redondShapeImageCollaborator  " style="width:5rem; height:5rem;">
-                                                                        <input type="radio" name="collaborator[<?php echo $index?>]" value="<?php echo $collaborator->getId()?>" id="collaborator<?php echo $collaborator->getId()?>" class="hidden"  <?php echo $indexCollaborator == 0 ? 'checked' : ''?>>
-                                                                        <span class="font-Poppins text-sm"><?php echo $collaborator->getName()?></span>
-                                                                    </label>
-                                                                </div>
-                                                            <?php } ?>  
-                                                        <?php } ?>
+                                                <div class="flex gap-4 items-end">
+                                                    <span class="font-Poppins text-base ">Funcionario: </span>
+                                                    <div class="collaborator flex items-center gap-2">
+                                                        <img src="<?php echo IMAGES_DIR.$service->getCollaborators()[0]->getAvatar() ?>" alt="avatar" class="redondShapeImageCollaborator" style="width:2rem; height:2rem;">
+                                                        <span class="font-Poppins text-lg "><?php echo $service->getCollaborators()[0]->getName()?></span>
+                                                        <input type="hidden" name="collaborator[<?php echo $index?>]" value="<?php echo $service->getCollaborators()[0]->getId()?>"   >
                                                     </div>
+                                                    <button type="button" id="btnOpenModalChooseCollaborator" class="text-xs bg-principal10 text-white font-Poppins rounded p-2 hover:underline">Alterar</button>
                                                 </div>
+
                                             </div>
                                         </div>
 
@@ -93,20 +125,29 @@
 
                 <fieldset id="fieldsetDate" class="w-full flex flex-col gap-4">
                     <h3 class="font-Urbanist font-semibold text-black text-xl">Selecionar data e horario</h3>
-                    <div class="w-full flex flex-col gap-4 lg:flex-row">
+                    <div class="w-full flex flex-col gap-4 ">
                         <div id="calendar" class="w-full"></div>
                       
-                        <section class="bg-white w-full lg:w-2/4 flex flex-col gap-2 border border-lightGray shadow-sm shadow-black rounded-md p-2 ">
+                        <section class="flex flex-col gap-2">
                             <h2 class="font-Urbanist font-semibold text-xl text-black w-full" id="legendTimes"></h2>
-                            <div class="w-full  max-h-60 flex flex-col gap-4 p-2  " id="containerTimes">
-                        
+
+                            <div class="bg-white w-full flex flex-col gap-2 border border-lightGray  rounded-md p-2 ">
+                                <div class="w-full  max-h-60 flex flex-col gap-4 p-2  " id="containerTimes"></div>
                             </div>
                         </section>
                     </div>
                 </fieldset>
 
+                <section class="acordion active check w-full flex flex-col gap-4" id="sectionData">
+                    <span  class="flex items-center gap-4 text-grayInput"><i class='bx bx-message-detail text-2xl'  ></i>Adicionar observação para empresa (opcional)</span>
+                    <textarea name="message" id="inputMessage" class="w-full h-full resize-none p-4 text-start border-2 border-grayInput rounded focus-within:border-principal10 focus-within:text-principal10" cols="1">
+                    </textarea>
+                </section>
+
+              
+
                 <section class="acordion active check w-full  flex flex-col gap-4 mt-4 " id="sectionData">
-                        <legend class="w-full text-grayInput font-Urbanist font-semibold text-xl  border-b border-b-lightGray">Finalizar agendamento</legend>
+                        <legend class="w-full font-Urbanist font-semibold text-black text-xl  border-b border-b-lightGray">Finalizar agendamento</legend>
                         
                         <div class="flex flex-col items-start gap-1">
                             <span class="font-Urbanist font-semibold  flex items-end gap-2">
@@ -147,7 +188,7 @@
             </div>
         </dialog>
 
-        <dialog id="modalCancel" class="w-2/5 bg-white text-black rounded p-4 shadow-lg shadow-black ">
+    <dialog id="modalCancel" class="w-2/5 bg-white text-black rounded p-4 shadow-lg shadow-black ">
         <div class="w-full flex justify-between items-center mb-4">
             <div class="flex gap-4 items-center">
                 <h1 class="text-2xl font-semibold font-Urbanist">Descartar agendamento?</h1>
@@ -162,31 +203,7 @@
         </div>
     </dialog>
 
-        <!-- dialog search clients -->
-        <dialog id="modalSearchClient" class=" w-2/4 bg-white "  >
-            <div class="w-full flex justify-end items-center mb-4">
-                <button id="btnCloseModalSearchClient" class="outline-none"><i class='bx bx-x text-2xl' style='color:#dbdbdb'  ></i></button>
-            </div>
-        
-            <div class="w-full flex items-center gap-4 relative">
-                <div  class=" flex  search w-full  items-center bg-white  rounded focus-within:shadow-sm focus-within:shadow-black focus-within:border-grayInput shadow shadow-borderFormColor">
-                    <input type="text" id="inputSearchClient" class="w-full ml-2 outline-none bg-transparent p-2 placeholder:text-placeholder" placeholder="Digite o telefone do cliente buscado">
-                    <i class='bx bx-search p-2  text-principal10 cursor-pointer'></i>
-                </div>
-                <i class='bx bxs-help-circle text-2xl hover:text-principal10 hover:cursor-pointer' id="btnOpenModalPassword"></i>
-
-                <div id="listClients" class="w-11/12 bg-white rounded-b-md shadow-sm shadow-black p-2 hidden flex-col gap-4 absolute" style="top:110%; left:2%;">
-                    <div class="client w-full flex items-center gap-4 border-b border-lightGray p-2">
-                        <img src="<?php echo AVATAR_DEFAULT?>" alt="img-cliente" class="redondShapeImageCollaborator">
-                        <div class="w-full flex justify-between items-center">
-                            <span>Nome: Cliente Padrão</span>
-                            <span>telefone:(xx)xxxxx-xxxx</span>
-                            <a href="/admin/schedule/store/client/default" class="bg-principal10 text-white text-sm p-2 rounded">Selecionar</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </dialog>
+       
 
     <script src='/assets/js/dist/index.global.min.js'></script>
     <script src='/assets/js/dist/locales-all.global.min.js'></script>

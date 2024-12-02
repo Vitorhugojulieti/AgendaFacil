@@ -1,79 +1,58 @@
 <?php
+namespace app\classes;
+use Dompdf\Dompdf;
 
-use Nesk\Puphpeteer\Puppeteer;
 
-class RelatorioAgendamentos
+class Reports
 {
-    private $pdo;
-
-    public function __construct($pdo)
+    public function __construct()
     {
-        $this->pdo = $pdo;
     }
 
-    public function gerarRelatorio($dataInicio, $dataFim)
-    {
-        $sql = "SELECT a.id, a.data_agendamento, a.horario_inicio, a.horario_fim, c.nome AS cliente, s.nome AS servico, s.preco, col.nome AS colaborador
-                FROM agendamentos AS a
-                INNER JOIN clientes AS c ON a.cliente_id = c.id
-                INNER JOIN servicos AS s ON a.servico_id = s.id
-                INNER JOIN colaboradores AS col ON a.colaborador_id = col.id
-                WHERE a.data_agendamento BETWEEN :dataInicio AND :dataFim
-                ORDER BY a.data_agendamento, a.horario_inicio";
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':dataInicio', $dataInicio);
-        $stmt->bindParam(':dataFim', $dataFim);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function gerarPDF($dados, $dataInicio, $dataFim)
-    {
-        // Carregar o template HTML
-        $html = file_get_contents("templateRelatorio.html");
-
-        // Substituir os placeholders
-        $html = str_replace("{{LOGO_PATH}}", "logo.png", $html);
-        $html = str_replace("{{DATA_INICIO}}", $dataInicio, $html);
-        $html = str_replace("{{DATA_FIM}}", $dataFim, $html);
-
+    public function generatePDF($type,$dados, $dataInicio, $dataFim)
+    {    
+        $dataInicio = new \DateTime($dataInicio);
+        $dataFim = new \DateTime($dataFim);
         $totalRecebido = 0;
         $dadosTabela = '';
 
         foreach ($dados as $linha) {
             $dadosTabela .= "
             <tr>
-                <td>{$linha['id']}</td>
-                <td>{$linha['data_agendamento']}</td>
-                <td>{$linha['horario_inicio']}</td>
-                <td>{$linha['horario_fim']}</td>
-                <td>{$linha['cliente']}</td>
-                <td>{$linha['servico']}</td>
-                <td>R$ " . number_format($linha['preco'], 2, ',', '.') . "</td>
+                <td>{$linha->getDateSchedule()->format('d-m-Y')}</td>
+                <td>{$linha->getStatus()}</td>
+                <td>{$linha->getStartTime()->format('H:i')}</td>
+                <td>{$linha->getEndTime()->format('H:i')}</td>
+                <td>{$linha->getClient()->getName()}</td>
+                <td>R$ " . number_format($linha->getTotalPaid(), 2, ',', '.') . "</td>
             </tr>";
-            $totalRecebido += $linha['preco'];
+            $totalRecebido += $linha->getTotalPaid();
         }
 
-        $html = str_replace("{{DADOS_TABELA}}", $dadosTabela, $html);
-        $html = str_replace("{{TOTAL_RECEBIDO}}", "R$ " . number_format($totalRecebido, 2, ',', '.'), $html);
+        $html = file_get_contents(__DIR__ .'../../views/templateRelatorio.html');
+       
+        //TODO header adaptavel a tabela
+        $headerTable = "  <tr>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Hora Início</th>
+                <th>Hora Fim</th>
+                <th>Cliente</th>
+                <th>Preço</th>
+            </tr>";
+        $conteudo_pdf = str_replace(
+            ['{{TITLE}}', '{{DATA_INICIO}}','{{DATA_FIM}}','{{TOTAL_RECEBIDO}}','{{DADOS_TABELA}}','{{CABECALHO}}'],
+            ['teste', $dataInicio->format('d-m-Y'),$dataFim->format('d-m-Y'), number_format($totalRecebido, 2, ',', '.'),$dadosTabela,$headerTable],
+            $html
+        );
 
-        // Inicializa o Puppeteer
-        $puppeteer = new Puppeteer();
-        $browser = $puppeteer->launch();
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($conteudo_pdf);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
 
-        // Gera o PDF
-        $page = $browser->newPage();
-        $page->setContent($html);
-        $pdf = $page->pdf([
-            'format' => 'A4',
-            'printBackground' => true,
-        ]);
-
-        // Salva o PDF em um arquivo
-        file_put_contents("Relatorio_Agendamentos_{$dataInicio}_{$dataFim}.pdf", $pdf);
-
-        $browser->close();
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="arquivo.pdf"'); // inline = exibir no navegador
+        echo $dompdf->output();
     }
 }

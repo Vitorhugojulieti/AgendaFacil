@@ -79,23 +79,48 @@ class ScheduleController implements ControllerInterface{
     public function index(array $args){
         $db = new Db();
         $db->connect();
-
         $schedules = new Schedule();
-        $schedules = $schedules->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
 
-        $company = new Company();
-        $company = $company->getById($db,$_SESSION['collaborator']->getIdCompany());
-        $activeCompany = $company->getRegistrationComplete() == 1 ? 'Empresa ativa' : 'Empresa inativa'; 
+        $currentPage = 1;
+        $recordsPerPage = 10;
+
+        if(isset($args[0])){
+            $currentPage = intval($args[0]);
+        }
+     
+
+        $startDate = isset($_GET['startDate']) ? intval($_GET['startDate']) : '';
+        $endDate = isset($_GET['endDate']) ? intval($_GET['endDate']) : '';
+        $status = isset($_GET['status']) ? $_GET['status'] : '';
+
+      
+    
+        if (!isset($_GET['startDate']) && !isset($_GET['endDate']) && !isset($_GET['status'])) {
+            $result = $schedules->getByCompanyPaginate($db, $_SESSION['collaborator']->getIdCompany(), $currentPage, $recordsPerPage);
+        } else {
+            $result = $schedules->getSchedulesByFilters(
+                $db,
+                $_SESSION['collaborator']->getIdCompany(),
+                $status,
+                $startDate,
+                $endDate,
+                $currentPage,
+                $recordsPerPage
+            );
+        }
+    
+        $pagination = $result['pagination'];
+        $schedules = $result['schedules'];
+
+
 
         $this->view = 'admin/agenda.php';
         $this->data = [
             'title'=>'Agenda | AgendaFacil',
-            // 'schedules'=>$schedules,
             'breadcrumb'=>Breadcrumb::getForAdmin(),
             'navActive'=>'agenda',
             'schedules'=>$schedules,
-            'activeCompany'=>$company->getRegistrationComplete() == 1 ? 'Empresa ativa' : 'Empresa inativa'
-
+            'pagination'=>$pagination
         ];
     }
 
@@ -323,7 +348,8 @@ class ScheduleController implements ControllerInterface{
             ['label'=>'Imprevisto do prestador de serviço','value'=>'imprevisto do prestador de serviço'],
             ['label'=>'Outro','value'=>'outro']];
 
-            $action = '/admin/schedule/cancel';
+            $actionCancel = '/admin/schedule/cancel';
+            $actionComplete = '/admin/schedule/complete';
             $linkBack = '/admin/schedule';
 
         }
@@ -334,73 +360,21 @@ class ScheduleController implements ControllerInterface{
             'schedule'=>$schedule,
             'orders'=>$orders,
             'reasons'=>$arrayReason,
-            'action'=>$action,
+            'actionCancel'=>$actionCancel,
+            'actionComplete'=>$actionComplete,
             'linkBack'=>$linkBack
 
         ];
     }
 
     public function update(array $args){
-        BlockNotAdmin::block($this,['update']);
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $db = new Db();
-            $db->connect();
 
-            $validate = new Validate();
-            $service = new Service();
-            $service = $service->getById($db,intval($_POST['id']));
-
-            if($_FILES['image1'] && $_FILES['image1']['error'] == 0){
-                $validate->handle(['image1'=>[IMAGE]],'service');
-                $collaborator->setAvatar($validate->data['image1']['success'] ? $validate->data['image1']['link'] : AVATAR_DEFAULT);
-            }
-
-            if($_FILES['image2'] && $_FILES['image2']['error'] == 0){
-                $validate->handle(['image2'=>[IMAGE]],'service');
-                $collaborator->setAvatar($validate->data['image2']['success'] ? $validate->data['image2']['link'] : AVATAR_DEFAULT);
-            }
-
-            if($_FILES['image3'] && $_FILES['image3']['error'] == 0){
-                $validate->handle(['image3'=>[IMAGE]],'service');
-                $collaborator->setAvatar($validate->data['image3']['success'] ? $validate->data['image3']['link'] : AVATAR_DEFAULT);
-            }
-
-            if($_POST['name'] && $service->getName() !== $_POST['name']){
-                $validate->handle(['name'=>[REQUIRED]],'service');
-                $service->setName($validate->data['name']);
-            }
-
-            if($_POST['description'] && $service->getDescription() !== $_POST['description']){
-                $validate->handle(['description'=>[REQUIRED]],'service');
-                $service->setDescription($validate->data['description']);
-            }
-
-            if($_POST['duration'] && $service->getDuration() !== $_POST['duration']){
-                $validate->handle(['duration'=>[REQUIRED]],'service');
-                $service->setDuration($validate->data['duration']);
-            }
-
-            if($_POST['price'] && $service->getPrice() !== $_POST['price']){
-                $validate->handle(['price'=>[REQUIRED]],'service');
-                $service->setPrice($validate->data['price']);
-            }
-
-            if($validate->errors) {
-                return redirect('/admin/collaborator/edit');
-            }
-            
-            if($service->update($db,$service->getId())){
-                Flash::set('resultUpdateService', 'Serviço atualizado com sucesso!','message sucess');
-                return redirect("/admin/service");
-            }
-
-            Flash::set('resultUpdateService', 'Erro ao editar serviço!','message error');
-            return redirect("/admin/service/edit");
-        }
     }
 
    
-
+    //TODO finalizar agendamento via admin
+    //TODO finalizar visualizacao da agenda - admin - cliente - colaborador
+    //TODO verificar problema dos inputs time para exibir tempo do db
     public function store(array $args){
         // BlockNotAdmin::block($this,['store']);
         $db = new Db();
@@ -419,13 +393,13 @@ class ScheduleController implements ControllerInterface{
         if(isset($args[0]) && $args[0] == 'client' && $args[1] == 'remove'){
             Cart::removeClient();
             Flash::set('resultInsertSchedule', 'Cliente removido com sucesso!','notification sucess');
+            redirect('/admin/schedule/store');
         }
 
         if(isset($args[0])){
             $this->addToCart($this->sanitizeArgNumber($args[0]),$serviceManager,$db);
         }
 
-        // $hours = $this->getAvailableTimes($db,$args,1);
         $this->view = 'admin/registerSchedule.php';
         $this->data = [
             'title'=>'Realizar agendamento | AgendaFacil',
@@ -440,76 +414,127 @@ class ScheduleController implements ControllerInterface{
         ];
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            var_dump($_POST);
-            die();
-            $db = new Db();
-            $db->connect();
+            if(Cart::get()){
+                $db = new Db();
+                $db->connect();
 
-            $validateData = $this->validateScheduleData();
-            $validateCollaborators = $this->validateCollaborators();
-            $validateServices = $this->validateServices();
+                $validateData = $this->validateScheduleData();
+                $validateCollaborators = $this->validateCollaborators();
+                $validateServices = $this->validateServices();
 
-            if(!$validateData || !$validateCollaborators || !$validateServices){
-                return redirect("/admin/schedule/store");
+                if(!$validateData || !$validateCollaborators || !$validateServices){
+                    Flash::set('resultInsertSchedule', 'Erro 399 ao agendar serviço!','notification error');
+                    return redirect("/admin/schedule/store");
+                }
+
+                $schedule = $this->registerSchedule($db,$validateData,Cart::getClient()->getId(),Cart::getIdCompany(),Cart::getAmount());
+                $orders = $this->registerOrders($db,$schedule,Cart::get());   
+            
+             
+                if(!$schedule || !$orders){
+                    Flash::set('resultInsertSchedule', 'Erro 408 ao agendar serviço!','notification error');
+                    return redirect("/admin/schedule/store");
+                }
+
+                Cart::delete();
+                //TODO enviar email para agendamento
+                Flash::set('resultInsertSchedule', 'Erro ao agendar serviço!','notification sucess');
+                return redirect("/admin/schedule");
             }
-
-            $schedule = $this->registerSchedule($db,$validateData,$_SESSION['collaborator']->getIdCompany());
-            $services = $this->registerServices($db,$service,$_SESSION['collaborator']->getIdCompany(),$validateImages);   
-            $collaborators = $this->registerCollaborators($db,$service,$_SESSION['collaborator']->getIdCompany(),$validateImages);   
-
-            if(!$schedule || !$services || $collaborators){
-                Flash::set('resultInsertSchedule', 'Erro ao agendar serviço!','message error');
-                return redirect("/admin/schedule/store");
-            }
-
-            NotificationController::store();//notification compay
-            NotificationController::store();//notification collaborator
-            Flash::set('resultInsertSchedule', 'Serviço agendado com sucesso!','message sucess');
-            return redirect("/admin/schedule");
         }
     }
 
     private function validateScheduleData(){
         $validate = new Validate();
         $validate->handle([
-            'name'=>[REQUIRED],
-            'description'=>[REQUIRED],
-            'price'=>[REQUIRED],
-            'duration'=>[TIME],
-        ],'services');
+            'date'=>[REQUIRED,DATE],
+            'time'=>[REQUIRED,TIME],
+        ],'schedule');
+      
+        if($_POST['message']){
+            $validate->handle([
+                'message'=>[REQUIRED]
+            ],'schedule');
+        }
+
         if($validate->errors) {
             return false;
         }
-
         return $validate;
     }
 
-    private function validateCollaborators(){
-        $validateImages = new Validate();
-        $validateImages->handle([
-            'image1'=>[IMAGE],
-            'image2'=>[IMAGE],
-            'image3'=>[IMAGE],
-        ],'services');
-
-        if($validateImages->errors) {
-            return false;
-        }
-        return $validateImages;
+    private function validateServices(){
+        return Cart::get() != 0;
     }
 
-    private function validateServices(){
-        $validateImages = new Validate();
-        $validateImages->handle([
-            'image1'=>[IMAGE],
-            'image2'=>[IMAGE],
-            'image3'=>[IMAGE],
-        ],'services');
-
-        if($validateImages->errors) {
-            return false;
+    private function validateCollaborators(){
+        if ($_POST['collaborator']) {
+            foreach ($_POST['collaborator'] as $index => $collaboratorId) {
+                $_SESSION['cart'][$index]->setIdCollaborator($collaboratorId);
+            }
+            return true;
         }
-        return $validateImages;
+        return false;
+    }
+    
+    private function registerSchedule($db,$validateData,$idClient,$idCompany,$amount){
+        $durationServices = $this->calculateTotalTime(Cart::get());
+        
+        $endTime = clone $validateData->data['time'];
+        $endTime->add($durationServices);
+
+        $schedule = new Schedule($idClient,
+                                $idCompany,
+                                0,
+                                $amount,
+                                0,
+                                '',
+                                isset($validateData->data['message']) ? $validateData->data['message'] : '',
+                                'Confirmado',
+                                $validateData->data['time'],
+                                $endTime,
+                                $validateData->data['date'],
+                                new \DateTime(),
+                                '');
+           
+        if($schedule->insert($db)){
+            $schedule = $schedule->getByDataTime($db,$validateData->data['date'],$validateData->data['time'],$idCompany);
+            return $schedule ? $schedule : false;
+        }
+        return false;
+        
+    }
+
+    private function registerOrders(Db $db,$schedule,$services){
+        $ok = true;
+        $lastEndTime;
+
+        foreach ($services as $index =>$service) {
+            if ($index == 0) {
+                $start = clone $schedule->getStartTime(); 
+            } else {
+                $start = clone $lastEndTime;
+            }
+    
+            $interval = new \DateInterval('PT' . $service->getDuration()->format('H') . 'H' . $service->getDuration()->format('i') . 'M');
+            $end = clone $start;
+            $end->add($interval);
+    
+            $lastEndTime = $end;
+
+            $order = new ScheduleOrder($schedule->getId(),
+                                    $service->getIdCollaborator(),
+                                    $service->getId(),
+                                    $start,
+                                    $end); 
+                
+          
+            if(!$order->insert($db)){
+                $ok = false;
+            }
+        }
+
+       return $ok;
     }
 
     private function getCollaboratorsByServices(Db $db,array $idsServices,$idCompany){
@@ -533,147 +558,8 @@ class ScheduleController implements ControllerInterface{
         return $daysOfMonth;
     }
 
-    // private function getAvailableTimes(Db $db,array $idsServices,$idCompany,$day){
-    //     $amountServicesTime = $this->calculateTotalTime($db,$idsServices);
-    //     $intervalString = "PT{$amountServicesTime->i}M";
-    //     $amountServicesTime = new \DateInterval($intervalString);
-    //     //pegar id da empresa
-    //     $company = new Company;
-    //     $company = $company->getById($db,$idCompany);
-    //     //pegar horarios
-    //     $start = new \DateTime($company->getOpeningHoursStart());
-    //     $end = new \DateTime($company->getOpeningHoursEnd());
-    //     //gerar intervalos possiveis
-    //     $intervals = $this->generateIntervals($start,$end,$amountServicesTime);
-    //     //pegar horarios agendados
-    //     $scheduledTimes = new Schedule();
-    //     $scheduledTimes  = $scheduledTimes->getScheduledTimes($db,2);
-    //     var_dump($scheduledTimes);
-    //     die();
-    //     //criar novo array somente com horarios disponiveis
-    //     $availableTimes = [];
-    //     foreach ($intervals as $interval) {
-    //         if(!$this->isScheduled($interval,$scheduledTimes,$amountServicesTime)){
-    //             $availableTimes[] = $interval;
-    //         }
-    //     }
-    //     return $availableTimes;
-    // }
 
-    // private function getAvailableDate(Db $db,array $idsServices,$idCompany){
-    //     $amountServicesTime = $this->calculateTotalTime($db,$idsServices);
-    //     $intervalString = "PT{$amountServicesTime->i}M";
-    //     $amountServicesTime = new \DateInterval($intervalString);
-    //     //pegar id da empresa
-    //     $company = new Company;
-    //     $company = $company->getById($db,$idCompany);
-    //     //pegar horarios
-    //     $start = new \DateTime($company->getOpeningHoursStart());
-    //     $end = new \DateTime($company->getOpeningHoursEnd());
-    //     //gerar intervalos possiveis
-    //     $intervals = $this->generateIntervals($start,$end,$amountServicesTime);
-    //     //pegar horarios agendados
-    //     $schedule = new Schedule();
-    //     $avaliableDays =[];
-    //    // –pegar um array somente com os dias que restam do mês a partir do atual —-
-    //    $monthDays = $this->getMonthDays();
-    //    foreach($monthDays as $day){
-    //         $scheduledTimes = $schedule->getScheduledTimes($db,$day);
-    //         //criar novo array somente com horarios disponiveis
-    //         $availableTimes = [];
-    //         foreach ($intervals as $interval) {
-    //             if(!$this->isScheduled($interval,$scheduledTimes,$amountServicesTime)){
-    //                 array_push($availableTimes,$interval);
-    //             }
-    //         }
-    //         Array_push($avaliableDays,["day"=>$day,"times"=>$availableTimes]);
-    //     }
-    //     //retornar se dias com horários disponiveis
-    //     return $avaliableDays;
-    // }
-
-    // public function isScheduled($interval, $blockedIntervals, \DateInterval $amountServicesTime) {
-    //     $intervalStart = new \DateTime($interval);
-    //     $intervalEnd = clone $intervalStart;
-    //     $intervalEnd->add($amountServicesTime);
-    //     foreach ($blockedIntervals as $blocked) {
-    //         $blockStart = new \DateTime($blocked['startTime']);
-    //         $blockEnd = new \DateTime($blocked['endTime']);
-    //         if ($intervalStart < $blockEnd && $intervalEnd > $blockStart) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
-    // private function calculateTotalTime(Db $db,array $idsServices){
-    //     $amountServicesTime = new \DateInterval('PT0H0M');
-    //     $service = new Service();
-
-    //     for ($i=0; $i < count($idsServices); $i++) { 
-    //         $serviceObj = $service->getById($db,intval($idsServices[$i]));
-    //         list($h, $m) = explode(':', $serviceObj->getDuration());
-    //         $amountServicesTime->h += $h;
-    //         $amountServicesTime->i += $m;
-
-    //         if ($amountServicesTime->i >= 60) {
-    //             $amountServicesTime->h += floor($amountServicesTime->i / 60);
-    //             $amountServicesTime->i = $amountServicesTime->i % 60;
-    //         }
-    //     }
-    //     return $amountServicesTime;
-    // }
-
-    // function generateIntervals(\DateTime $start, \DateTime $end, \DateInterval $interval) {
-    //     $intervals = [];
-    
-    //     // Adicionar o tempo de intervalo como string
-    //     $current = clone $start;
-    
-    //     while ($current < $end) {
-    //         $intervals[] = $current->format('H:i');
-    
-    //         // Adicionar o intervalo de tempo
-    //         $current->add($interval);
-    //     }
-    
-    //     // Adicionar o horário final se não estiver incluído
-    //     if ($current->format('H:i') !== $end->format('H:i')) {
-    //         $intervals[] = $end->format('H:i');
-    //     }
-    
-    //     return $intervals;
-    // }
-    
-    private function registerSchedule($db,$idService,$idCompany,$validateImages){
-        $imagesRegister = new Images();
-        $dataImages = [
-            ['typeImage'=>'serviceImage','link'=>$validateImages->data['image1']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService],
-            ['typeImage'=>'serviceImage','link'=>$validateImages->data['image2']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService],
-            ['typeImage'=>'serviceImage','link'=>$validateImages->data['image3']['link'],'Company_idCompany'=>$idCompany,'idService'=>$idService],
-        ];
-
-        return $imagesRegister->insert($db,$dataImages);
-    }
-
-    private function registerServices(Db $db,$validate,$idCompany){
-        $service = new Service(
-            $validate->data['name'],
-            $validate->data['description'],
-            $validate->data['price'],
-            (float)$validate->data['duration'],
-            true,$idCompany);
-
-        $service->insert($db);
-        $service = $service->getIdByName($db,$validate->data['name'],$idCompany);
-        return $service ? $service : false;
-    }
-
-    private function registerCollaborators($db,$idService,$idCompany,$validateImages){
-      
-    }
-
-    public function cancel(array $args){
+    public function setCanceled(array $args){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $validate = new Validate();
             if($_POST['message'] && $_POST['id']){
@@ -697,6 +583,36 @@ class ScheduleController implements ControllerInterface{
             $schedule->setStatus('cancelado');
             $schedule->setCancellationReason($validate->data['reason']);
             $schedule->setCancellationDescription($validate->data['message']);
+            
+            if($schedule->update($db,$id)){
+                Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');
+                return redirect("/admin/schedule");
+            }
+        }
+    }
+
+    public function setComplete(){
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $validate = new Validate();
+            if($_POST['message'] && $_POST['id']){
+                $validate->handle([
+                    'message'=>[REQUIRED],
+                    'reason'=>[REQUIRED]
+                ],'schedule');
+
+                $id = intval($_POST['id']);
+            }
+    
+            if($validate->errors) {
+                Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');
+                return redirect("/admin/schedule");
+            }
+
+            $db = new Db();
+            $db->connect();
+            $schedule = new Schedule();
+            $schedule = $schedule->getById($db,$id);
+            $schedule->setStatus('concluido');
             
             if($schedule->update($db,$id)){
                 Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');

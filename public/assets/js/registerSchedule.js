@@ -12,9 +12,6 @@ manageModalCancel.init();
 const searchClientManager = new searchClient('#inputSearchClient','#listClients');
 searchClientManager.init();
 
-const manageModalSearchClient = new modals('#modalSearchClient','#btnOpenModalSearchClient','#btnCloseModalSearchClient');
-manageModalSearchClient.init();
-
 document.addEventListener('change', function(event) {
     if (event.target.name === 'collaborators[]') {
         const collaborators = document.querySelectorAll('.collaborator');
@@ -32,6 +29,7 @@ document.addEventListener('change', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     const inputDate = document.querySelector('#inputDate');
+    let selectedDateEl = null;
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
         headerToolbar: {
@@ -45,20 +43,19 @@ document.addEventListener('DOMContentLoaded', function() {
         dayMaxEvents: true,
 
         datesSet: function() {
-            // let initialDate = new Date();
-            // let year = initialDate.getFullYear();
-            // let month = String(initialDate.getMonth() + 1).padStart(2, '0'); 
-            // let day = String(initialDate.getDate()).padStart(2, '0');
-            // let formattedDate = `${year}-${month}-${day}`;
+            let initialDate = new Date();
+            let year = initialDate.getFullYear();
+            let month = String(initialDate.getMonth() + 1).padStart(2, '0'); 
+            let day = String(initialDate.getDate()).padStart(2, '0');
+            let formattedDate = `${year}-${month}-${day}`;
 
-            // const timesGenerator = new generateTimes('admin');
-            // timesGenerator.setDate(formattedDate);
-            // timesGenerator.generateTimesElements();
-            // timesGenerator.init();
-            // inputDate.value = formattedDate;
+            const timesGenerator = new generateTimes('admin');
+            timesGenerator.setDate(formattedDate);
+            timesGenerator.generateTimesElements();
+            timesGenerator.init();
+            inputDate.value = formattedDate;
         },
 
-        // Habilita a seleção de data
         dateClick: function(info) {
             let selectedDate = info.date;
             let year = selectedDate.getFullYear();
@@ -71,13 +68,43 @@ document.addEventListener('DOMContentLoaded', function() {
             timesGenerator.generateTimesElements();
             timesGenerator.init();
             inputDate.value = formattedDate;
-        }
+            selectDate(selectedDate);
+
+        },
+
+     
+
+
+        
     });
 
+    function selectDate(date) {
+        // Formata a data
+        let year = date.getFullYear();
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let day = String(date.getDate()).padStart(2, '0');
+        let formattedDate = `${year}-${month}-${day}`;
+
+        // Remove o destaque da data anterior
+        if (selectedDateEl) {
+            selectedDateEl.classList.remove('fc-daygrid-day');
+            selectedDateEl.classList.remove('fc-day-today');
+        }
+
+        // Encontra o elemento correspondente à nova data no calendário
+        const newSelectedDateEl = calendarEl.querySelector(
+            `[data-date="${formattedDate}"]`
+        );
+
+        if (newSelectedDateEl) {
+            newSelectedDateEl.classList.add('fc-daygrid-day');
+            newSelectedDateEl.classList.add('fc-day-today');
+            selectedDateEl = newSelectedDateEl; // Atualiza a variável de rastreamento
+        }
+
+    }
+
     calendar.render();
-    // document.addEventListener('click',()=>{
-    //     calendar.gotoDate(inputDate.value);
-    // })
 });
 
 const listClients = document.querySelector('#listClients');
@@ -87,23 +114,20 @@ inputSearchClient.addEventListener('click',(e)=>{
     listClients.classList.add('flex');
 });
 
-// inputSearchClient.addEventListener('focusout',(e)=>{
-//     listClients.classList.remove('flex');
-//     listClients.classList.add('hidden');
-// });
 
-// document.addEventListener('click',(e)=>{
-//     if (e.target.id != "listClients") {
-//         listClients.classList.remove('flex');
-//         listClients.classList.add('hidden');
-//     }
-// })
+
+document.addEventListener('click',(e)=>{
+    if (e.target.id != "listClients" && e.target.id != "inputSearchClient") {
+        listClients.classList.remove('flex');
+        listClients.classList.add('hidden');
+    }
+})
 
 
 function selectCollaborator(serviceIndex, collaboratorId){
     let serviceDiv = document.querySelector(`.collaborator-selection[data-service-index='${serviceIndex}']`);
-    console.log(collaboratorId);
-    console.log(serviceIndex);
+    console.log('colID:'+ collaboratorId);
+    console.log('service:'+serviceIndex);
     console.log(serviceDiv);
         
     serviceDiv.querySelectorAll('.labelCollaborator').forEach((label) => {

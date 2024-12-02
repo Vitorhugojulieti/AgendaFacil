@@ -6,11 +6,13 @@ use app\models\Collaborator;
 use app\models\Company;
 use app\models\ServiceVoucher;
 use app\models\Service;
+use app\models\Schedule;
 use app\classes\Flash;
 use app\classes\Old;
 use app\classes\Validate;
 use app\classes\BlockNotAdmin;
 use app\classes\CodeGenerator;
+use app\classes\Reports;
 use app\classes\Breadcrumb;
 
 
@@ -21,31 +23,32 @@ class ReportController implements ControllerInterface{
 
     // ok
     public function index(array $args){
-        BlockNotAdmin::block($this,['index']);
 
         $db = new Db();
         $db->connect();
 
-        // $vouchers = new ServiceVoucher();
-        // $vouchers = $vouchers->getAll($db);
+        $schedules = new Schedule();
+        $schedules = $schedules->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
+       
+        // $reportsPdf = new Reports();
+        // $reportsPdf->generatePDF($schedules,'11/10/2024','12/12/2024');
+        $collaborators = new Collaborator();
+        $collaborators = $collaborators->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
+        $collaborators = $collaborators['collaborators'];
 
         $services = new Service();
-        $services = $services->getAll($db);
-
-        $company = new Company();
-        $company = $company->getById($db,$_SESSION['collaborator']->getIdCompany());
-        $activeCompany = $company->getRegistrationComplete() == 1 ? 'Empresa ativa' : 'Empresa inativa'; 
+        $services = $services->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
+        $services = $services['services'];
 
         $this->view = 'admin/reports.php';
         $this->data = [
             'title'=>'Relatorios | AgendaFacil',
             'navActive'=>'relatorios',
-            'breadcrumb'=>Breadcrumb::getForAdmin(),
             'services'=>$services,
-            'activeCompany'=>$activeCompany
-
-
+            'collaborators'=>$collaborators
         ];
+
+     
     }
 
     public function edit(array $args){
@@ -63,10 +66,79 @@ class ReportController implements ControllerInterface{
     }
 
     //ok
-    public function store(array $args){
+    public function store(array $args)
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $db = new Db();
+            $db->connect();
     
+            $filter = $_POST['filter'] ?? null;
+            $status = $_POST['status'] ?? null;
+            $startDate = $_POST['startDate'] ?? null;
+            $endDate = $_POST['endDate'] ?? null;
+            $service = $_POST['service'] ?? null;
+            $collaborator = $_POST['collaborator'] ?? null;
+    
+            // Salvar filtros na sessão para uso no endpoint de geração de PDF
+            $_SESSION['report_filters'] = compact('filter', 'status', 'startDate', 'endDate', 'service', 'collaborator');
+    
+            // Redirecionar ou retornar um link para abrir o PDF
+            echo json_encode(['pdf_url' => '/admin/report/generateReport']);
+        }
     }
-
+    
+    //TODO finalizar relatorios
+    public function generateReport()
+    {
+        if (!isset($_SESSION['report_filters'])) {
+            http_response_code(400);
+            echo "Filtros de relatório não encontrados.";
+            return;
+        }
+    
+        $filters = $_SESSION['report_filters'];
+        $db = new Db();
+        $db->connect();
+        $reportsPdf = new Reports();
+    
+        // Recuperar filtros
+        $filter = $filters['filter'];
+        $status = $filters['status'];
+        $startDate = $filters['startDate'];
+        $endDate = $filters['endDate'];
+        $service = $filters['service'];
+        $collaborator = $filters['collaborator'];
+    
+        // Gerar relatórios conforme o tipo
+        if ($filter === "pagamentos" || $filter === "recebimentos") {
+            $receipts = new Receipt();
+            $receipts = $receipts->getReceiptsByFilters(
+                $db,
+                $_SESSION['collaborator']->getIdCompany(),
+                ($filter === "pagamentos") ? $collaborator : 0,
+                $startDate,
+                $endDate,
+                ($filter === "recebimentos") ? $service : 0
+            );
+            $reportsPdf->generatePDF($filter, $receipts, $startDate, $endDate);
+        } elseif ($filter === "agendamentos") {
+            $schedules = new Schedule();
+            $schedules = $schedules->getSchedulesByFilters(
+                $db,
+                $_SESSION['collaborator']->getIdCompany(),
+                $status,
+                $startDate,
+                $endDate,
+                intval($collaborator),
+                intval($service),
+                1,
+                10000
+            );
+            $schedules = $schedules['schedules'];
+            $reportsPdf->generatePDF('agendamentos', $schedules, $startDate, $endDate);
+        }
+    }
+    
    
 
 

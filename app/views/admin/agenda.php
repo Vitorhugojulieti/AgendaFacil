@@ -1,3 +1,7 @@
+<?php echo flash('resultInsertCollaborator');  ?>
+<?php echo flash('resultUpdateCollaborator');  ?>
+<?php echo flash('reultDeleteCollaborator');  ?>
+
 <main class="lg:w-5/6 w-full flex lg:absolute" style="left:17%; top:10%;">
     <?php require __DIR__ . '/../includes/nav.php'; ?>
 
@@ -59,33 +63,40 @@
                                     </td>
                                     <?php if ($schedule->getStatus() == 'cancelado') { ?>
                                         <td class="p-2 text-center">
-                                            <span class="bg-errorColor text-white rounded p-1">Ativo</span>
+                                            <span class="w-36 bg-errorColor text-white rounded p-1">Cancelado</span>
                                         </td>
                                     <?php } elseif ($schedule->getStatus() == 'confirmado') { ?>
                                         <td class="p-2 text-center">
-                                            <span class="bg-yellow text-white rounded p-1">Inativo</span>
+                                            <span class="w-36 bg-yellow text-white rounded p-1">Confirmado</span>
                                         </td>
                                     <?php } elseif ($schedule->getStatus() == 'concluido') { ?>
                                         <td class="p-2 text-center">
-                                            <span class="bg-yellow text-white rounded p-1">Inativo</span>
+                                            <span class="w-36 bg-sucessColor text-white rounded p-1">Concluido</span>
                                         </td>
                                     <?php } ?>
                                     
 
-                                        <!-- TODO arrumar aqui e paginacao + filtros -->
                                     <!-- collaborator actions -->
                                     <td class="flex items-center justify-center gap-4 p-2 text-center">
+                                        <a href="/admin/schedule/show/<?php echo $schedule->getId()?>"class="hover:underline">Detalhes</a>
                                     </td>
                                 </tr> 
                             <?php } ?> 
                     </tbody>
                 </table>
+                <div class="w-full flex items-center justify-between p-4 ">
+                    <span><?php echo 'Pagina '.$pagination['currentPage'].' de '.$pagination['totalPages']?></span>
+                    <div class="buttons flex items-center gap-4">
+                        <a href="/admin/schedule/<?php echo $pagination['currentPage'] != 1 ? $pagination['currentPage'] - 1 : '';?>" class="flex items-center gap-4 text-sm   "><i class='bx bx-left-arrow-alt text-2xl hover:scale-50'   ></i>Anterior</a>
+                        <a href="/admin/schedule/<?php echo $pagination['currentPage'] +1;?>" class="flex items-center gap-4 text-sm   ">Proxima<i class='bx bx-right-arrow-alt text-2xl hover:scale-50'  ></i></a>
+                    </div>
+                </div>
            
 
             <?php }else{ ?>
                         <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
                             <i class='bx bxs-info-circle text-4xl'></i>
-                            <span class="font-Urbanist font-semibold text-xl">Você não tem serviços cadastrados!</span>
+                            <span class="font-Urbanist font-semibold text-xl">Você não tem agendamentos!</span>
                         </div>
             <?php } ?>
             </div>
@@ -95,18 +106,68 @@
             
     </div>
     <!-- crud flash messages -->
-    <?php echo flash('resultInsertCollaborator');  ?>
-    <?php echo flash('resultUpdateCollaborator');  ?>
-    <?php echo flash('reultDeleteCollaborator');  ?>
+
+
+    
+    <dialog id="modalFilters" class="w-2/5 bg-white text-black rounded p-4 ">
+        <div class="w-full flex justify-between items-center pb-2 border-b border-b-lightGray mb-4">
+            <h2 class="text-xl font-Urbanist font-semibold" >Filtros</h2>  
+            <button id="btnCloseModalFilters" class="outline-none"><i class='bx bx-x text-2xl' style='color:#dbdbdb'  ></i></button>
+        </div>
+        <div  class="w-full flex flex-col gap-6">
+            <div class="flex flex-col justify-start gap-2 ">
+                <h4 class="text-base font-Urbanist font-semibold ">Data inicial</h4>
+                <div class="w-full flex flex-col gap-2 border border-lightGrayInput rounded p-2">
+                    <input type="date" name="minDate" id="inputStartDate" class="outline-none">
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-start gap-2 ">
+                <h4 class="text-base font-Urbanist font-semibold ">Data final</h4>
+                <div class="w-full flex flex-col gap-2 border border-lightGrayInput rounded p-2">
+                    <input type="date" name="maxDate" id="inputEndDate" class="outline-none">
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-start gap-2">
+                <h4 class="text-base font-Urbanist font-semibold ">Status</h4>
+                <div class="filter-status w-full flex items-center justify-between gap-8" id="containerStatus">
+                    <label for="radioCompleted" class="w-full flex items-center gap-2 bg-principal5 text-white justify-center p-2 rounded hover:cursor-pointer hover:underline">
+                        <input type="radio" name="status" value="concluido" id="radioCompleted" class="hidden">
+                        <span class="text-sm">Concluido</span>
+                    </label>
+
+                    <label for="radioConfirmed" class="w-full flex items-center gap-2 bg-principal5 text-white justify-center p-2 rounded hover:cursor-pointer hover:underline">
+                        <input type="radio" name="status" value="confirmado" id="radioConfirmed" class="hidden">
+                        <span class="text-sm">Confirmado</span>
+                    </label>
+
+                    <label for="radioCanceled" class="w-full flex items-center gap-2 bg-principal5 text-white justify-center p-2 rounded hover:cursor-pointer hover:underline">
+                        <input type="radio" name="status" value="cancelado" id="radioCanceled" class="hidden">
+                        <span class="text-sm">Cancelado</span>
+                    </label>
+
+                    <label for="radioAll" class="w-full flex items-center gap-2 bg-principal10 text-white justify-center p-2 rounded hover:cursor-pointer hover:underline">
+                        <input type="radio" name="status" value="" id="radioAll" class="hidden" checked>
+                        <span class="text-sm">Todos</span>
+                    </label>
+                
+                </div>
+            </div>
+
+            <div class="w-full flex justify-center items-center gap-4 mt-4">
+                <button id="btnReset" class="w-1/4 border border-grayInput text-principal10 text-sm p-2 rounded hover:underline ">Resetar</button>
+                <button id="btnFilter" class="w-1/4 bg-principal10 text-white text-sm text-center rounded p-2 border  hover:underline ">Aplicar</button>
+            </div>
+        </div>
+    </dialog>
+
 
     
 
-    <!-- <script type="module"  src="/assets/js/agendaAdmin.js"></script> -->
-    <!-- <script  src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6/main.min.js" defer></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6/main.min.js" defer></script> -->
+
     <script src='/assets/js/dist/index.global.min.js'></script>
-    <!-- <script src="js/bootstrap5/index.global.min.js"></script> -->
     <script src='/assets/js/dist/locales-all.global.min.js'></script>
-    <script    src="/assets/js/noModuleAgendaAdmin.js" defer></script>
+    <script type="module"  src="/assets/js/agenda.js" defer></script>
 
 </main>

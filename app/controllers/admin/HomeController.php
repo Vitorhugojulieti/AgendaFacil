@@ -131,6 +131,9 @@ class HomeController{
             }
            
             if(count($collaborators) > 0 && count($services) > 0 && count($dataLine['schedules'])>0 && count($dataLine['cancellations'])>0){
+                usort($columnChar, fn($a, $b) => $b['y'] <=> $a['y']);
+                $columnChar = array_slice($columnChar, 0, 5);
+                
                 $schedulesOfServices = [
                     'lineChart'=>$dataLine,
                     'donutChart'=>$dataDonut,

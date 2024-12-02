@@ -24,13 +24,13 @@ export default class generateDashboard{
       var options = {
           chart: {
               type: 'donut',
-              background: '#FFFF',
-              height: 650, // Define a altura igual para ambos os gráficos
+              background: '#F8F8FF',
+              height: 550, 
               dropShadow: {
-                  enabled: false,  // Habilita a sombra
+                  enabled: false,  
                
               },
-              width: '100%'
+              width: '90%'
           },
           title: {
               text: 'Serviços agendados',
@@ -196,16 +196,12 @@ export default class generateDashboard{
       var options = {
           series: dataSeries,
           chart: {
-              height: 450, // Define a altura igual para ambos os gráficos
+              height: 300, // Define a altura igual para ambos os gráficos
               type: 'line',
               stacked: false,
-              background: '#FFFF',
+              background: '#F8F8FF',
               zoom: { enabled: false },
               toolbar: { show: false },
-              dropShadow: {
-                  enabled: false,  // Habilita a sombra
-                 
-              }
           },
           title: {
               text: 'Análise de Agendamentos e Cancelamentos',
@@ -298,10 +294,19 @@ export default class generateDashboard{
         chart: {
         height: 350,
         type: 'bar',
-        background: '#ffffff',
+        background: '#F8F8FF',
         dropShadow: {
-          enabled: true // Desabilita a sombra
+          enabled: false // Desabilita a sombra
         },
+        title: {
+          text: 'Análise de Agendamentos e Cancelamentos',
+          align: 'center',
+          style: {
+              fontSize: '20px',
+              fontWeight: 'normal',
+              color: '#223249'
+          }
+      },
         events: {
           click: function(chart, w, e) {
             // console.log(chart, w, e)
@@ -319,17 +324,17 @@ export default class generateDashboard{
         }
       },
       dataLabels: {
-        enabled: false
+        enabled: true
       },
       legend: {
-        show: false
+        show: true
       },
    
       xaxis: {
         categories: data.map(item => (typeof item === 'object' ? item.x : item)),
         labels: {
           style: {
-            colors: colors,
+            colors: '#0000',
             fontSize: '12px'
           }
         }
@@ -340,6 +345,78 @@ export default class generateDashboard{
       chart.render();
     }
 
+    generateYearlyChart(container, data, modelSelector = null) {
+      const colors = ['#FF5733', '#33FF57', '#3357FF', '#F1C40F', '#8E44AD'];
+    
+      // Opções do gráfico
+      const options = {
+        series: [{ data: data }],
+        chart: {
+          id: 'barYear',
+          height: 300,
+          width: '100%',
+          type: 'bar',
+          events: {
+            dataPointSelection: function (e, chart, opts) {
+              const selectedData = opts.selectedDataPoints[0];
+              if (selectedData.length > 0) {
+                const yearData = chart.w.config.series[0].data[selectedData[0]];
+                console.log(`Selected Year: ${yearData.x}, Value: ${yearData.y}`);
+              } else {
+                console.log('No year selected.');
+              }
+            },
+          },
+          toolbar: { show: false },
+        },
+        plotOptions: {
+          bar: {
+            distributed: true,
+            horizontal: true,
+            barHeight: '40%',
+            dataLabels: { position: 'bottom' },
+          },
+        },
+        dataLabels: {
+          enabled: false,
+          formatter: (val, opt) => opt.w.globals.labels[opt.dataPointIndex],
+          dropShadow: { enabled: true },
+        },
+        colors: colors,
+        title: {
+          text: 'Relação de agendamentos por colaborador',
+          align: 'center',
+          style: {
+              fontSize: '20px',
+              fontWeight: 'normal',
+              color: '#223249'
+          }
+      },
+        yaxis: { labels: { show: true } },
+        tooltip: {
+          y: {
+            title: { formatter: (val, opts) => opts.w.globals.labels[opts.dataPointIndex] },
+          },
+        },
+      };
+    
+      // Renderizar o gráfico
+      const chart = new ApexCharts(container, options);
+      chart.render();
+    
+      // Configurar atualização de dados ao mudar o seletor (se aplicável)
+      if (modelSelector) {
+        document.querySelector(modelSelector).addEventListener('change', function () {
+          const newData = data.map(d => ({
+            x: d.x,
+            y: Math.floor(Math.random() * 500) + 100, // Exemplo de novos valores
+          }));
+          chart.updateSeries([{ data: newData }]);
+        });
+      }
+    }
+    
+
     init(){
         this.getData().then(data => {
             console.log(data);
@@ -347,7 +424,14 @@ export default class generateDashboard{
               this.generateDonutChart(this.containerDonutChart,data.donutChart);
               this.generateCombinedChart(this.containerLineChart,data.lineChart);
               // this.generateLineChart(this.containerLineChart,data.lineChart);
-              // this.generateColumnChart(this.containerColumnChart,data.columnChart);
+
+              const dataTeste = [
+                { x: '2020', y: 120 },
+                { x: '2021', y: 150 },
+                { x: '2022', y: 180 },
+              ];
+              
+              this.generateYearlyChart(this.containerColumnChart,data.columnChart);
             }else{
               this.container.innerHTML =` <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
                                               <i class='bx bxs-info-circle text-4xl'></i>

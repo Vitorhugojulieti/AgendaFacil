@@ -22,6 +22,7 @@ class ContactEmail extends Email{
         }
     }
 
+    //TODO enviar email para agendamento
     public static function sendConfirmationEmail(String $name,String $email){
          
          try {
@@ -38,9 +39,6 @@ class ContactEmail extends Email{
             $message = str_replace('{{name}}', $name, $template);
             $message = str_replace('{{code}}', $code, $message);
 
-            // $contactEmail->addEmbeddedImage(__DIR__ .'../../../public/assets/images/logo.png', 'logo_agenda');
-            // $message = str_replace('{{logo}}', 'cid:logo_agenda', $message);
-                    
             $contactEmail->setMessage($message);
             $contactEmail->send();
             return true;
@@ -49,6 +47,31 @@ class ContactEmail extends Email{
             return false;
          }
     }
+
+    public static function sendScheduleEmail(String $adminCompany,String $email){
+         
+        try {
+           $contactEmail = new ContactEmail();
+           $contactEmail->setTo(["email"=>$email,"name"=>$name]);
+           $contactEmail->setFrom(["email"=>"vitorhugojulieti@gmail.com","name"=>"vitor hugo"]);
+           $contactEmail->setSubject("Confirmar E-mail");
+
+           $code = CodeGenerator::generate(4);
+           $_SESSION['codeConfirmEmail'] = $code;
+   
+           $template = file_get_contents(__DIR__ .'../../views/templateEmail.html');
+               
+           $message = str_replace('{{name}}', $name, $template);
+           $message = str_replace('{{code}}', $code, $message);
+
+           $contactEmail->setMessage($message);
+           $contactEmail->send();
+           return true;
+
+        } catch (\Throwable $th) {
+           return false;
+        }
+   }
 }
 
 ?>

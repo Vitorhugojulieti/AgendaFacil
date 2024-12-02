@@ -150,5 +150,9 @@ class Cart{
     public static function removeClient(){
         unset($_SESSION['clientSelected']);
     }
+
+    public static function getClient(){
+        return $_SESSION['clientSelected'] ? $_SESSION['clientSelected'] : 0;
+    }
 }
 ?>

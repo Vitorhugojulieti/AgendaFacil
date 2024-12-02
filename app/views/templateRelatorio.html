@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Agendamentos</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; }
+        .container { width: 100%; max-width: 800px; margin: auto; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: #003366; }
+        .logo { width: 100px; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 8px; border: 1px solid #ddd; text-align: center; }
+        th { background-color: #003366; color: #fff; }
+        .total { text-align: right; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{TITLE}}</h1>
+            <p>Período: {{DATA_INICIO}} a {{DATA_FIM}}</p>
+        </div>
+        <table>
+            {{CABECALHO}}
+            {{DADOS_TABELA}}
+        </table>
+        <p class="total">Valor total: {{TOTAL_RECEBIDO}}</p>
+    </div>
+</body>
+</html>
