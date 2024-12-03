@@ -89,33 +89,54 @@ class Company implements ModelInterface, JsonSerializable{
         return $arrayObjectsCompany;
     }
 
-    public function getByLocation(Db $db, String $city,String $uf){
+    public function filterByLocationAndCategory(Db $db, String $city, String $uf, String $category = "", int $currentPage = 1, int $recordsPerPage = 10) {
         $db->setTable($this->table);
-        $companys = $db->query("*","city='{$city}' AND state='{$uf}'");
-        $arrayObjectsCompany =[];
-        foreach ($companys as $company){
-            $companyObject = new Company($company['logo'],
-                                        $company['name'],
-                                        $company['cnpj'],
-                                        $company['phone'],
-                                        $company['category'],
-                                        $company['cep'],
-                                        $company['road'],
-                                        $company['number'],
-                                        $company['district'],
-                                        $company['state'],
-                                        $company['city'],
-                                        $company['plan'],
-                                        $company['created_at'],
-                                        $company['registrationComplete'],
-                                        );
-
-            $companyObject->getServicesDb($db,$company['idCompany']);
-            $companyObject->setId($company['idCompany']);
-            array_push($arrayObjectsCompany,$companyObject);
+    
+        $where = "city = '{$city}' AND state = '{$uf}'";
+    
+        if ($category != "") {
+            $where .= " AND category = '{$category}'";
         }
-        return $arrayObjectsCompany;
+    
+        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
+        $companys = $paginationResult['data'];
+        $arrayObjectsCompany = [];
+    
+        foreach ($companys as $company) {
+            $companyObject = new Company(
+                $company['logo'],
+                $company['name'],
+                $company['cnpj'],
+                $company['phone'],
+                $company['category'],
+                $company['cep'],
+                $company['road'],
+                $company['number'],
+                $company['district'],
+                $company['state'],
+                $company['city'],
+                $company['plan'],
+                $company['created_at'],
+                $company['registrationComplete']
+            );
+    
+            $companyObject->getServicesDb($db, $company['idCompany']);
+            $companyObject->setId($company['idCompany']);
+            $arrayObjectsCompany[] = $companyObject;
+        }
+    
+        // Return the array of Company objects and pagination metadata
+        return [
+            'companys' => $arrayObjectsCompany,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
     }
+    
 
     public function getById(Db $db, int $id){
         $db->setTable($this->table);
@@ -184,55 +205,7 @@ class Company implements ModelInterface, JsonSerializable{
         return $idFound[0]['idCompany'];
     }
 
-    public function filterByLocationAndCategory($db,$location, $category, $currentPage = 1, $recordsPerPage = 10) {
-        $db->setTable($this->table);
-
-        $where = [];
-        if (!empty($location)) {
-            $where[] = "city='".$location['city']."' AND state='".$location['state']."'";
-        }
-        if (!empty($category)) {
-            $where[] = "category = '" . $category . "'";
-        }
-
-        $whereClause = !empty($where) ? implode(' AND ', $where) : null;
-        $order = 'name ASC';
-
-        $filteredCompanys = $db->paginate($currentPage, $recordsPerPage, '*', $whereClause, $order);
-
-        $arrayObjectsCompany =[];
-        foreach ($filteredCompanys['data'] as $company){
-            $companyObject = new Company($company['logo'],
-                                        $company['name'],
-                                        $company['cnpj'],
-                                        $company['phone'],
-                                        $company['category'],
-                                        $company['cep'],
-                                        $company['road'],
-                                        $company['number'],
-                                        $company['district'],
-                                        $company['state'],
-                                        $company['city'],
-                                        $company['plan'],
-                                        $company['created_at'],
-                                        $company['registrationComplete'],
-                                        );
-
-            $companyObject->getServicesDb($db,$company['idCompany']);
-            $companyObject->setId($company['idCompany']);
-            array_push($arrayObjectsCompany,$companyObject);
-        }
-
-            $pagination = [
-                'currentPage' => $filteredCompanys['currentPage'],
-                'recordsPerPage' => $filteredCompanys['recordsPerPage'],
-                'totalRecords' => $filteredCompanys['totalRecords'],
-                'totalPages' => $filteredCompanys['totalPages']
-            ];
-
-            return ['data'=>$arrayObjectsCompany,'pagination'=>$pagination];
-    }
-
+  
     public function insert(Db $db){
         $db->setTable($this->table);
         

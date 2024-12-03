@@ -80,7 +80,7 @@
                     <h3 class="font-Urbanist font-semibold text-black text-xl">Selecionar serviços</h3>
                     <?php if(count($services) != 0){ ?>
 
-                                <?php foreach ($services as $index => $service) { ?>
+                        <?php foreach ($services as $index => $service) { ?>
                                     <section class="acordion active service w-full bg-white p-2 border border-lightGray rounded-lg shadow shadow-borderFormColor " >
                                         <div class="col1 w-full flex  justify-start">
                                             <div class="circle bg-sucessColor text-white text-center w-6 h-6 rounded-full flex items-center justify-center">
@@ -90,7 +90,7 @@
 
                                         <div class="col2 w-full flex flex-col ml-4">
                                             <div class="details mr-8 pb-2 flex justify-between items-center gap-8 border-b border-b-lightGray box-border" id="services">
-                                                <span class="flex items-center gap-4 font-Poppins text-lg font-semibold">
+                                                <span class="flex items-center gap-4 font-Poppins text-lg">
                                                 
                                                     <?php echo ucfirst($service->getName()); ?>
                                                 </span>
@@ -98,16 +98,23 @@
                                             </div>
 
                                             <div class="collaborators pt-2">
-                                                <div class="flex gap-4 items-end">
-                                                    <span class="font-Poppins text-base ">Funcionario: </span>
-                                                    <div class="collaborator flex items-center gap-2">
-                                                        <img src="<?php echo IMAGES_DIR.$service->getCollaborators()[0]->getAvatar() ?>" alt="avatar" class="redondShapeImageCollaborator" style="width:2rem; height:2rem;">
-                                                        <span class="font-Poppins text-lg "><?php echo $service->getCollaborators()[0]->getName()?></span>
-                                                        <input type="hidden" name="collaborator[<?php echo $index?>]" value="<?php echo $service->getCollaborators()[0]->getId()?>"   >
-                                                    </div>
-                                                    <button type="button" id="btnOpenModalChooseCollaborator" class="text-xs bg-principal10 text-white font-Poppins rounded p-2 hover:underline">Alterar</button>
-                                                </div>
+                                                <span class="font-Poppins text-lg pt-2">Colaboradores disponiveis</span>
 
+                                                <div class="body w-full pt-4">
+                                                    <div class="collaborators-service w-full flex gap-6">
+                                                        <?php if(count($service->getCollaborators()) !== 0){ ?>
+                                                            <?php foreach ($service->getCollaborators() as $indexCollaborator => $collaborator) {?>
+                                                                <div class="collaborator-selection w-max flex gap-4 p-2" data-service-index="<?php echo $index; ?>">
+                                                                    <label for="collaborator<?php echo $collaborator->getId()?>" class="labelCollaborator flex flex-col items-center gap-2 hover:cursor-pointer <?php echo $indexCollaborator == 0 ? 'collaborator-selected' : ''?>" onclick="selectCollaborator(<?php echo $index; ?>, <?php echo $collaborator->getId(); ?>)"> 
+                                                                        <img src="<?php echo IMAGES_DIR.$collaborator->getAvatar()?>" alt="" class="collaborator redondShapeImageCollaborator  " style="width:5rem; height:5rem;">
+                                                                        <input type="radio" name="collaborator[<?php echo $index?>]" value="<?php echo $collaborator->getId()?>" id="collaborator<?php echo $collaborator->getId()?>" class="hidden"  <?php echo $indexCollaborator == 0 ? 'checked' : ''?>>
+                                                                        <span class="font-Poppins text-sm"><?php echo $collaborator->getName()?></span>
+                                                                    </label>
+                                                                </div>
+                                                            <?php } ?>  
+                                                        <?php } ?>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 

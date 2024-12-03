@@ -20,10 +20,20 @@ class HomeController{
         $db = new Db();
         $db->connect();
         $companys = new Company();
-        // $companys = new Company();
-        // $companys = $companys->getAll($db);
+        $currentPage = 1;
+        $recordsPerPage = 10;
+
+        if(isset($args[0])){
+            $currentPage = intval($args[0]);
+        }
+
+        $category = isset($_GET['category']) ? $_GET['category'] : "";
+
         if(isset($_SESSION['location'])){
-            $companys = $companys->filterByLocationAndCategory($db,['city'=>$_SESSION['location']['localidade'],'state'=>$_SESSION['location']['uf']],'',1,10);
+            $companys = $companys->filterByLocationAndCategory($db,$_SESSION['location']['localidade'],$_SESSION['location']['uf'],$category,$currentPage,$recordsPerPage);
+            $pagination = $companys['pagination'];
+            $companys = $companys['companys'];
+
         }else{
             $companys = ["data"=>[]];
         }
@@ -31,10 +41,11 @@ class HomeController{
         $this->view = 'home.php';
         $this->data = [
             'title'=>'Agenda facil',
-            'companys'=>$companys['data'],
+            'companys'=>$companys,
             'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
             'breadcrumb'=>Breadcrumb::get(),
-            'navActive'=>'agenda'
+            'navActive'=>'agenda',
+            'pagination'=>$pagination
         ];
 
         if(!isset($_SESSION['user']) || !isset($_SESSION['auth'])) {

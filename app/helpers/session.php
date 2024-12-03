@@ -1,6 +1,7 @@
 <?php
 use app\classes\Flash;
-
+use app\models\database\Db;
+use app\models\Notification;
 
 function verifySession(){
     // Verifica se a sessão está inativa
@@ -33,4 +34,50 @@ function getCompanyActive(){
     }
 }
 
-?>
+function setCompanyNotifications(){
+        $db = new Db();
+        $db = $db->connect();
+
+        $notifications = new Notification();
+        $notifications = $notifications->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
+        $_SESSION['notifications'] = $notifications;
+}
+function getCompanysNotifications() {
+    // setCompanyNotifications();
+    $html = ''; 
+
+    if (isset($_SESSION['notifications']) && count($_SESSION['notifications']) > 0) {
+            $unmarkedNotifications = 0;
+        foreach ($_SESSION['notifications'] as $notification) { 
+            if($notification->getNotified() === 0){
+                $unmarkedNotifications += 1;
+            }
+            $_SESSION['unmarkedNotifications'] = $unmarkedNotifications;
+
+            $now = new DateTime(); 
+            $interval = $now->diff($notification->getDate());
+
+            // Usando o operador de concatenação correto "."
+            $html .= '<div class="w-full ' . ($notification->getNotified() === 0 ? 'bg-grayNotification' : 'bg-white') . ' flex gap-4 items-center p-2 border-b border-b-grayInput">
+                        <div class="circle-notification">
+                            <i class="bx bxs-message text-2xl" style="color:#ffff"></i>
+                        </div>
+                        <div class="bodyNotification flex flex-col items-start gap-1">
+                            <span class="text-base text-black font-semibold font-Urbanist">' . $notification->getMessage() . '</span>
+                            <span class="text-sm">' . 'Há ' . $interval->i . ' minutos' . '</span>
+                            <a href="' . $notification->getLink() . '" class="text-sm hover:underline">Ver detalhes</a>
+                        </div>
+                    </div>';
+        }
+    } else {
+        // Se não houver notificações, exibe uma mensagem informando
+        $html .= '<div class="w-full text-grayInput flex flex-col gap-2 items-center justify-center p-12">
+                    <i class="bx bxs-info-circle text-4xl"></i>
+                    <span class="font-Urbanist font-semibold text-xl">Você não tem notificações!</span>
+                  </div>';
+    }
+
+    return $html;
+}
+
+

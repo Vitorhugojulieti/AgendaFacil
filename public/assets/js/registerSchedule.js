@@ -125,20 +125,18 @@ document.addEventListener('click',(e)=>{
 
 
 function selectCollaborator(serviceIndex, collaboratorId){
-    let serviceDiv = document.querySelector(`.collaborator-selection[data-service-index='${serviceIndex}']`);
-    console.log('colID:'+ collaboratorId);
-    console.log('service:'+serviceIndex);
-    console.log(serviceDiv);
-        
-    serviceDiv.querySelectorAll('.labelCollaborator').forEach((label) => {
+    let servicesDiv = document.querySelectorAll(`.collaborator-selection[data-service-index='${serviceIndex}']`);
+    servicesDiv.forEach((div)=>{
+        let label = div.querySelector('.labelCollaborator');
         label.classList.remove('collaborator-selected'); 
-    });
-    
-    const selectedLabel = serviceDiv.querySelector(`label[for='collaborator${collaboratorId}']`);
-    console.log(selectedLabel);
-    selectedLabel.classList.add('collaborator-selected');
-    
-    selectedLabel.querySelector('input').checked = true;
+
+        const selectedLabel = div.querySelector(`label[for='collaborator${collaboratorId}']`);
+        if(selectedLabel != null){
+            selectedLabel.querySelector('input').checked = true;
+            selectedLabel.classList.add('collaborator-selected');
+        }
+    })
 }
+
 
 window.selectCollaborator = selectCollaborator;

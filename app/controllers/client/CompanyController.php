@@ -79,6 +79,33 @@ class CompanyController implements ControllerInterface{
     public function destroy(array $args){
        
     }
+
+    public function searchCompany(){
+        //evita erros com o mvc
+        $this->master = 'masterapi.php';
+        $this->view = 'api.php';
+        $this->data = [
+            'title'=>'api',
+        ];
+
+        if (isset($_GET['query'])) {
+            $query = $_GET['query'];
+            $searchTerm = "%" . $query . "%";
+
+            $db = new Db();
+            $db->connect();
+
+            $db->setTable("company");
+            $companys = $db->query("*","name LIKE '$searchTerm' ");
+
+            header('Content-Type: application/json');
+            echo json_encode($companys);
+            exit();
+        }else {
+            header('HTTP/1.1 400 Bad Request');
+            echo json_encode(['error' => 'Parameter "query" is required']);
+        }
+}
 }
 
 ?>

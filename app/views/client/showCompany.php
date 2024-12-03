@@ -8,7 +8,7 @@
                 <div class="details p-4 w-full flex justify-between items-center ">
                     <div class="flex items-center gap-8">
                         <img src="<?php echo '../../'.$company->getLogo() ?>" alt="" class="redondShapeImageCollaborator" style="width:7rem;height:7rem;">
-                        <div class="flex flex-col gap-1">
+                        <div class="flex flex-col gap-2">
                             <div class="flex items-center gap-4">
                                 <h2 class="font-Urbanist font-semibold text-3xl"><?php echo $company->getName()?></h2>
                                 <div class="flex items-start gap-2">
@@ -18,27 +18,13 @@
                             </div>
 
                             <h3><span class="font-semibold">Endereço:</span> <?php echo $company->getRoad(). ' - Numero: '.$company->getNumber() .' - '. $company->getCity().'-'. $company->getState()?></h3>
-                            <div class="flex items-center gap-4">
-                               
+                            <div class="flex items-center gap-6">
+                                <a href="tel:<?php echo $company->getPhone()?>" class="outline-none p-2 rounded bg-transparent flex items-center gap-4 border border-lightGray"><i class='bx bx-phone text-2xl' style='color:#223249'></i>Ligar</a>
+                                <button id="btnShare" onclick="setShareData('<?php echo $company->getName(); ?>', 'Conheça a empresa <?php echo $company->getName(); ?> no AgendaFacil', '<?php echo IMAGES_DIR . 'company/show/' . $company->getId(); ?>')" class="outline-none p-2 rounded bg-transparent flex items-center gap-4 border border-lightGray"><i class='bx bxs-share-alt text-2xl' style='color:#223249'  ></i>Compartilhar</button>
                             </div>
+
                         </div>
-                        <div class="flex flex-col">
-                            <?php $daysOfWeek = ['Domingo','Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];?>
-                            <?php foreach ($daysOfWeek as $key => $dayName) { ?>
-                                <?php $hour = $company->getHourByDay($key); // Método que retorna as horas de acordo com o índice do dia ?>
-                                
-                                <?php if ($hour) { ?>
-                                    <div>
-                                        <span><?php echo $dayName; ?></span>
-                                        <span><?php echo 'Manhã ' . $hour->getOpeningHoursMorningStart()->format('H:i') . ' as ' . $hour->getOpeningHoursMorningEnd()->format('H:i'); ?></span>
-                                        <span><?php echo 'Tarde ' . $hour->getOpeningHoursAfternoonStart()->format('H:i') . ' as ' . $hour->getOpeningHoursAfternoonEnd()->format('H:i'); ?></span>
-                                    </div>
-                                <?php } else { ?>
-                                    <div><?php echo $dayName . ' Fechado'; ?></div>
-                                <?php } ?>
-                            <?php } ?>
-                        </div>
-                        <button id="btnShare" class="outline-none border-none bg-transparent"><i class='bx bxs-share-alt text-3xl' style='color:#223249'  ></i></button>
+                        
                     </div>
                 </div>
 
@@ -49,11 +35,6 @@
                             <span >Serviços disponiveis</span>
                         </label>
 
-                        <label class="w-full opt text-center  border-b-2 border-lightGray pb-2   hover:cursor-pointer" for="inputPack">
-                            <input type="radio" name="opt" id="inputPack" class="hidden" name="opt" value="packs">
-                            <span>Pacotes</span>
-                        </label> 
-
                         <label class="w-full opt text-center  border-b-2 border-lightGray pb-2   hover:cursor-pointer" for="inputGalery">
                             <input type="radio" name="opt" id="inputGalery" class="hidden" name="opt" value="galery">
                             <span>Galeria</span>
@@ -61,7 +42,7 @@
 
                         <label class="w-full opt text-center  border-b-2 border-lightGray pb-2   hover:cursor-pointer" for="inputDetails">
                             <input type="radio" name="opt" id="inputDetails" class="hidden" name="opt" value="details">
-                            <span>Avaliações</span>
+                            <span>Sobre</span>
                         </label>
                     </nav>
 
@@ -90,54 +71,14 @@
                         </div>
                     </section>
 
-                    <section id="packs" class="bg-bgPrincipal w-full h-full p-4 hidden flex-col gap-4">
-                        <h2 class="font-Urbanist font-semibold text-xl flex items-center gap-4">Pacotes disponiveis <span class="p-2 border border-white text-white rounded bg-principal5 text-xs"><?php echo count($vouchers).' Resultados';?></span></h2>
-
-                        <div class="packs flex flex-col items-center gap-4">
-                            <?php if(isset($vouchers) && count($vouchers) != 0){?>
-                                <?php foreach ($vouchers as $voucher) { ?>
-                                    <div class=" w-full flex flex-col items-center border border-lightGray rounded-lg shadow shadow-borderFormColor text-white">
-                                        <div class="w-full bg-principal10 flex  items-center justify-between gap-4 p-6 rounded-lg">
-                                                                                    
-                                            <div class="w-full flex items-center justify-between">
-                                                <div class="w-full flex flex-col gap-2 items-starts">
-                                                    <span class="text-2xl"><?php echo $voucher->getName()?></span>
-                                                    <span class="text-base"><?php echo 'Descrição: '.$voucher->getDescription() ?></span>
-                                                </div>
-                                                <span class="w-1/6 text-xl"><?php echo  'R$ '.number_format($voucher->getAmount(), 2, ',', '.'); ?></span>
-                                            </div>
-
-                                            <div class="w-1/4 flex items-center justify-between  pl-4 border-l border-lightGray">
-                                                <span class="flex flex-col items-center gap-2">
-                                                    <span class="text-3xl "><?php echo $voucher->getDiscount().' %';?></span>
-                                                    <span class="text-sm ">Desconto</span>
-                                                </span>
-                                                <a href="/voucher/show/<?php echo $voucher->getId()?>" class="bg-white text-principal10 font-Poppins p-2 rounded hover:underline">Detalhes</a>
-                                            </div>
-                                        </div>
-                                        <div class="w-full p-4 bg-white text-base text-text-gray rounded-lg flex items-center gap-2">
-                                            <i class="bx bxs-info-circle text-xl" style="color:#71717a"  ></i>
-                                            <span><?php echo 'Validade: '.$voucher->getDateExpiration()->format('d-m-Y')?></span>
-                                        </div>
-                                    </div>
-                                <?php } ?>
-                                
-                            <?php }else{ ?>
-                                <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
-                                    <i class='bx bxs-info-circle text-4xl'></i>
-                                    <span class="font-Urbanist font-semibold text-xl">A empresa ainda não tem pacotes cadastrados!</span>
-                                </div>
-                            <?php } ?>
-                        </div>
-                    </section>
-
+                   
                     <section id="galery" class="bg-bgPrincipal w-full h-full p-4 hidden flex-col gap-4">
                         <h2 class="font-Urbanist font-semibold text-xl flex items-center gap-4">Galeria da empresa</h2>
 
                             <?php if(isset($images) && count($images) != 0){?>
-                               <div class="w-full flex flex-col gap-4">
+                               <div class="w-full flex flex-wrap gap-4">
                                 <?php foreach ($images as $image) { ?>
-                                        <div class="w-2/4 border border-lightGray rounded-lg shadow shadow-borderFormColor p-2">
+                                        <div class="w-1/4 border border-lightGray rounded-lg shadow shadow-borderFormColor p-2">
                                             <img src="<?php echo IMAGES_DIR.$image->getLink()?>" alt="" loading="lazy" >
                                         </div>
                                     <?php } ?>
@@ -151,40 +92,72 @@
                             <?php } ?>
                     </section>
 
-                    <section id="details" class="bg-bgPrincipal w-full h-full p-4  hidden flex-col gap-4">
-                        <h2 class="font-Urbanist font-semibold text-xl flex items-center gap-4">Avaliações da empresa</h2>
-                            <?php if(isset($evaluations) && count($evaluations) != 0){?>
-                                <div class="w-full flex flex-col gap-4">
-                                    <?php foreach ($evaluations as $evaluation) { ?>
-                                            <div class="w-1/4 bg-white flex flex-col items-center gap-2 border border-lightGray rounded-lg shadow shadow-borderFormColor p-2">
-                                                <div class="profile flex flex-col gap-2 items-center">
-                                                    <img class="redondShapeImageCollaborator" style="width:4rem; height:4rem;" src="<?php echo $evaluation->getClient()->getAvatar()?>" alt="" loading="lazy" >
-                                                    <span class="font-semibold text-base"><?php echo $evaluation->getClient()->getName()?></span>
-                                                </div>
-                                                <div class="note">
-                                                    <?php for ($i=0; $i < 5; $i++) { ?>
-                                                        <?php if($i < (int) $evaluation->getNote()){ ?>
-                                                            <i class='bx bxs-star text-2xl' style='color:#fbec5d'  ></i>
-                                                        <?php }elseif ($i == (int) $evaluation->getNote() && ($evaluation->getNote() - (int) $evaluation->getNote()) >= 0.5) { ?>
-                                                            <i class='bx bxs-star-half text-2xl' style='color:#fbec5d' ></i>
-                                                        <?php }else{ ?>
-                                                            <i class='bx bx-star text-2xl' style='color:#C1C1C1'  ></i>
-                                                        <?php } ?>
-                                                    <?php } ?>
-                                                </div>
-                                                <div class="feedback">
-                                                    <p class="text-sm"><?php echo $evaluation->getFeedback()?></p>
-                                                </div>
-                                            </div>
+                    <section id="details" class="bg-bgPrincipal w-full h-full p-4 hidden  gap-4">
+                       
+
+                        <?php if(isset($evaluations) && count($evaluations) != 0){?>
+                            <div class="w-full flex flex-col gap-4">
+                             <h2 class="font-Urbanist font-semibold text-xl flex items-center gap-4">Avaliações da empresa</h2>
+
+                                <?php foreach ($evaluations as $evaluation) { ?>
+                                    <div class="w-1/4 bg-white flex flex-col items-center gap-2 border border-lightGray rounded-lg shadow shadow-borderFormColor p-2">
+                                        <div class="profile flex flex-col gap-2 items-center">
+                                            <img class="redondShapeImageCollaborator" style="width:4rem; height:4rem;" src="<?php echo $evaluation->getClient()->getAvatar()?>" alt="" loading="lazy" >
+                                            <span class="font-semibold text-base"><?php echo $evaluation->getClient()->getName()?></span>
+                                        </div>
+                                        <div class="note">
+                                            <?php for ($i=0; $i < 5; $i++) { ?>
+                                                <?php if($i < (int) $evaluation->getNote()){ ?>
+                                                    <i class='bx bxs-star text-2xl' style='color:#fbec5d'  ></i>
+                                                <?php }elseif ($i == (int) $evaluation->getNote() && ($evaluation->getNote() - (int) $evaluation->getNote()) >= 0.5) { ?>
+                                                    <i class='bx bxs-star-half text-2xl' style='color:#fbec5d' ></i>
+                                                <?php }else{ ?>
+                                                    <i class='bx bx-star text-2xl' style='color:#C1C1C1'  ></i>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </div>
+                                        <div class="feedback">
+                                            <p class="text-sm"><?php echo $evaluation->getFeedback()?></p>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        <?php }else{ ?>
+                            <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
+                                <i class='bx bxs-info-circle text-4xl'></i>
+                                <span class="font-Urbanist font-semibold text-xl">A empresa ainda não tem avaliações!</span>
+                            </div>
+                        <?php } ?>
+
+
+                        <div class="flex flex-col w-full bg-white items-start gap-2 border border-lightGray rounded-lg shadow shadow-borderFormColor p-2">
+                            <h2 class="font-Urbanist font-semibold text-xl flex items-center gap-4">Horario de funcionamento</h2>
+                            <?php $daysOfWeek = ['Domingo','Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']; ?>
+                            <?php foreach ($daysOfWeek as $key => $dayName) { ?>
+                                <?php $hour = $company->getHourByDay($key); ?>
+                                
+                                <div class="flex  items-start justify-between w-full">
+                                    <!-- Coluna para o nome do dia -->
+                                    <div class="flex flex-col items-start w-1/2">
+                                        <span class="text-grayInput<?php echo ($key == date('w')) ? 'font-bold' : ''; ?> ">
+                                            <?php echo $dayName; ?>
+                                        </span>
+                                    </div>
+
+                                    <!-- Coluna para os horários -->
+                                    <div class="flex justify-end  gap-2 w-1/2 ">
+                                        <?php if ($hour) { ?>
+                                            <span class=" <?php echo !($key == date('w')) ? 'text-grayInput' : ''; ?>"><?php echo '<b>Manhã</b> ' . $hour->getOpeningHoursMorningStart()->format('H:i') . ' às ' . $hour->getOpeningHoursMorningEnd()->format('H:i'); ?></span>
+                                            <span class=" <?php echo !($key == date('w')) ? 'text-grayInput' : ''; ?>"><?php echo '<b>Tarde</b>' . $hour->getOpeningHoursAfternoonStart()->format('H:i') . ' às ' . $hour->getOpeningHoursAfternoonEnd()->format('H:i'); ?></span>
+                                        <?php } else { ?>
+                                            <span class="text-red">Fechado</span>
                                         <?php } ?>
-                                </div>
-                            <?php }else{ ?>
-                                <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
-                                    <i class='bx bxs-info-circle text-4xl'></i>
-                                    <span class="font-Urbanist font-semibold text-xl">A empresa ainda não tem avaliações!</span>
+                                    </div>
                                 </div>
                             <?php } ?>
+                        </div>
                     </section>
+
                 </div>
 
         </main>

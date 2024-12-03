@@ -63,14 +63,49 @@ class ScheduleController{
     public function index(array $args){
         $db = new Db();
         $db->connect();
-       
+
+        $schedules = new Schedule();
+
+        $currentPage = 1;
+        $recordsPerPage = 10;
+
+        if(isset($args[0])){
+            $currentPage = intval($args[0]);
+        }
+     
+
+        $startDate = isset($_GET['startDate']) ? intval($_GET['startDate']) : '';
+        $endDate = isset($_GET['endDate']) ? intval($_GET['endDate']) : '';
+        $status = isset($_GET['status']) ? $_GET['status'] : '';
+
+      
+    
+        if (!isset($_GET['startDate']) && !isset($_GET['endDate']) && !isset($_GET['status'])) {
+            $result = $schedules->getByClientPaginate($db, $_SESSION['user']->getId(), $currentPage, $recordsPerPage);
+        } else {
+            $result = $schedules->getSchedulesClientByFilters(
+                $db,
+                $_SESSION['user']->getId(),
+                $status,
+                $startDate,
+                $endDate,
+                $currentPage,
+                $recordsPerPage
+            );
+        }
+    
+        $pagination = $result['pagination'];
+        $schedules = $result['schedules'];
+
+
 
         $this->view = 'client/agenda.php';
         $this->data = [
             'title'=>'Agenda | AgendaFacil',
-            // 'schedules'=>$schedules,
+            'navActive'=>'agenda',
+            'schedules'=>$schedules,
+            'pagination'=>$pagination,
             'location'=> isset($_SESSION['location']) ? $_SESSION['location']['localidade'].'-'.$_SESSION['location']['uf'] : 'Não encontrado!',
-            'breadcrumb'=>Breadcrumb::get()
         ];
     }
 

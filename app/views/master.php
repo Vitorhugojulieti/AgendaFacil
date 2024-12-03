@@ -18,7 +18,7 @@
 
     <title><?php echo $title?></title>
 </head>
-<body class="overflow-x-hidden scroll-smooth relative">
+<body class="overflow-x-hidden scroll-smooth ">
 <?php require 'includes/header.php'; ?>
     <?php require VIEW_PATH.$this->controller->view; ?>
 </body>

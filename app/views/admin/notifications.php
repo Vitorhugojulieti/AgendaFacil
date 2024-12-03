@@ -54,7 +54,7 @@
                            
                                 <!-- collaborator actions -->
                                 <td class="flex items-center justify-center gap-4 p-2 text-center">
-                                    <a  class="hover:underline" href="<?php echo $notification->getLink();?>">Detalhes</a>
+                                    <a  class="hover:underline" href="<?php echo IMAGES_DIR.$notification->getLink();?>">Detalhes</a>
                                     <a class="hover:underline" href="/admin/notification/markNotified/<?php echo $notification->getId();?>" >Marcar como lida</a>
                                 </td>
                             </tr> 
@@ -74,69 +74,6 @@
     </div>
 
 
-     <!-- modais -->
-    <dialog id="modalService" class="w-1/4 bg-white text-black rounded p-4 ">
-        <div class="w-full flex justify-between items-center mb-4">
-            <div class="flex flex-col gap-4 items-start ">
-                <i class='bx bx-trash text-3xl' style='color:#223249'  ></i>
-                <h2 class="text-xl text-principal10 font-Poppins font-semibold" id="messageDelete"></h2>  
-            </div>
-        </div>
-        <div class="w-full flex items-center gap-4">
-            <button id="btnCloseModalService"  class="w-full border border-grayInput text-principal10 p-2 rounded hover:underline ">Cancelar</button>
-            <a id="btnDelete"  class="w-full bg-red text-white text-center rounded p-2 border  hover:underline ">Inativar</a>
-        </div>
-    </dialog>
-
-     <dialog id="modalFilters" class="w-1/4 bg-white text-black rounded p-4 ">
-        <div class="w-full flex justify-between items-center pb-2 border-b border-b-lightGray mb-4">
-            <h2 class="text-xl font-Urbanist font-semibold" >Filtros</h2>  
-            <button id="btnCloseModalFilters" class="outline-none"><i class='bx bx-x text-2xl' style='color:#dbdbdb'  ></i></button>
-        </div>
-        <div  class="flex flex-col gap-6">
-            <div class="flex flex-col justify-start gap-2 ">
-                <h4 class="text-base font-Urbanist font-semibold ">Duração</h4>
-                <div class="w-full flex flex-col gap-2">
-                    <input type="range" name="maxDuration" id="inputRangeDuration" step=10 value="0">
-                    <span id="viewRangeDuration"></span>
-                </div>
-            </div>
-
-            <div class="flex flex-col justify-start gap-2 ">
-                <h4 class="text-base font-Urbanist font-semibold ">Preço</h4>
-                <div class="w-full flex flex-col gap-2">
-                    <input type="range" name="maxPrice" id="inputRangePrice" step=10 value="0">
-                    <span id="viewRangePrice"></span>
-                </div>
-            </div>
-
-            <div class="flex flex-col justify-start gap-2">
-                <h4 class="text-base font-Urbanist font-semibold ">Status</h4>
-                <div class="filter-status w-full flex items-center justify-between gap-8" id="containerStatus">
-                    <label for="radioActive" class="w-full flex items-center gap-2 bg-principal5 text-white justify-center p-2 rounded hover:cursor-pointer hover:underline">
-                        <input type="radio" name="status" value="1" id="radioActive" class="hidden">
-                        <span class="text-sm">Ativos</span>
-                    </label>
-
-                    <label for="radioInactive" class="w-full flex items-center gap-2 bg-principal5 text-white justify-center p-2 rounded hover:cursor-pointer hover:underline">
-                        <input type="radio" name="status" value="0" id="radioInactive" class="hidden">
-                        <span class="text-sm">Inativos</span>
-                    </label>
-
-                    <label for="radioAll" class="w-full flex items-center gap-2 bg-principal10 text-white justify-center p-2 rounded hover:cursor-pointer hover:underline">
-                        <input type="radio" name="status" value="" id="radioAll" class="hidden" checked>
-                        <span class="text-sm">Todos</span>
-                    </label>
-                
-                </div>
-            </div>
-
-            <div class="w-full flex justify-center items-center gap-4 mt-4">
-                <button id="btnReset" class="w-1/4 border border-grayInput text-principal10 text-sm p-2 rounded hover:underline ">Resetar</button>
-                <button id="btnFilter" class="w-1/4 bg-principal10 text-white text-sm text-center rounded p-2 border  hover:underline ">Aplicar</button>
-            </div>
-        </div>
-    </dialog>
 
     <script type="module"  src="/assets/js/service.js"></script>
 

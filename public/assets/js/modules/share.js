@@ -2,13 +2,17 @@ export default class share{
     constructor(button,modalObject){
         this.button = document.querySelector(button);
         this.modalObject = modalObject;
-        this.shareData = {
-            title: 'Título do link',
-            text: 'Texto que descreve o link',
-            url: 'https://www.exemplo.com'
-          };
+       
     }
 
+    setShareData(title,text,url){
+      this.shareData = {
+        title: title,
+        text: text,
+        url: url
+      };
+    }
+    
     init(){
         this.button.addEventListener('click', async () => {
             if (navigator.share) {

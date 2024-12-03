@@ -5,9 +5,12 @@ import share from "./modules/share.js";
 
 const modalShareManager = new modals();
 const shareButton = new share('#btnShare',modalShareManager);
-shareButton.init();
+window.setShareData = function(title, text, url) {
+    shareButton.setShareData(title, text, url);
+    shareButton.init();
+};
 
-const menuTabManager = new menuTab('#menuTab',['#services','#packs','#galery','#details']);
+const menuTabManager = new menuTab('#menuTab',['#services','#galery','#details']);
 menuTabManager.init();
 
 const searchServices = new search('.service','#inputSearchService');

@@ -13,12 +13,11 @@
 
                         <legend class="w-full text-grayInput font-Urbanist font-semibold text-xl  border-b border-b-lightGray">Selecionar data e horario</legend>
 
-                        <div class="body w-full flex gap-8 pt-4">
-                            <div class="w-2/4 hidden" id="containerCalendar"></div>
+                        <div class="body w-full flex flex-col gap-8 pt-4">
                             <div class="w-full bg-white border-lightGray shadow-sm shadow-black rounded-md p-2" id="calendar"></div>
 
 
-                            <section class="bg-white  w-2/4 flex flex-col gap-2 border border-lightGray shadow-sm shadow-black rounded-md p-2 " id="times">
+                            <section class="bg-white  w-full flex flex-col gap-2 border border-lightGray shadow-sm shadow-black rounded-md p-2 " id="times">
                                 <h2 class="font-Poppins text-lg text-black w-full" id="legendTimes"></h2>
                                 <div class="w-full  max-h-60 flex flex-col gap-4  " id="containerTimes">
                         
@@ -55,7 +54,7 @@
                                                         <?php if(count($service->getCollaborators()) !== 0){ ?>
                                                             <?php foreach ($service->getCollaborators() as $indexCollaborator => $collaborator) {?>
                                                                 <div class="collaborator-selection w-max flex gap-4 p-2" data-service-index="<?php echo $index; ?>">
-                                                                    <label for="collaborator<?php echo $collaborator->getId()?>" class="labelCollaborator flex flex-col items-center gap-2 hover:cursor-pointer" onclick="selectCollaborator(<?php echo $index; ?>, <?php echo $collaborator->getId(); ?>)"> 
+                                                                    <label for="collaborator<?php echo $collaborator->getId()?>" class="labelCollaborator flex flex-col items-center gap-2 hover:cursor-pointer <?php echo $indexCollaborator == 0 ? 'collaborator-selected' : ''?>" onclick="selectCollaborator(<?php echo $index; ?>, <?php echo $collaborator->getId(); ?>)"> 
                                                                         <img src="<?php echo IMAGES_DIR.$collaborator->getAvatar()?>" alt="" class="collaborator redondShapeImageCollaborator  " style="width:5rem; height:5rem;">
                                                                         <input type="radio" name="collaborator[<?php echo $index?>]" value="<?php echo $collaborator->getId()?>" id="collaborator<?php echo $collaborator->getId()?>" class="hidden"  <?php echo $indexCollaborator == 0 ? 'checked' : ''?>>
                                                                         <span class="font-Poppins text-sm"><?php echo $collaborator->getName()?></span>

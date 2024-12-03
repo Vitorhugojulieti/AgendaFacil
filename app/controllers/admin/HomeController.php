@@ -46,18 +46,6 @@ class HomeController{
             }
         }
         
-        $notifications = new Notification();
-        $notifications = $notifications->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
-
-        $unmarkedNotifications = 0;
-        //TODO criar metodo para pegar total de nao lidas?
-
-        foreach ($notifications as $notification) {
-            if($notification->getNotified() === 0){
-                $unmarkedNotifications += 1;
-            }
-        }
-
         $schedules = array_slice($schedules, 0, 5);
 
         $this->view = 'admin/homeAdmin.php';
@@ -68,8 +56,6 @@ class HomeController{
             'totalSchedules'=>$totalSchedules,
             'totalServices'=>$services,
             'nameCollaborator'=>$_SESSION['collaborator']->getName(),
-            'notifications' =>$notifications,
-            'unmarkedNotifications'=>$unmarkedNotifications,
             'breadcrumb'=>Breadcrumb::getForAdmin(),
             'receipts'=>$receipts,
             'schedules'=>$schedules

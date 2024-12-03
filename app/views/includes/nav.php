@@ -12,7 +12,6 @@
         <li class="<?php echo $navActive ==='servicos' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-folder'></i><a href="/admin/service"  class="hover:underline">Serviços</a></li>
         <li class="<?php echo $navActive ==='colaboradores' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-user' ></i><a href="/admin/collaborator"  class="hover:underline">Colaboradores</a></li>
         <li class="<?php echo $navActive ==='relatorios' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-bar-chart-square'></i><a href="/admin/report"  class="hover:underline">Relatorios</a></li>
-        <li class="<?php echo $navActive ==='cupons' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class="fa-solid fa-ticket"></i><a href="/admin/voucher"  class="hover:underline">Cupons</a> <span class="border-2 border-principal5 text-principal5 rounded px-2 text-sm">Pro</span></li>
         <li class="<?php echo $navActive ==='data' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-data'></i><a href="/admin/data"  class="hover:underline">Dados empresa</a></li>
         <li class="<?php echo $navActive ==='dataAdm' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-data'></i><a href="/admin/data/admin"  class="hover:underline">Dados admin</a></li>
         <a href="/admin/login/destroy" class="flex items-center gap-2 hover:cursor-pointer"><i class='bx bx-log-out'></i><span class="hover:underline">Sair</span></a>
@@ -26,7 +25,6 @@
         <li class="hover:cursor-pointer flex items-center gap-2"><i class='bx bx-folder'></i><a href="/admin/service" >Serviços</a></li>
         <li class="hover:cursor-pointer flex items-center gap-2"><i class='bx bx-user' ></i><a href="/admin/collaborator" >Colaboradores</a></li>
         <li class="hover:cursor-pointer flex items-center gap-2"><i class='bx bx-bar-chart-square'></i><a href="#" >Relatorios</a></li>
-        <li class="hover:cursor-pointer flex items-center gap-2"><i class="fa-solid fa-ticket"></i><a href="#" >Vales serviços</a> <span class="border-2 border-principal5 text-principal5 rounded px-2">Pro</span></li>
         <li class="hover:cursor-pointer flex items-center gap-2"><i class='bx bx-data'></i><a href="#" >Dados empresa</a></li>
     </ul>
 
@@ -58,7 +56,6 @@
         <li class="hover:cursor-pointer flex items-center gap-2"><i class='bx bx-folder'></i><a href="/admin/service" >Serviços</a></li>
         <li class="hover:cursor-pointer flex items-center gap-2"><i class='bx bx-user' ></i><a href="/admin/collaborator" >Colaboradores</a></li>
         <li class="hover:cursor-pointer flex items-center gap-2"><i class='bx bx-bar-chart-square'></i><a href="#" >Relatorios</a></li>
-        <li class="hover:cursor-pointer flex items-center gap-2"><i class="fa-solid fa-ticket"></i><a href="#" >Vales serviços</a> <span class="border-2 border-principal5 text-principal5 rounded px-2">Pro</span></li>
         <li class="hover:cursor-pointer flex items-center gap-2"><i class='bx bx-data'></i><a href="#" >Dados empresa</a></li>
     </ul>
 
@@ -79,7 +76,6 @@
 
         <li class="<?php echo $navActive ==='home' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-home'></i><a  href="/" class="hover:underline">Home</a></li>
         <li class="<?php echo $navActive ==='Agenda' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-calendar'></i><a  href="/schedule/" class="hover:underline">Agenda</a></li>
-        <li class="<?php echo $navActive ==='Cupons' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class="fa-solid fa-ticket"></i><a href="#"  class="hover:underline">Cupons</a> <span class="border-2 border-principal5 text-principal5 rounded px-2 text-sm">Pro</span></li>
         <li class="<?php echo $navActive ==='Dados' ? 'bg-white p-2 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-data'></i><a href="/data/"  class="hover:underline">Dados usuario</a></li>
         <a href="/login/destroy" class="flex items-center gap-2 hover:cursor-pointer"><i class='bx bx-log-out'></i><span class="hover:underline">Sair</span></a>
     </ul>

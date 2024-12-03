@@ -4,6 +4,7 @@ use app\models\database\Db;
 use app\interfaces\ModelInterface;
 use app\models\Schedule;
 use app\models\Client;
+use app\models\Company;
 use JsonSerializable;
 
 class Schedule implements ModelInterface, JsonSerializable{
@@ -24,6 +25,7 @@ class Schedule implements ModelInterface, JsonSerializable{
     private array $collaborators;
     private array $services;
     private Client $client;
+    private Company $company;
     // status -> 'confirmado' - 'aguardando pagamento' - 'cancelado'
     private string $tableOrders = "schedule_orders";
     private string $table = "schedules";
@@ -130,6 +132,84 @@ class Schedule implements ModelInterface, JsonSerializable{
             ]
         ];
     }
+
+    public function getSchedulesClientByFilters(
+        Db $db,
+        int $idClient,
+        string $status = "",
+        string $startDate = '',
+        string $endDate = '',
+        int $currentPage = 1,
+        int $recordsPerPage = 10
+    ) {
+        $now = new \DateTime();
+        $db->setTable($this->table);
+        $where = "Client_idClient = {$idClient}";
+    
+        // Filtros opcionais
+        if ($status != "") {
+            if($status != 'all'){
+                $where .= " AND status = '{$status}'";
+            }
+        }
+    
+        $startDate = $startDate !='' ? $startDate : '2024-01-01';
+        $endDate = $endDate !='' ? $endDate : $now->format('Y-m-d');
+    
+        $where .= " AND dateSchedule BETWEEN '{$startDate}' AND '{$endDate}'";
+        
+        // Paginação
+        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
+        $schedules = $paginationResult['data'];
+        $arrayObjectsSchedule = [];
+    
+        // Criando objetos de agendamento
+        foreach ($schedules as $schedule) {
+            $newSchedule = new Schedule(
+                $schedule['Client_idClient'],
+                $schedule['Company_idCompany'],
+                $schedule['paidOut'],
+                floatval($schedule['totalPaid']),
+                $schedule['voucherService'],
+                $schedule['cancellationReason'],
+                $schedule['observation'],
+                $schedule['status'],
+                new \DateTime($schedule['startTime']),
+                new \DateTime($schedule['endTime']),
+                new \DateTime($schedule['dateSchedule']),
+                new \DateTime($schedule['created_at']),
+                $schedule['cancellationDescripton'] != null ? $schedule['cancellationDescripton'] : ''
+            );
+    
+            // Definindo o ID do agendamento
+            $newSchedule->setId($schedule['idSchedule']);
+    
+            // Buscando o cliente
+            $client = new Client(); 
+            $client = $client->getById($db, $schedule['Client_idClient']);
+            $newSchedule->setClient($client);
+    
+            // Buscando a empresa
+            $company = new Company(); 
+            $company = $company->getById($db, $schedule['Company_idCompany']);
+            $newSchedule->setCompany($company);
+    
+            // Adicionando o agendamento à lista
+            array_push($arrayObjectsSchedule, $newSchedule);
+        }
+    
+        // Retornando os resultados com a paginação
+        return [
+            'schedules' => $arrayObjectsSchedule,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
+    }
+    
 
     public function getById(Db $db, int $id){
         $db->setTable($this->table);
@@ -266,6 +346,50 @@ class Schedule implements ModelInterface, JsonSerializable{
         return $arrayObjectsSchedule;
     }
 
+    public function getByClientPaginate(Db $db, int $idClient, int $currentPage = 1, int $recordsPerPage = 10) {
+        $db->setTable($this->table);
+        $where = "Client_idClient = {$idClient}";
+        
+        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
+        $schedules = $paginationResult['data'];
+        $arrayObjectsSchedule = [];
+        
+        foreach ($schedules as $schedule) {
+            $scheduleObj = new Schedule(
+                $schedule['Client_idClient'],
+                $schedule['Company_idCompany'],
+                $schedule['paidOut'],
+                $schedule['totalPaid'],
+                $schedule['voucherService'],
+                $schedule['cancellationReason'],
+                $schedule['observation'],
+                $schedule['status'],
+                new \DateTime($schedule['startTime']),
+                new \DateTime($schedule['endTime']),
+                new \DateTime($schedule['dateSchedule']),
+                new \DateTime($schedule['created_at']),
+                $schedule['cancellationDescripton'] == null ? '' : $schedule['cancellationDescripton']
+            );
+    
+            $company = new Company();
+            $company = $company->getById($db, $schedule['Company_idCompany']);
+            $scheduleObj->setCompany($company);
+    
+            $scheduleObj->setId($schedule['idSchedule']);
+            array_push($arrayObjectsSchedule, $scheduleObj);
+        }
+    
+        return [
+            'schedules' => $arrayObjectsSchedule,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
+    }
+    
     public function getByClient(Db $db,$idClient){
         $db->setTable($this->table);
         $schedules = $db->query("*","Client_idClient={$idClient}");
@@ -290,6 +414,7 @@ class Schedule implements ModelInterface, JsonSerializable{
         }
         return $arrayObjectsSchedule;
     }
+
     public function getByCompanyForDate(Db $db,$idCompany,$startDate,$endDate){
         $db->setTable($this->table);
         $schedules = $db->query("*","Company_idCompany={$idCompany} AND dateSchedule>='{$startDate->format('Y-m-d H:i:s')}' AND dateSchedule<='{$endDate->format('Y-m-d H:i:s')}'");
@@ -558,16 +683,32 @@ class Schedule implements ModelInterface, JsonSerializable{
 
         return false;
     }
-
-    private function isCancellable(): bool{
-        $now = new \DateTime();
-        return !($now > $this->getStartTime() || $this->getStatus() != 'cancelado');
+    public function isCancellable(): bool {
+        $now = new \DateTime();  
+        $startDate = $this->getDateSchedule();  
+        $startTime = $this->getStartTime();   
+        
+        $startDateTime = clone $startDate; 
+        $startDateTime->setTime($startTime->format('H'), $startTime->format('i'));  
+        $startDateTime->modify('-1 hour');  
+    
+        return $now < $startDateTime && $this->getStatus() != 'cancelado';
     }
+    
+    
+    
 
-    private function isComplete(): bool{
-        $now = new \DateTime();
-        return $now > $this->getEndTime();
+    public function isComplete(): bool {
+        $now = new \DateTime();  
+        $endDate = $this->getDateSchedule(); 
+        $endTime = $this->getEndTime();      
+        $endDateTime = clone $endDate;  
+        $endDateTime->setTime($endTime->format('H'), $endTime->format('i')); 
+        return $now > $endDateTime && $this->getStatus() != 'concluido';
     }
+    
+    
+    
 
     public function delete(Db $db,int $id){
         $db->setTable($this->table);
@@ -707,6 +848,13 @@ class Schedule implements ModelInterface, JsonSerializable{
     }
     public function getClient(): Client {
         return $this->client;
+    }
+
+    public function setCompany(Company $company): void {
+        $this->company = $company;
+    }
+    public function getCompany(): Company {
+        return $this->company;
     }
 
     public function getRegistrationDate(): \DateTime {

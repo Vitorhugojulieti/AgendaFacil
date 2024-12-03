@@ -437,6 +437,8 @@ class ScheduleController implements ControllerInterface{
                 }
 
                 Cart::delete();
+                Cart::removeClient();
+
                 //TODO enviar email para agendamento
                 Flash::set('resultInsertSchedule', 'Erro ao agendar serviço!','notification sucess');
                 return redirect("/admin/schedule");
@@ -559,65 +561,56 @@ class ScheduleController implements ControllerInterface{
     }
 
 
-    public function setCanceled(array $args){
+    public function cancel(array $args){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $validate = new Validate();
-            if($_POST['message'] && $_POST['id']){
+            if($_POST['idSchedule']){
                 $validate->handle([
-                    'message'=>[REQUIRED],
                     'reason'=>[REQUIRED]
                 ],'schedule');
 
-                $id = intval($_POST['id']);
+                $id = intval($_POST['idSchedule']);
+
+                if($validate->errors) {
+                    Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');
+                    return redirect("/admin/schedule");
+                }
+    
+                $db = new Db();
+                $db->connect();
+                $schedule = new Schedule();
+                $schedule = $schedule->getById($db,$id);
+                $schedule->setStatus('cancelado');
+                $schedule->setCancellationReason($validate->data['reason']);
+                $schedule->setCancellationDescription($_POST['message']);
+                
+                if($schedule->update($db,$id)){
+                    Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','notification error');
+                    return redirect("/admin/schedule");
+                }
             }
     
-            if($validate->errors) {
-                Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');
-                return redirect("/admin/schedule");
-            }
-
-            $db = new Db();
-            $db->connect();
-            $schedule = new Schedule();
-            $schedule = $schedule->getById($db,$id);
-            $schedule->setStatus('cancelado');
-            $schedule->setCancellationReason($validate->data['reason']);
-            $schedule->setCancellationDescription($validate->data['message']);
-            
-            if($schedule->update($db,$id)){
-                Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');
-                return redirect("/admin/schedule");
-            }
+         
         }
     }
 
-    public function setComplete(){
+    public function complete(){
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $validate = new Validate();
-            if($_POST['message'] && $_POST['id']){
-                $validate->handle([
-                    'message'=>[REQUIRED],
-                    'reason'=>[REQUIRED]
-                ],'schedule');
-
-                $id = intval($_POST['id']);
+            if($_POST['idSchedule']){
+                $id = intval($_POST['idSchedule']);
+                
+                $db = new Db();
+                $db->connect();
+                $schedule = new Schedule();
+                $schedule = $schedule->getById($db,$id);
+                $schedule->setStatus('concluido');
+                
+                if($schedule->update($db,$id)){
+                    Flash::set('resultUpdateSchedule', 'Erro ao concluir agendamento!','notification error');
+                    return redirect("/admin/schedule");
+                }
             }
     
-            if($validate->errors) {
-                Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');
-                return redirect("/admin/schedule");
-            }
-
-            $db = new Db();
-            $db->connect();
-            $schedule = new Schedule();
-            $schedule = $schedule->getById($db,$id);
-            $schedule->setStatus('concluido');
-            
-            if($schedule->update($db,$id)){
-                Flash::set('resultUpdateSchedule', 'Erro ao cancelar agendamento!','message error');
-                return redirect("/admin/schedule");
-            }
         }
     }
 

@@ -25,10 +25,7 @@
                             <input type="text" id="inputSearch" class="w-full ml-2 outline-none bg-transparent p-2 placeholder:text-placeholder" placeholder="Buscar">
                             <i class='bx bx-search p-2  text-principal10 cursor-pointer'></i>
                         </div>
-
                             <button type="button"  id="btnOpenModalFilters" class="flex items-center gap-2 p-2 bg-white shadow shadow-borderFormColor rounded"><i class='bx bx-filter' style='color:#223249' ></i>Filtros<span id="iconFilter" class="rounded-full bg-principal10 text-white text-sm p-1 h-6 w-6 hidden justify-center items-center"></span></button>
-                        
-
                         </div>
                     </div>
                 </div>
@@ -168,6 +165,6 @@
 
     <script src='/assets/js/dist/index.global.min.js'></script>
     <script src='/assets/js/dist/locales-all.global.min.js'></script>
-    <script type="module"  src="/assets/js/agenda.js" defer></script>
+    <script type="module"  src="/assets/js/agendaAdmin.js" defer></script>
 
 </main>

@@ -13,7 +13,7 @@
                         <span class="font-Poppins font-bold">Data do agendamento<span class="font-normal"><?php echo ' '.$schedule->getDateSchedule()->format('d/m/Y') ?></span></span>
                         <?php if($schedule->getStatus() == "cancelado"){?>
                             <span class="font-Poppins font-bold">Status<span class="font-normal text-sm p-1 rounded bg-errorColor text-white"><?php echo ' '.$schedule->getStatus() ?></span></span>
-                        <?php }else if($schedule->getStatus() == "Confirmado"){ ?>
+                        <?php }else if($schedule->getStatus() == "confirmado"){ ?>
                             <span class="font-Poppins font-bold">Status<span class="font-normal text-sm p-2 rounded bg-orange text-white"><?php echo ' '.$schedule->getStatus() ?></span></span>
                         <?php }else{ ?>
                             <span class="font-Poppins font-bold">Status<span class="font-normal text-sm p-2 rounded bg-sucessColor text-white"><?php echo ' '.$schedule->getStatus() ?></span></span>
@@ -70,10 +70,14 @@
 
 
                 <div class="w-2/5 flex gap-4 p-4">
-                    <?php if($schedule->getStatus() !== "cancelado" && $schedule->getStatus() !== "Concluido"){?>
-                        <button class="w-full bg-sucessColor text-white text-center font-Poppins font-normal p-2 rounded  hover:underline hover:cursor-pointer  "  id="btnOpenModalComplete">Concluir</button>
+                    <?php if($schedule->isCancellable()){?>
                         <button class="w-full bg-red text-white text-center font-Poppins font-normal p-2 rounded  hover:underline hover:cursor-pointer  "  id="btnOpenModalCancel">Cancelar</button>
                     <?php } ?>
+
+                    <?php if($schedule->isComplete() && isset($_SESSION['collaborator'])){?>
+                        <button class="w-full bg-sucessColor text-white text-center font-Poppins font-normal p-2 rounded  hover:underline hover:cursor-pointer  "  id="btnOpenModalComplete">Concluir</button>
+                    <?php } ?>
+
                     <a href="<?php echo $linkBack; ?>" class="w-full border border-lightGray text-principal10 text-center font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">Voltar</a>
                 </div>
             </section>
@@ -83,11 +87,11 @@
 
 
     <dialog id="modalCancel" class="w-2/5 bg-white text-black rounded p-4 shadow-lg shadow-black ">
-        <form action="<?php echo $actionCancel;?>" method="post" class="w-full flex flex-col gap-4">
-            <input type="number" class="hidden" name="id" value="<?php echo $schedule->getId();?>">
+        <form action="<?php echo $actionCancel;?>" id="formCancel" method="post" class="w-full flex flex-col gap-4">
+            <input type="number" class="hidden" name="idSchedule" value="<?php echo $schedule->getId();?>">
             <legend class="text-xl font-semibold font-Urbanist">Deseja cancelar o agendamento?</legend>
 
-            <div class="w-full">
+            <div class="w-full flex-col gap-4">
                 <!-- <h2>Motivo do cancelamento</h2> -->
                 <div class="w-full flex flex-col gap-2" id="containerRadiosReason">
                     <?php foreach ($reasons as $index => $reason) { ?>
@@ -103,6 +107,7 @@
                     </label>
                     
                 </div>
+                <span class="text-red " id="msgFormCancel"></span>
             </div>
 
             <div class="buttons w-full flex  gap-4">
@@ -116,13 +121,11 @@
 
     <dialog id="modalComplete" class="w-2/5 bg-white text-black rounded p-4 shadow-lg shadow-black ">
         <form action="<?php echo $actionComplete;?>" method="post" class="w-full flex flex-col gap-4">
-            <input type="number" class="hidden" name="id" value="<?php echo $schedule->getId();?>">
+            <input type="number" class="hidden" name="idSchedule" value="<?php echo $schedule->getId();?>">
             <legend class="text-xl font-semibold font-Urbanist">Concluir agendamento?</legend>
 
-    
-
             <div class="buttons w-full flex  gap-4">
-         
+                <button type="submit"  class="w-full bg-sucessColor text-white text-base text-center border border-lightGray rounded p-2 hover:cursor-pointer hover:underline">Concluir</button>
                 <button id="btnCloseModalComplete" type="button" class="w-full border border-lightGray bg-white text-principal10 text-center text-base font-Poppins font-semibold rounded p-2 hover:cursor-pointer hover:underline">Descartar</button>
             </div>
         </form>

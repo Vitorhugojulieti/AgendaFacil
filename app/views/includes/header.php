@@ -10,40 +10,18 @@
                 <div id="btnOpenPopUpNotification" class="p-3 flex items-center gap-4 hover:cursor-pointer ">
                     <i class='bx bx-bell text-principal10 text-xl' ></i>
                     <span class="font-Urbanist font-medium hover:underline">Notificações</span>
-                    <?php if(isset($unmarkedNotifications) && $unmarkedNotifications > 0){ ?>
+                    <?php if(isset($_SESSION['unmarkedNotifications']) && $_SESSION['unmarkedNotifications'] > 0){ ?>
                         <span class="w-6 h-6 rounded-full bg-principal9 text-white text-center" id="displayNotifications"><?php echo $unmarkedNotifications ;?></span>
                     <?php }?> 
                 </div>
 
-                <div id="popUpNotification" class="pop-menu-notification hidden w-96 flex-col items-start bg-white  rounded-xl  shadow-sm shadow-black">
+                <div id="popUpNotification" class="pop-menu-notification hidden w-96 flex-col items-start bg-white z-10 rounded-xl  shadow-sm shadow-black">
                     <span class="w-full font-Urbanist text-xl font-semibold text-black p-4 pb-8">Notificações</span>
                     <div class="notificationList pt-2 pb-2  max-h-80">
-                        <?php if(isset($notifications) && count($notifications) > 0){?>
-                            <?php foreach ($notifications as $notification) { 
-                                $now = new DateTime(); 
-                                $interval = $now->diff($notification->getDate());
-                            ?>
-                                <!-- notification -->
-                                <div class="w-full <?php echo $notification->getNotified() === 0 ? 'bg-grayNotification' : 'bg-white'?> flex gap-4 items-center p-2 border-b border-b-grayInput">
-                                    <div class="circle-notification">
-                                        <i class='bx bxs-message text-2xl' style='color:#ffff'  ></i>
-                                    </div>
-                                    <div class="bodyNotification flex flex-col items-start gap-1">
-                                        <span class="text-base text-black font-semibold font-Urbanist"><?php echo $notification->getMessage();?></span>
-                                        <span class="text-sm"><?php echo 'Há '.$interval->i.'minutos' ?> </span>
-                                        <a href="<?php echo $notification->getLink(); ?>" class="text-sm hover:underline">Ver detalhes</a>
-                                    </div>
-                                </div>
-                            <?php } ?>
-                        <?php }else{?>
-                            <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
-                                <i class='bx bxs-info-circle text-4xl'></i>
-                                <span class="font-Urbanist font-semibold text-xl">Você não tem notificações!</span>
-                            </div>
-                        <?php }?>
+                        <?php echo getCompanysNotifications();?>
                         
                     </div>
-                    <span class="w-full flex justify-between items-center p-2">
+                    <span class="w-full flex justify-between items-center p-2 bg-white">
                         <a href="" class="text-sm hover:underline">Marcar todas como lida</a>
                         <a href="/admin/notification" class="text-sm hover:underline">Ver todas notificações</a>
                     </span>

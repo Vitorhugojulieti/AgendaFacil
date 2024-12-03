@@ -26,7 +26,7 @@ function openModalDelete(id,name,used){
 const searchElements = new search('.row','#inputSearch');
 searchElements.init();
 
-const spanCountFilters = document.querySelector('#iconFilter')
+const spanCountFilters = document.querySelector('#iconFilter');
 
 const inputRangeDuration = document.querySelector('#inputRangeDuration');
 const spanRangeDuration = document.querySelector('#viewRangeDuration');
