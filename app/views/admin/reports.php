@@ -63,7 +63,7 @@
                             </div>
                             <div class="flex items-center border-2 border-grayInput   rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white" style="box-shadow:0 0 10px 5px rgb(0,0,0,0.02);">
                                 <i class='bx bx-rename' style=' padding-left:1rem; padding-right:1rem;'></i>
-                                <select name="status" id="inputStatus"class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder ">
+                                <select name="status" id="inputStatus"class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder disabled:cursor-not-allowed	 ">
                                     <option value="all">Todos</option>
                                     <option value='concluido'  >Concluido</option>
                                     <option value='confirmado'  >Confirmado</option>
@@ -79,7 +79,7 @@
                             </div>
                             <div class="flex items-center border-2 border-grayInput   rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white" style="box-shadow:0 0 10px 5px rgb(0,0,0,0.02);">
                                 <i class='bx bx-rename' style=' padding-left:1rem; padding-right:1rem;'></i>
-                                <select name="service" id="inputService"class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder ">
+                                <select name="service" id="inputService"class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder disabled:cursor-not-allowed">
                                     <option value="all">Todos</option>
                                    <?php foreach ($services as $service) { ?>
                                         <option value=<?php echo $service->getId(); ?>  ><?php echo $service->getName();?></option>
@@ -95,8 +95,8 @@
                             </div>
                             <div class="flex items-center border-2 border-grayInput   rounded focus-within:border-principal10 focus-within:text-principal10 focus-within:bg-white" style="box-shadow:0 0 10px 5px rgb(0,0,0,0.02);">
                                 <i class='bx bx-rename' style=' padding-left:1rem; padding-right:1rem;'></i>
-                                <select name="collaborator" id="inputCollaborator"class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder ">
-                                    <option value="all">Todos</option>
+                                <select name="collaborator" id="inputCollaborator"class="w-full p-2 outline-none bg-transparent border-l-2 border-grayInput transition-all duration-300 focus:border-principal10 focus:text-black placeholder:text-placeholder disabled:cursor-not-allowed">
+                                    <option value="">Todos</option>
                                     <?php foreach ($collaborators as $collaborator) { ?>
                                         <option value=<?php echo $collaborator->getId(); ?>  ><?php echo $collaborator->getName();?></option>
                                    <?php } ?>

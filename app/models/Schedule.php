@@ -133,6 +133,62 @@ class Schedule implements ModelInterface, JsonSerializable{
         ];
     }
 
+    public function getSchedulesByCollaboratorByFilters(
+        Db $db,
+        int $idCollaborator,
+        string $status = "",
+        string $startDate = '',
+        string $endDate = '',
+        int $currentPage = 1,
+        int $recordsPerPage = 10
+    ) {
+        $now = new \DateTime();
+        $db->setTable('schedule_order'); // Tabela intermediária
+        $where = "collaborator_idCollaborator = {$idCollaborator}";
+    
+        // Filtros opcionais
+        if ($status != "") {
+            if ($status != 'all') {
+                $where .= " AND status = '{$status}'";
+            }
+        }
+    
+        $startDate = $startDate != '' ? $startDate : '2024-01-01';
+        $endDate = $endDate != '' ? $endDate : $now->format('Y-m-d');
+    
+        $where .= " AND dateSchedule BETWEEN '{$startDate}' AND '{$endDate}'";
+    
+        // Paginação
+        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "schedules_idSchedule", $where);
+        $orders = $paginationResult['data'];
+        $arrayObjectsSchedules = [];
+    
+        // Criando objetos de agendamento para cada ID retornado
+        foreach ($orders as $order) {
+            $scheduleObj = new Schedule();
+            $scheduleObj = $scheduleObj->getById($db, $order['schedules_idSchedule']);
+    
+            // Caso precise buscar o cliente relacionado ao agendamento
+            $client = new Client();
+            $client = $client->getById($db, $scheduleObj->getClientId());
+            $scheduleObj->setClient($client);
+    
+            array_push($arrayObjectsSchedules, $scheduleObj);
+        }
+    
+        // Retornando os resultados com a paginação
+        return [
+            'schedules' => $arrayObjectsSchedules,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
+    }
+    
+
     public function getSchedulesClientByFilters(
         Db $db,
         int $idClient,

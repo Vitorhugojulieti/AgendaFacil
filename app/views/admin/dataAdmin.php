@@ -4,7 +4,7 @@
 
         <div class=" w-full min-h-screen flex flex-col justify-start  items-start bg-bgPrincipal p-4 gap-4 ">
             <!-- data main collaborator -->
-            <form action="<?php echo $actionCollaborator;?>" method="POST" enctype="multipart/form-data" id="formUpdateCollaborator" class="bg-white w-5/6 md:w-full flex flex-col items-start justify-start gap-4 shadow shadow-borderFormColor p-2 rounded-lg">
+            <form action="<?php echo isset($isCollaborator) ? '/collaborator/data/store' : $actionCollaborator;?>" method="POST" enctype="multipart/form-data" id="formUpdateCollaborator" class="bg-white w-5/6 md:w-full flex flex-col items-start justify-start gap-4 shadow shadow-borderFormColor p-2 rounded-lg">
                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['token']; ?>">
                 <!-- container data admin -->
                 <fieldset id="containerDataAdmin" class="w-full  justify-start items-start">
@@ -17,8 +17,8 @@
                         <span class="text-errorColor " id="msgAvatarError"><?php echo flash('avatar');  ?></span>
                     </div>
 
-                    <h2 class="w-full font-Urbanist font-semibold text-black text-xl md:text-2xl border-b-2 border-b-lightGray mb-4">Dados do administrador</h2>
-
+                    <h2 class="w-full font-Urbanist font-semibold text-black text-xl md:text-2xl border-b-2 border-b-lightGray mb-4"><?php echo isset($isCollaborator) ? 'Dados do colaborador' : 'Dados do administrador'?></h2>
+                    
                     <div class="w-full lg:grid lg:grid-rows-1 lg:grid-cols-2 gap-12 md:flex md:w-5/6 md:flex-col ">
                             <!-- column 1 -->
                             <div class="w-full col-span-1 row-span-1 col-start-1 flex flex-col items-start justify-center gap-4 ">

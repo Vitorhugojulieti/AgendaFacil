@@ -340,6 +340,8 @@ class DataController{
               
                 if($collaborator->update($db,$collaborator->getId())){
                     Flash::set('resultUpdateAdmin', 'Colaborador editado com sucesso!','notification sucess');
+                    $collaboratorManager = new Collaborator();
+                    $_SESSION['collaborator'] = $collaboratorManager->getById($db,$collaborator->getId());
                     return redirect("/admin/data/admin");
                 }else{
                     Flash::set('resultUpdateAdmin', 'Erro ao editar colaborador!','notification error');

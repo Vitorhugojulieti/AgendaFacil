@@ -4,16 +4,14 @@ use app\interfaces\ControllerInterface;
 use app\models\database\Db;
 use app\models\Collaborator;
 use app\models\Company;
-use app\models\ServiceVoucher;
-use app\models\Service;
 use app\models\Schedule;
+use app\models\Receipt;
+use app\models\Service;
 use app\classes\Flash;
 use app\classes\Old;
 use app\classes\Validate;
 use app\classes\BlockNotAdmin;
-use app\classes\CodeGenerator;
 use app\classes\Reports;
-use app\classes\Breadcrumb;
 
 
 class ReportController implements ControllerInterface{
@@ -68,6 +66,13 @@ class ReportController implements ControllerInterface{
     //ok
     public function store(array $args)
     {
+
+        $this->master = 'masterapi.php';
+        $this->view = 'api.php';
+        $this->data = [
+            'title'=>'api',
+        ];
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db = new Db();
             $db->connect();
@@ -88,8 +93,13 @@ class ReportController implements ControllerInterface{
     }
     
     //TODO finalizar relatorios
-    public function generateReport()
-    {
+    public function generateReport(){
+        $this->master = 'masterapi.php';
+        $this->view = 'api.php';
+        $this->data = [
+            'title'=>'api',
+        ];
+
         if (!isset($_SESSION['report_filters'])) {
             http_response_code(400);
             echo "Filtros de relatório não encontrados.";
@@ -115,10 +125,9 @@ class ReportController implements ControllerInterface{
             $receipts = $receipts->getReceiptsByFilters(
                 $db,
                 $_SESSION['collaborator']->getIdCompany(),
-                ($filter === "pagamentos") ? $collaborator : 0,
                 $startDate,
                 $endDate,
-                ($filter === "recebimentos") ? $service : 0
+                ($filter === "pagamentos") ? intval($collaborator) : 0
             );
             $reportsPdf->generatePDF($filter, $receipts, $startDate, $endDate);
         } elseif ($filter === "agendamentos") {
@@ -129,13 +138,11 @@ class ReportController implements ControllerInterface{
                 $status,
                 $startDate,
                 $endDate,
-                intval($collaborator),
-                intval($service),
                 1,
                 10000
             );
             $schedules = $schedules['schedules'];
-            $reportsPdf->generatePDF('agendamentos', $schedules, $startDate, $endDate);
+            $reportsPdf->generatePDF('schedule', $schedules, $startDate, $endDate);
         }
     }
     

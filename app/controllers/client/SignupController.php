@@ -62,7 +62,7 @@ class SignupController{
             $validate->data['cpf'],
             $validate->data['phone'],
             $validate->data['email'],
-            $validate->data['password'],
+            md5($validate->data['password']),
             $registrationDate,0);
         return $client->insert($db);
     }
@@ -134,7 +134,7 @@ class SignupController{
                     $_SESSION['user'] = $clientBD;
     
                   
-                    redirect('/signup/chooseAvatar');
+                    redirect('/home');
                 }else{
                     Flash::set('confirmEmail','Codigo invalido!');
                     redirect('/signup/confirmEmail');
@@ -146,35 +146,7 @@ class SignupController{
 
     }
 
-    //TODO remover
-    public function chooseAvatar(){
-        $this->view = 'chooseAvatar.php';
-        $this->data = [
-            'title'=>'Selecione seu avatar | AgendaFacil',
-        ];
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $db = new Db();
-            $db->connect();
-            $validateAvatar = $this->validateAvatar();
-
-            if(!$validateAvatar){
-                return redirect("/signup/chooseAvatar");
-            }
-                    
-            $client = new Client();
-          
-            $client->setAvatar($validateAvatar->data['avatar']['link']);
-            if($client->update($db,$_SESSION['user']->getId())){
-                $_SESSION['user']->setAvatar($validateAvatar->data['avatar']['link']);
-                $_SESSION['auth'] = true;
-                return redirect("/");
-            }
-
-            Flash::set('chooseAvatar','Erro ao cadastrar avatar','message error');
-            redirect("/signup/chooseAvatar");
-        }
-    }
+   
 
     private function validateAvatar(){
         $validateImages = new Validate();

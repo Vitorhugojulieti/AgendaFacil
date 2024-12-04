@@ -116,16 +116,11 @@ class LoginController{
                 Flash::set('loginCollaborator','Usuario ou senha invalidos!');
                 return redirect('/admin/login');
             }
-            //TODO trocar mensagem da senha para usuario ou senha invalidos
     
-            // $passwordMatch = password_verify($password,$clientFound->getPassword());
+            $passwordMatch = password_verify($password,$clientFound->getPassword());
 
-            // if(!$passwordMatch){
-            //     Flash::set('loginPassword','Senha invalida!');
-            //     return redirect('/login');
-            // }
-            if(!($password === $collaboratorFound->getPassword())){
-                Flash::set('passwordLoginCollaborator','Senha invalida!');
+            if(!$passwordMatch){
+                Flash::set('loginCollaborator','Usuario ou senha invalidos!');
                 return redirect('/admin/login');
             }
     
@@ -143,7 +138,7 @@ class LoginController{
                 setCompanyActive($company->getRegistrationComplete());
                 return redirect('/admin/');
             }else if($collaboratorFound->getNivel() == 'collaborator'){
-                return redirect('/collaborator/');
+                return redirect('/collaborator/schedule');
             }
         }
         return redirect('/admin/login');

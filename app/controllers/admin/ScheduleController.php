@@ -120,7 +120,8 @@ class ScheduleController implements ControllerInterface{
             'breadcrumb'=>Breadcrumb::getForAdmin(),
             'navActive'=>'agenda',
             'schedules'=>$schedules,
-            'pagination'=>$pagination
+            'pagination'=>$pagination,
+            'isCollaborator'=>false
         ];
     }
 

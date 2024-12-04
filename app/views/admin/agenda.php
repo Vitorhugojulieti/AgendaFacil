@@ -6,13 +6,20 @@
     <?php require __DIR__ . '/../includes/nav.php'; ?>
 
     <div class="w-full min-h-screen flex flex-col justify-start items-start bg-bgPrincipal p-4">
+    
+        <?php if($isCollaborator){?>
+            <h1 class="text-2xl font-semibold mb-4 pb-2 border-b border-lightGray w-full"><?php echo 'Olá '.$_SESSION['collaborator']->getName().' 👋';?></h1>
+        <?php } ?>
 
         <div class="w-full  bg-bgPrincipal flex flex-col gap-4">
+
             <h2 class="text-principal10 text-2xl font-Urbanist font-semibold">Sua agenda</h2>
 
-            <div class="w-full flex justify-end ">
-                <a href="/admin/schedule/store" class=" add-schedule bg-principal10 text-white text-sm rounded-full p-3 flex items-center "><i class='bx bx-plus text-3xl'></i></a>
-            </div>
+            <?php if(!$isCollaborator){?>
+                <div class="w-full flex justify-end ">
+                    <a href="/admin/schedule/store" class=" add-schedule bg-principal10 text-white text-sm rounded-full p-3 flex items-center "><i class='bx bx-plus text-3xl'></i></a>
+                </div>
+            <?php } ?>
             <div id="calendar"></div>
 
             <div class="w-full  bg-bgPrincipal ">

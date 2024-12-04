@@ -84,19 +84,40 @@ class ScheduleOrder implements ModelInterface{
         return $arrayObjectsOrders;
     }
 
-    public function getSchedulesByCollaborator(Db $db,$idCollaborator){
+    public function getSchedulesByCollaborator(
+        Db $db,
+        int $idCollaborator,
+        int $currentPage = 1,
+        int $recordsPerPage = 10
+    ) {
         $db->setTable($this->table);
-        $collaboratorManager = new Collaborator();
-        $serviceManager = new Service();
-        $orders = $db->query("schedules_idSchedule","collaborator_idCollaborator={$idCollaborator}");
-        $arrayObjectsSchedules =[];
-        foreach ($orders as $order){
+    
+        // Consulta para obter os IDs de agendamentos relacionados ao colaborador
+        $where = "collaborator_idCollaborator = {$idCollaborator}";
+        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "schedules_idSchedule", $where);
+        $orders = $paginationResult['data']; // Resultados paginados
+    
+        $arrayObjectsSchedules = [];
+    
+        // Criando objetos de agendamento para cada ID retornado
+        foreach ($orders as $order) {
             $scheduleObj = new Schedule();
-            $scheduleObj= $scheduleObj->getById($db,$order['schedules_idSchedule']);
-            array_push($arrayObjectsSchedules,$scheduleObj);
+            $scheduleObj = $scheduleObj->getById($db, $order['schedules_idSchedule']);
+            array_push($arrayObjectsSchedules, $scheduleObj);
         }
-        return $arrayObjectsSchedules;
+    
+        // Retornando os resultados com os dados de paginação
+        return [
+            'schedules' => $arrayObjectsSchedules,
+            'pagination' => [
+                'currentPage' => $paginationResult['currentPage'],
+                'recordsPerPage' => $paginationResult['recordsPerPage'],
+                'totalRecords' => $paginationResult['totalRecords'],
+                'totalPages' => $paginationResult['totalPages']
+            ]
+        ];
     }
+    
 
     public function getSchedulesByService(Db $db,$idService){
         $db->setTable($this->table);

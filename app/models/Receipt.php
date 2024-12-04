@@ -1,6 +1,7 @@
 <?php
 namespace app\models;
 use app\models\database\Db;
+use app\models\Collaborator;
 use app\interfaces\ModelInterface;
 
 class Receipt implements ModelInterface{
@@ -8,15 +9,18 @@ class Receipt implements ModelInterface{
     private int $idCompany;
     private int $idCollaborator;
     private float $amount;
+    private \DateTime $dateReceipt;
     private string $table = "receipts";
 
     public function __construct($amount = 0.0, 
                                 $idCollaborator = 0, 
-                                $idCompany = 0
+                                $idCompany = 0,
+                                $dateReceipt = new \DateTime()
                                 ){
         $this->amount = $amount;
         $this->idCollaborator = $idCollaborator;
         $this->idCompany = $idCompany;
+        $this->dateReceipt = $dateReceipt;
     }
 
     public function totalRecords(Db $db){
@@ -25,80 +29,46 @@ class Receipt implements ModelInterface{
         return $total[0]['total'];
     }
 
-    //TODO finalizar esse metodo
     public function getReceiptsByFilters(
         Db $db,
         int $idCompany,
-        string $status = "",
         string $startDate = "",
         string $endDate = "",
         int $collaboratorId = 0,
-        int $serviceId = 0,
-        int $currentPage = 1,
-        int $recordsPerPage = 10
     ) {
         $db->setTable($this->table);
         $where = "Company_idCompany = {$idCompany}";
     
-        // Filtros opcionais
-        if ($status != "") {
-            if($status != 'all'){
-                $where .= " AND status = '{$status}'";
-            }
-        }
-    
         if ($startDate != "" && $endDate != "") {
-            $where .= " AND dateSchedule BETWEEN '{$startDate}' AND '{$endDate}'";
+            $where .= " AND created_at BETWEEN '{$startDate}' AND '{$endDate}'";
         }
     
         if ($collaboratorId > 0) {
             $where .= " AND idCollaborator = {$collaboratorId}";
         }
+
+        $where .= " AND idCollaborator != {$collaboratorId}";
+
+   
+        $receipts = $db->query("*", $where);
     
-        if ($serviceId > 0) {
-            $where .= " AND idService = {$serviceId}";
-        }
- 
-        
-        // Realiza a paginação com os filtros
-        $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
-        $schedules = $paginationResult['data'];
-        $arrayObjectsSchedule = [];
+        $arrayObjectsReceipt = [];
     
-        foreach ($schedules as $schedule) {
-            $newSchedule = new Schedule(
-                $schedule['Client_idClient'],
-                $schedule['Company_idCompany'],
-                $schedule['paidOut'],
-                floatval($schedule['totalPaid']),
-                $schedule['voucherService'],
-                $schedule['cancellationReason'],
-                $schedule['observation'],
-                $schedule['status'],
-                new \DateTime($schedule['startTime']),
-                new \DateTime($schedule['endTime']),
-                new \DateTime($schedule['dateSchedule']),
-                new \DateTime($schedule['created_at']),
-                $schedule['cancellationDescripton'] != null ? $schedule['cancellationDescripton'] : ''
+        foreach ($receipts as $receipt) {
+            $newReceipt = new Receipt(
+                floatval($receipt['total']), 
+                intval($receipt['idCollaborator']) ,
+                intval($receipt['company_idCompany']), 
+                new \DateTime($receipt['created_at'])
             );
     
-            $newSchedule->setId($schedule['idSchedule']);
-            $client = new Client(); 
-            $client = $client->getById($db,$schedule['Client_idClient']);
-            $newSchedule->setClient($client);
-            array_push($arrayObjectsSchedule,$newSchedule);
+            $newReceipt->setId($receipt['idReceipt']);
+            $arrayObjectsReceipt[] = $newReceipt;
         }
     
-        return [
-            'schedules' => $arrayObjectsSchedule,
-            'pagination' => [
-                'currentPage' => $paginationResult['currentPage'],
-                'recordsPerPage' => $paginationResult['recordsPerPage'],
-                'totalRecords' => $paginationResult['totalRecords'],
-                'totalPages' => $paginationResult['totalPages']
-            ]
-        ];
+        return $arrayObjectsReceipt;
     }
+    
 
     public function getAll(Db $db){
         $db->setTable($this->table);
@@ -276,6 +246,21 @@ class Receipt implements ModelInterface{
         $this->idCollaborator = $idCollaborator;
     }
 
+    public function getDateReceipt(): \DateTime {
+        return $this->dateReceipt;
+    }
+
+    public function setDateReceipt(\DateTime $dateReceipt): void {
+        $this->dateReceipt = $dateReceipt;
+    }
+
+    public function getCollaborator(){
+        $db = new Db();
+        $db->connect();
+        $collaborator = new Collaborator();
+        $collaborator = $collaborator->getById($db,$this->getIdCollaborator());
+        return $collaborator ? $collaborator : '';
+    }
 }
 
 ?>

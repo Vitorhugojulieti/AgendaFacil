@@ -152,7 +152,7 @@ class SignupController{
             $validateData->data['cpf'],
             $validateData->data['phone'],
             $validateData->data['email'],
-            $validateData->data['password'],
+            md5($validateData->data['password']),
             "manager",
             $idCompany,
             new \DateTime()
