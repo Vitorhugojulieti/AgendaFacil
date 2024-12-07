@@ -6,7 +6,7 @@
         <main class="bg-bgPrincipal w-full h-full flex flex-col gap-8 p-4"  >
             
             <form action="/schedule/store"  method="POST" class="flex flex-col gap-4 bg-white p-4 border border-lightGray rounded-lg shadow shadow-borderFormColor" >
-                <input type="text" class="hidden" id="inputDate">
+                <input type="text" class="hidden" id="inputDate" name="inputDate">
                 <legend class="w-full font-Urbanist font-semibold text-2xl text-black ">Agendar serviços</legend>
 
                 <section class="acordion active check w-full  flex flex-col gap-4" id="sectionData">

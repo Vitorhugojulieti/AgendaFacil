@@ -39,7 +39,7 @@
                             </div>
                             
                             <div class="w-full h-full flex flex-col gap-4 px-4 items-start justify-start">
-                                <a href="http://localhost:8889/company/show/<?php echo $company->getId()?>" class="font-Urbanist font-semibold text-2xl flex items-center gap-4"><?php echo $company->getName()?><span class="text-base text-yellow font-Poppins font-semibold" ><i class='bx bxs-star text-xl' style='color:#fbec5d'  ></i>4.5</span></a>
+                                <a href="http://localhost:8889/company/show/<?php echo $company->getId()?>" class="font-Urbanist font-semibold text-2xl flex items-center gap-4"><?php echo $company->getName()?></a>
                                 <h3 class="w-full font-Poppins font-normal text-sm "><?php echo $company->getRoad().', numero: '.$company->getNumber().', '.$company->getDistrict().' - '.$company->getCity().'-'.$company->getState()?></h3>
                               
                                 <a href="http://localhost:8889/company/show/<?php echo $company->getId();?>" class="w-2/4 p-2 bg-principal10 text-sm text-white text-center font-Urbanist font-normal rounded cursor-pointer hover:underline">Ver mais</a>

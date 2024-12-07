@@ -117,9 +117,9 @@ class LoginController{
                 return redirect('/admin/login');
             }
     
-            $passwordMatch = password_verify($password,$clientFound->getPassword());
+            // $passwordMatch = password_verify($password,$collaboratorFound->getPassword());
 
-            if(!$passwordMatch){
+            if(!($password === $collaboratorFound->getPassword())){
                 Flash::set('loginCollaborator','Usuario ou senha invalidos!');
                 return redirect('/admin/login');
             }

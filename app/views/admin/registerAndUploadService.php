@@ -13,7 +13,7 @@
                 <fieldset id="containerDataService" class="w-full  justify-start items-start">
 
                    <div class="images w-full flex items-start justify-between mb-8">
-                        <div class="w-1/4 hover:cursor-pointer flex flex-col items-center justify-center  ">
+                        <div class="w-1/4 hover:cursor-pointer flex flex-col items-center justify-center  max-h-60">
                             <input type="file" name="image1" id="inputImage1" class="hidden">
                             <label for="inputImage1" class="flex flex-col items-center p-4 gap-4 border-2 border-grayInput border-dashed rounded">
                                 <img id="previewImage1"  alt="imagem1" src="<?php echo isset($service) ? '../../../'.$service->getImage(0) : ''?>">
@@ -23,7 +23,7 @@
                             <span class="text-errorColor " id="msgInputImage1"><?php echo flash('image1');  ?></span>
                         </div>
 
-                        <div class="w-1/4 hover:cursor-pointer flex flex-col items-center justify-center  ">
+                        <div class="w-1/4 hover:cursor-pointer flex flex-col items-center justify-center  max-h-60">
                             <input type="file" name="image2" id="inputImage2" class="hidden">
                             <label for="inputImage2" class="flex flex-col items-center p-4 gap-4 border-2 border-grayInput border-dashed rounded">
                                 <img id="previewImage2"  alt="imagem2" src="<?php echo isset($service) ? '../../../'.$service->getImage(1) : ''?>">
@@ -34,7 +34,7 @@
                         </div>
 
                         
-                        <div class="w-1/4 hover:cursor-pointer flex flex-col items-center justify-center  ">
+                        <div class="w-1/4 hover:cursor-pointer flex flex-col items-center justify-center  max-h-60">
                             <input type="file" name="image3" id="inputImage3" class="hidden">
                             <label for="inputImage3" class="flex flex-col items-center p-4 gap-4 border-2 border-grayInput border-dashed rounded">
                                 <img id="previewImage3"  alt="imagem3" src="<?php echo isset($service) ? '../../../'.$service->getImage(2) : ''?>">

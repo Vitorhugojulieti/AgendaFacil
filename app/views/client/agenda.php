@@ -62,7 +62,7 @@
 
                                     <!-- collaborator actions -->
                                     <td class="flex items-center justify-center gap-4 p-2 text-center">
-                                        <a href="/admin/schedule/show/<?php echo $schedule->getId()?>"class="hover:underline">Detalhes</a>
+                                        <a href="/schedule/show/<?php echo $schedule->getId()?>"class="hover:underline">Detalhes</a>
                                     </td>
                                 </tr> 
                             <?php } ?> 
@@ -71,8 +71,8 @@
                 <div class="w-full flex items-center justify-between p-4 ">
                     <span><?php echo 'Pagina '.$pagination['currentPage'].' de '.$pagination['totalPages']?></span>
                     <div class="buttons flex items-center gap-4">
-                        <a href="/admin/schedule/<?php echo $pagination['currentPage'] != 1 ? $pagination['currentPage'] - 1 : '';?>" class="flex items-center gap-4 text-sm   "><i class='bx bx-left-arrow-alt text-2xl hover:scale-50'   ></i>Anterior</a>
-                        <a href="/admin/schedule/<?php echo $pagination['currentPage'] +1;?>" class="flex items-center gap-4 text-sm   ">Proxima<i class='bx bx-right-arrow-alt text-2xl hover:scale-50'  ></i></a>
+                        <a href="/schedule/<?php echo $pagination['currentPage'] != 1 ? $pagination['currentPage'] - 1 : '';?>" class="flex items-center gap-4 text-sm   "><i class='bx bx-left-arrow-alt text-2xl hover:scale-50'   ></i>Anterior</a>
+                        <a href="/schedule/<?php echo $pagination['currentPage'] +1;?>" class="flex items-center gap-4 text-sm   ">Proxima<i class='bx bx-right-arrow-alt text-2xl hover:scale-50'  ></i></a>
                     </div>
                 </div>
            

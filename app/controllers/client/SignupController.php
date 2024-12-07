@@ -62,7 +62,7 @@ class SignupController{
             $validate->data['cpf'],
             $validate->data['phone'],
             $validate->data['email'],
-            md5($validate->data['password']),
+            $validate->data['password'],
             $registrationDate,0);
         return $client->insert($db);
     }
@@ -95,6 +95,7 @@ class SignupController{
                 $_SESSION['user']->setPhone($phone);
                 $_SESSION['user']->setCpf($cpf);
                 $_SESSION['user']->setRegistrationComplete(1);
+                $_SESSION['user']->setId($clientUpdate->getId());
                 $_SESSION['auth'] = true;
 
                 redirect('/');
@@ -128,10 +129,11 @@ class SignupController{
                 if($_SESSION['codeConfirmEmail'] === $field1.$field2.$field3.$field4){
                     $client = new Client();
                     $client->setRegistrationComplete(1);
-                    $client->setName("marcio");
+                    $client->setAvatar(AVATAR_DEFAULT);
                     $clientBD = $client->getByEmail($db,$_SESSION['emailSend']);
                     $client->update($db,$clientBD->getId());
                     $_SESSION['user'] = $clientBD;
+                    $_SESSION['auth'] = true;
     
                   
                     redirect('/home');

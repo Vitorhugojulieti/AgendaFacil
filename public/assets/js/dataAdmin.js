@@ -1,3 +1,6 @@
+import previewImage from "./modules/previewImage.js";
+
+
 // checkbox manager styles 
 const days = document.querySelectorAll('.day');
 const containerHours = document.querySelector('#containerHours');
@@ -138,3 +141,7 @@ window.clearChecks = clearChecks;
 window.cancelHour = cancel;
 window.create = create;
 window.deleteHour = deleteHour;
+
+
+const previewAvatar = new previewImage('#previewLogo','#inputLogo','#iconLogo','#spanLogo','#msgInputLogo');
+previewAvatar.init();

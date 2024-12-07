@@ -8,7 +8,7 @@ use app\classes\Old;
 use app\classes\Breadcrumb;
 
 
-class DataController implements ControllerInterface{
+class DataController{
     public array $data = [];
     public string $view;
     public string $master = 'master.php';

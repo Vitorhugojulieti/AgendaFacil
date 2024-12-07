@@ -493,7 +493,7 @@ class ScheduleController implements ControllerInterface{
                                 0,
                                 '',
                                 isset($validateData->data['message']) ? $validateData->data['message'] : '',
-                                'Confirmado',
+                                'confirmado',
                                 $validateData->data['time'],
                                 $endTime,
                                 $validateData->data['date'],

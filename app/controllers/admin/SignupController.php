@@ -152,12 +152,12 @@ class SignupController{
             $validateData->data['cpf'],
             $validateData->data['phone'],
             $validateData->data['email'],
-            md5($validateData->data['password']),
+            $validateData->data['password'],
             "manager",
             $idCompany,
             new \DateTime()
             ,1,
-            true,floatval(0));
+            1,floatval(0));
         unset($_SESSION['old']);
         return $collaborator->insert($db);
     }
@@ -260,9 +260,9 @@ class SignupController{
             $db = new Db();
             $db->connect();
 
-            $idNotificationPost = $_POST['idNotification'];
-            $notification = new Notification();
-            $notification = $notification->getById($db,$idNotificationPost);
+            // $idNotificationPost = $_POST['idNotification'];
+            // $notification = new Notification();
+            // $notification = $notification->getById($db,$idNotificationPost);
 
             $days = isset($_POST['days']) ? $_POST['days'] : ''; 
             $startHourMorning = isset($_POST['inputOpeningHoursMorningStart']) ? $_POST['inputOpeningHoursMorningStart'] : ''; 
@@ -339,8 +339,8 @@ class SignupController{
             $company->update($db,$_SESSION['collaborator']->getIdCompany());
             $_SESSION['activeCompany'] = 1;
 
-            $notification->setNotified(1);
-            $notification->update($db,$_SESSION['collaborator']->getIdCompany());
+            // $notification->setNotified(1);
+            // $notification->update($db,$_SESSION['collaborator']->getIdCompany());
 
             Flash::set('resultCompleteRegistration', 'Cadastro finalizado!','notification sucess');
             return redirect("/admin/");
@@ -348,7 +348,7 @@ class SignupController{
 
         $this->data = [
             'title'=>'Concluir cadastro | AgendaFacil',
-            'idNotification'=>$idNotification
+            // 'idNotification'=>$idNotification
         ];
     }
 

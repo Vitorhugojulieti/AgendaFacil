@@ -36,14 +36,14 @@ function getCompanyActive(){
 
 function setCompanyNotifications(){
         $db = new Db();
-        $db = $db->connect();
+        $db->connect();
 
         $notifications = new Notification();
         $notifications = $notifications->getByCompany($db,$_SESSION['collaborator']->getIdCompany());
         $_SESSION['notifications'] = $notifications;
 }
 function getCompanysNotifications() {
-    // setCompanyNotifications();
+    setCompanyNotifications();
     $html = ''; 
 
     if (isset($_SESSION['notifications']) && count($_SESSION['notifications']) > 0) {

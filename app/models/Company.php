@@ -98,6 +98,7 @@ class Company implements ModelInterface, JsonSerializable{
             $where .= " AND category = '{$category}'";
         }
     
+    
         $paginationResult = $db->paginate($currentPage, $recordsPerPage, "*", $where);
         $companys = $paginationResult['data'];
         $arrayObjectsCompany = [];

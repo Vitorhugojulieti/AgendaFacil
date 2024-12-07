@@ -22,20 +22,22 @@ containerReasons.addEventListener('change', function(event) {
 
 
 document.getElementById('formCancel').addEventListener('submit', function(e) {
-    e.preventDefault();
+    e.preventDefault(); 
+
     const radios = document.querySelectorAll('input[name="reason"]');
     let isChecked = false;
 
     for (let i = 0; i < radios.length; i++) {
         if (radios[i].checked) {
-        isChecked = true;
-        break;
+            isChecked = true;
+            break;
         }
     }
 
     if (!isChecked) {
         document.querySelector('#msgFormCancel').innerHTML = 'Selecione pelo menos um motivo para o cancelamento!';
-    }else{
-        e.target.submit();
+    } else {
+        console.log('aa')
+        document.getElementById('formCancel').submit();
     }
 });

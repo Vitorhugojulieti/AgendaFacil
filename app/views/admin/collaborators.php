@@ -18,6 +18,7 @@
                         <a href="/admin/collaborator/store" class="w-2/4 bg-principal10 text-white text-sm rounded p-3 flex items-center justify-center"><i class='bx bx-plus'></i>Novo colaborador</a>
                 </div>
             </div>
+            <?php if(count($collaborators) > 0 ){?>
             <table class="w-full bg-white shadow shadow-borderFormColor p-2 rounded-lg">
                 <thead class="bg-white p-4  border-b-2 border-lightGray ">
                     <tr>
@@ -84,6 +85,7 @@
                     <?php } ?>
                 </tbody>
             </table>
+          
             <div class="w-full flex items-center justify-between p-4 ">
                     <span><?php echo 'Pagina '.$pagination['currentPage'].' de '.$pagination['totalPages']?></span>
                     <div class="buttons flex items-center gap-4">
@@ -91,6 +93,13 @@
                         <a href="/admin/collaborator/<?php echo $pagination['currentPage'] +1;?>" class="flex items-center gap-4 text-sm   ">Proxima<i class='bx bx-right-arrow-alt text-2xl hover:scale-50'  ></i></a>
                     </div>
             </div>
+
+            <?php }else{?>
+                <div class="w-full  text-grayInput flex flex-col gap-2 items-center justify-center p-12" >
+                        <i class='bx bxs-info-circle text-4xl'></i>
+                        <span class="font-Urbanist font-semibold text-xl">Você não tem colaboradores cadastrados!</span>
+                    </div>
+            <?php }?>
         </div>
     </div>
     <!-- crud flash messages -->

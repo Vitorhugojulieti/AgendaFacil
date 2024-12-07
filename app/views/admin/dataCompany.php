@@ -13,10 +13,10 @@
                         <input type="file" name="logo" id="inputLogo" class="hidden">
                         <label for="inputLogo" class="flex flex-col items-center gap-2 pt-4 pb-4">
                             <img id="previewLogo"  alt="logo" src="<?php echo isset($company) ? '../../'.$company->getLogo() : AVATAR_DEFAULT?>">
-                            <!-- <i class='hidden bx bx-image text-4xl text-grayInput' id="iconLogo"></i>
-                            <span class="hidden text-grayInput hover:underline hover:cursor-pointer" id="spanLogo"><span class="font-semibold text-principal5">Insira</span> a logo da empresa aqui</span> -->
+                            <i class='hidden bx bx-image text-4xl text-grayInput' id="iconLogo"></i>
+                            <span class="hidden text-grayInput hover:underline hover:cursor-pointer" id="spanLogo"><span class="font-semibold text-principal5">Insira</span> a logo da empresa aqui</span>
                         </label>
-                        <!-- <span class="text-errorColor " id="msgInputLogo"><?php echo flash('image1');  ?></span> -->
+                        <span class="text-errorColor " id="msgInputLogo"></span>
                     </div>
 
                     <h2 class="w-full font-Urbanist font-semibold text-black text-xl md:text-2xl border-b-2 border-b-lightGray mb-4">Dados da empresa</h2>

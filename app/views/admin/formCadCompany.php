@@ -84,7 +84,7 @@
                                         <label for="inputCategory" class="flex items-center gap-1">Categoria</label>
                                     </div>
                                     <div class="flex items-center border-2 border-lightGrayInput rounded focus-within:border-white focus-within:text-white">
-                                        <select name="category" id="inputCategory" value="<?php echo old('category') ?>" class="w-full p-2 outline-none bg-transparent  transition-all duration-300 focus:bg-white focus:border-white focus:text-black">
+                                        <select name="category" id="inputCategory" class="w-full p-2 outline-none bg-transparent  transition-all duration-300 focus:bg-white focus:border-white focus:text-black">
                                             <option value="Barbearia">Barbearia</option>
                                             <option value="Salão de beleza">Salão de beleza</option>
                                             <option value="Spa">Spa</option>

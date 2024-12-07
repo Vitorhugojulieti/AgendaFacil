@@ -33,7 +33,6 @@
                 <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['collaborator']) ? IMAGES_DIR.$_SESSION['collaborator']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator hover:cursor-pointer">
 
                 <div id="popUpAvatar" class="hidden flex-col items-start bg-white  rounded-xl pop-menu-avatar shadow-sm shadow-black ">
-                    <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray rounded-t-xl hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
                     <a href="/admin/login/destroy" class="p-2 flex items-center gap-1 rounded-b-xl hover:bg-lightGray" ><i class='bx bx-log-out' style='color:#223249' ></i>Logout</a>
                 </div>
             </div>
@@ -123,7 +122,6 @@
                 <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['collaborator']) ? IMAGES_DIR.$_SESSION['collaborator']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator hover:cursor-pointer">
 
                 <div id="popUpAvatar" class="hidden flex-col items-start bg-white  rounded-xl pop-menu-avatar shadow-sm shadow-black ">
-                    <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray rounded-t-xl hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
                     <a href="/admin/login/destroy" class="p-2 flex items-center gap-1 rounded-b-xl hover:bg-lightGray" ><i class='bx bx-log-out' style='color:#223249' ></i>Logout</a>
                 </div>
             </div>
@@ -196,22 +194,10 @@
                 <div id="popUpNotification" class="pop-menu-notification hidden w-96 flex-col items-start bg-white  rounded-xl  shadow-sm shadow-black">
                     <span class="w-full font-Urbanist text-xl font-semibold text-black p-4 pb-8">Notificações</span>
                     <div id="notificationList pt-2 pb-2 overflow-y-auto">
-                        <?php foreach ($notifications as $notification) { 
-                            $now = new DateTime(); 
-                            $interval = $now->diff($notification->getDate());
-                        ?>
-                            <!-- notification -->
-                            <div class="w-full <?php echo $notification->getNotified() === 0 ? 'bg-grayNotification' : 'bg-white'?> flex gap-4 items-center p-2 border-b border-b-grayInput">
-                                <div class="circle-notification">
-                                    <i class='bx bxs-message text-2xl' style='color:#ffff'  ></i>
-                                </div>
-                                <div class="bodyNotification flex flex-col items-start gap-1">
-                                    <span class="text-base text-black font-semibold font-Urbanist"><?php echo $notification->getMessage();?></span>
-                                    <span class="text-sm"><?php echo 'Há '.$interval->i.'minutos' ?> </span>
-                                    <a href="<?php echo $notification->getLink(); ?>" class="text-sm hover:underline">Ver detalhes</a>
-                                </div>
-                            </div>
-                        <?php } ?>
+                    <div class="w-full text-grayInput flex flex-col gap-2 items-center justify-center p-12">
+                    <i class="bx bxs-info-circle text-4xl"></i>
+                    <span class="font-Urbanist font-semibold text-xl">Você não tem notificações!</span>
+                  </div>
                         
                     </div>
                     <span class="w-full flex justify-between items-center p-2">
@@ -226,7 +212,6 @@
                 <img id="btnOpenPopUpAvatar" src="<?php echo isset($_SESSION['user']) ? $_SESSION['user']->getAvatar() : '/assets/images/avatar_default.png';?>" alt="" class="redondShapeImageCollaborator hover:cursor-pointer">
 
                 <div id="popUpAvatar" class="hidden flex-col items-start bg-white  rounded-xl pop-menu-avatar shadow-sm shadow-black ">
-                    <a href="" class="flex items-center gap-1 p-2 border-b-2 border-lightGray hover:bg-lightGray"><i class='bx bx-cog' style='color:#223249'  ></i>Configurações</a>
                     <a href="/login/destroy" class="p-2 flex items-center gap-1 hover:bg-lightGray" ><i class='bx bx-log-out' style='color:#223249' ></i>Logout</a>
                 </div>
             </div>
@@ -287,7 +272,6 @@
                 <li class="<?php echo $navActive ==='Agenda' ? 'bg-white p-4 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-calendar text-2xl'></i><a  href="/schedule/" class="hover:underline text-xl">Agenda</a></li>
                 <li class="<?php echo $navActive ==='Cupons' ? 'bg-white p-4 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class="fa-solid fa-ticket text-2xl"></i><a href="#"  class="hover:underline text-xl">Cupons</a> <span class="border-2 border-principal5 text-principal5 rounded px-2 text-sm">Pro</span></li>
                 <li class="<?php echo $navActive ==='Dados' ? 'bg-white p-4 rounded text-principal10' : ''?> hover:cursor-pointer flex items-center gap-2"><i class='bx bx-data text-2xl'></i><a href="/data"  class="hover:underline text-xl">Dados usuario</a></li>
-                <a href="#" class="flex items-center gap-2 hover:cursor-pointer"><i class='bx bx-cog text-2xl'></i><span class="hover:underline text-xl">Configurações</span></a>
                 <a href="/login/destroy" class="flex items-center gap-2 hover:cursor-pointer"><i class='bx bx-log-out text-2xl'></i><span class="hover:underline text-xl">Sair</span></a>
             </ul>
         </nav>

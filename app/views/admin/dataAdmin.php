@@ -52,25 +52,8 @@
                                     <span class="text-errorColor " id="msgCpfError"><?php echo flash('cpf');  ?></span>
                                 </div>
 
-                                <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-borderFormColor">
-                                    <div>
-                                        <label for="inputOpeningHoursEnd" class="flex items-center gap-1">Data de aniversario</label>
-                                    </div>
-                                    <div class="flex items-center border-2 border-borderFormColor rounded focus-within:border-principal10 focus-within:text-principal10">
-                                        <i class='bx bx-time-five' style='padding-left:1rem; padding-right:1rem;'></i>
-                                        <input type="date" name="birthDate" id="inputOpeningHoursEnd" value="<?php echo isset($collaborator) ? $collaborator->getBirthDate()->format('Y-m-d') : ''; ?>" class="w-full p-2 outline-none bg-transparent border-l-2 border-borderFormColor transition-all duration-300 focus:border-principal10 focus:text-black">
-                                    </div>
-                                    <span class="text-errorColor " id="msgOpeningHoursEndError"><?php echo flash('openingHoursEnd');  ?></span>
-                                </div>
-                                <!-- TODO corrigitr pq o campo nao mostra a data atual -->
-                            </div>
-
-                            <!-- column 2 -->
-                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-center gap-4 ">
-                                
-                                 <!-- campo -->
-                                <div class="field w-full focus-within:text-principal10 text-grayInput ">
+                                         <!-- campo -->
+                                         <div class="field w-full focus-within:text-principal10 text-grayInput ">
                                     <div>
                                         <label for="inputActive" >Gênero</label>
                                     </div>
@@ -84,6 +67,13 @@
                                     </div>
                                     <span class="text-errorColor " id="msgNameError"><?php echo flash('name');  ?></span>
                                 </div>
+
+                            </div>
+
+                            <!-- column 2 -->
+                            <div class="w-full col-span-1 row-span-1 col-start-2 flex flex-col items-start justify-start gap-4 ">
+                                
+                        
                                 <!-- campo -->
                                  <div class="field w-full focus-within:text-principal10 text-borderFormColor">
                                     <div>
